@@ -16,5 +16,5 @@ COPY bin/Release/netcoreapp3.1/publish/ app/
 # RUNTIME
 FROM base AS final
 WORKDIR /app
-COPY --from=publish /app .														
+COPY --from=publish /app /app													
 CMD '/bin/bash'
