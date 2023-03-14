@@ -1,0 +1,47 @@
+version: '3.5'
+
+networks:
+  main:
+    name: itu-minitwit-network
+
+services:
+  minitwitimage:
+    build:
+      context: .
+      dockerfile: itu-minitwit-node/Dockerfile
+    image: emigiusto/minitwitimage
+    container_name: minitwit
+    networks:
+      - main
+    ports:
+        - '5000:5000'
+    depends_on:
+      - grafana
+      - prometheus
+
+  flagtool:
+    build:
+      context: .
+      dockerfile: flag_tool/Dockerfile
+    image: emigiusto/flag-tool
+    container_name: flag-tool
+    networks:
+      - main
+    command: tail -f /dev/null
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      - main
+
+  grafana:
+    image: grafana/grafana:4.5.2
+    ports:
+      - "3001:3000"  
+    networks:
+      - main
