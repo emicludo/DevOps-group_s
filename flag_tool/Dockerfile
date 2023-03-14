@@ -4,7 +4,7 @@ RUN mkdir /flag_tool
 # BUILD
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
 WORKDIR /build
-COPY . .
+COPY /flag_tool .
 RUN dotnet restore "flag_tool.csproj"
 RUN dotnet build "flag_tool.csproj" -c Release -o /app
 
