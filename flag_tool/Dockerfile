@@ -10,11 +10,11 @@ RUN dotnet build "flag_tool.csproj" -c Release -o /app
 
 # COMPILE
 FROM build AS publish
-RUN dotnet publish "flag_tool.csproj" -c Release -o /app				
-COPY bin/Release/netcoreapp3.1/publish/ app/
+RUN dotnet publish "flag_tool.csproj" -c Release -o /app
+COPY /app /app
 
 # RUNTIME
 FROM base AS final
 WORKDIR /app
-COPY --from=publish /app /app													
+COPY --from=publish /app /app
 CMD '/bin/bash'
