@@ -204,7 +204,7 @@ router.post('/msgs/:username', async function (req, res, next) {
     const body = {
       author_id: userId,
       text: content,
-      pub_date: Math.floor(Date.now() / 1000),
+      pub_date: Date.now(),
       flagged: 0
     };
     database.add('message', body, function (lasdId, err) {
