@@ -30,11 +30,11 @@ router.get('/', function (req, res, next) {
   const flash = req.session.flash
   delete req.session.flash
 
-  database.all('select message.*, user.* from message, user \
-                where message.flagged = 0 \
-                and message.author_id = user.user_id \
-                and (user.user_id = ? or user.user_id in (select whom_id from follower where who_id = ?)) \
-                order by message.pub_date desc limit 30'
+  database.all(`select message.*, user.* from message, user 
+                where message.flagged = 0 
+                and message.author_id = user.user_id 
+                and (user.user_id = ? or user.user_id in (select whom_id from follower where who_id = ?)) 
+                order by message.pub_date desc limit 30`
   , [req.session.user.user_id, req.session.user.user_id], (err, rows) => {
     if (err) {
       console.error(err)
@@ -52,10 +52,10 @@ router.get('/public', function (req, res, next) {
   const flash = req.session.flash
   delete req.session.flash
 
-  database.all('select message.*, user.* from message, user \
-                where message.flagged = 0 \
-                and message.author_id = user.user_id \
-                order by message.pub_date desc limit 30'
+  database.all(`select message.*, user.* from message, user 
+                where message.flagged = 0 
+                and message.author_id = user.user_id 
+                order by message.pub_date desc limit 30`
   , [], (err, rows) => {
     if (err) {
       console.error(err)
@@ -99,9 +99,9 @@ router.get('/:username', function (req, res, next) {
 
         // if they are not followed
         if (rows2.length === 0) {
-          database.all('select message.*, user.* from message, user where \
-          user.user_id = message.author_id and user.user_id = ? \
-          order by message.pub_date desc limit 30', [profile.user_id], (err, rows3) => {
+          database.all(`select message.*, user.* from message, user where 
+          user.user_id = message.author_id and user.user_id = ? 
+          order by message.pub_date desc limit 30`, [profile.user_id], (err, rows3) => {
             if (err) {
               console.error(err)
               res.status(500).send({ error: 'An error occurred while retrieving user', description: err.toString() })
@@ -111,9 +111,9 @@ router.get('/:username', function (req, res, next) {
             res.render('index', { messages: rows3, path: req.path, followed: false, profile, user: req.session.user, flash, gravatar })
           })
         } else { // if they are followed
-          database.all('select message.*, user.* from message, user where \
-          user.user_id = message.author_id and user.user_id = ? \
-          order by message.pub_date desc limit 30', [profile.user_id], (err, rows3) => {
+          database.all(`select message.*, user.* from message, user where 
+          user.user_id = message.author_id and user.user_id = ? 
+          order by message.pub_date desc limit 30`, [profile.user_id], (err, rows3) => {
             if (err) {
               console.error(err)
               res.status(500).send({ error: 'An error occurred while retrieving user', description: err.toString() })
@@ -125,9 +125,9 @@ router.get('/:username', function (req, res, next) {
         }
       })
     } else {
-      database.all('select message.*, user.* from message, user where \
-          user.user_id = message.author_id and user.user_id = ? \
-          order by message.pub_date desc limit 30', [profile.user_id], (err, rows4) => {
+      database.all(`select message.*, user.* from message, user where 
+          user.user_id = message.author_id and user.user_id = ? 
+          order by message.pub_date desc limit 30`, [profile.user_id], (err, rows4) => {
         if (err) {
           console.error(err)
           res.status(500).send({ error: 'An error occurred while retrieving user', description: err.toString() })

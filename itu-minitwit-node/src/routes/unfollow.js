@@ -23,6 +23,9 @@ router.get('/:username', function (req, res, next) {
       res.status(400).send({ error: 'User does not exist' })
     } else {
       database.all('delete from follower where who_id=? and whom_id=?', [req.session.user.user_id, rows[0].user_id], (err, rows2) => {
+        if (err) {
+          console.error(err)
+        }
         req.session.flash = 'You are no longer following ' + rows[0].username
         res.redirect(`/api/${rows[0].username}`)
       })
