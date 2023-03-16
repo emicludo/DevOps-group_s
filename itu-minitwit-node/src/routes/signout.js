@@ -1,16 +1,11 @@
-var express = require('express');
-var router = express.Router();
-
-const database = require('../db/dbService');
+const express = require('express')
+const router = express.Router()
 
 /* Logs the user out */
-router.get('/', function(req, res, next) {
-  
-  req.session.flash = "You were logged out";
-  delete req.session.user;
-  res.redirect('/api/public');
-  return;
+router.get('/', function (req, res, next) {
+  req.session.flash = 'You were logged out'
+  delete req.session.user
+  res.redirect('/api/public')
+})
 
-});
-
-module.exports = router;
+module.exports = router
