@@ -57,7 +57,7 @@ app.use('/api/signout', signoutRouter);
 app.use('/api/', indexRouter);
 app.use('/', simulatorRouter);
 
-//Metrics endpoint
+//Metrics endpoint - consumed by Prometheus
 app.get('/metrics', async (req, res) => {
   res.set('Content-Type', client.register.contentType);
   res.send(await client.register.metrics());
