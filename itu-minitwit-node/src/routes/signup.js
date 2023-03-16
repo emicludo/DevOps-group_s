@@ -84,6 +84,6 @@ router.post('/', function (req, res, next) {
         req.session.flash = 'You were successfully registered and can login now'
         res.redirect('/api/signin')
       })
-    ) {}
+    ) {} //eslint-disable-line
   })
 })

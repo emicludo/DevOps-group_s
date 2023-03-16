@@ -1,10 +1,10 @@
-var createError = require('http-errors')
-var express = require('express')
-var session = require('express-session')
-var path = require('path')
-var cookieParser = require('cookie-parser')
-var logger = require('morgan')
-var rfs = require('rotating-file-stream')
+const createError = require('http-errors')
+const express = require('express')
+const session = require('express-session')
+const path = require('path')
+const cookieParser = require('cookie-parser')
+const logger = require('morgan') //eslint-disable-line
+const rfs = require('rotating-file-stream') //eslint-disable-line
 
 // Routing
 const indexRouter = require('./src/routes/index')
@@ -58,7 +58,6 @@ app.use('/', simulatorRouter)
 app.use(function (req, res, next) {
   next(createError(404))
 })
-
 
 // error handler
 app.use(function (err, req, res, next) {

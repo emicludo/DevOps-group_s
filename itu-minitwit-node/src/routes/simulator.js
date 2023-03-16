@@ -139,7 +139,7 @@ router.get('/msgs/:username', async function (req, res, next) {
     }
 
     const users = await getAllUsers()
-    const userSelected = users.find(user => user.username = username)
+    const userSelected = users.find(user => user.username = username) //eslint-disable-line
     if (userSelected === -1) {
       res.status(404).send({ status: 404, error_msg: 'User is not on our database' })
     }
