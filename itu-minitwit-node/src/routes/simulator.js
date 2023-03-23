@@ -196,8 +196,8 @@ router.post('/msgs/:username', async function (req, res, next) {
     }
 
     const users = await getAllUsers()
-    const userSelected = users.find(user => user.username = username)
-    if (userSelected == -1) {
+    const userSelected = users.find(user => user.username == username)
+    if (userSelected == undefined) {
       res.status(404).send({ status: 404, error_msg: "User is not on our database" });
     }
     const userId = userSelected.user_id
@@ -205,7 +205,7 @@ router.post('/msgs/:username', async function (req, res, next) {
     const body = {
       author_id: userId,
       text: content,
-      pub_date: Math.floor(Date.now() / 1000),
+      pub_date: Date.now(),
       flagged: 0
     };
     database.add('message', body, function (lasdId, err) {
