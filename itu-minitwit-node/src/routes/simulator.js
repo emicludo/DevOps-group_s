@@ -91,9 +91,10 @@ router.get('/msgs', function (req, res, next) {
 
     //Gets Limit
     var no_msgs = parseInt(req.query.no);
-    if (no_msgs == undefined) {
+    if (!no_msgs) {
       no_msgs = 100;
     }
+    
     const query = `SELECT message.*, user.* FROM message, user
     WHERE message.flagged = 0 AND message.author_id = user.user_id
     ORDER BY message.pub_date DESC LIMIT ?`
