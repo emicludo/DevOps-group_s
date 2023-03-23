@@ -3,8 +3,10 @@ var express = require('express');
 var session = require('express-session');
 var path = require('path');
 var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-var rfs = require('rotating-file-stream');
+
+
+//Utils
+/* var logger = require('./src/logger/logger'); */
 
 //Routing
 var indexRouter = require('./src/routes/index');
@@ -19,15 +21,6 @@ var signoutRouter = require('./src/routes/signout');
 var simulatorRouter = require('./src/routes/simulator');
 
 var app = express();
-
-/* // create a rotating write stream
-var accessLogStream = rfs.createStream('access.log', {
-  interval: '1d',
-  path: path.join(__dirname, 'log')
-}) */
-
-/* // setting up the logger
-app.use(logger('dev', {stream: accessLogStream})) */
 
 app.use(session({
   secret: 'c2b71086dd6ba3b83431e00118d52c0fd2f178f439910fe7bf7e86a2a163e26f83932fac1f908015d7815bf0a817914e38ee56d904888337bff57c91c76ae8b1',
