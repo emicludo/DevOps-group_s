@@ -1,14 +1,4 @@
-[0mGET / [0m- [0m- ms - -[0m
-[0mGET /api/public [32m200 [0m243.287 ms - 11110[0m
-[0mGET /stylesheets/style.css [32m200 [0m2.262 ms - 3126[0m
-[0mGET /favicon.ico [0m- [0m- ms - -[0m
-[0mGET /api/a [32m200 [0m52.002 ms - 807[0m
-[0mGET /stylesheets/style.css [36m304 [0m1.052 ms - -[0m
-[0mGET /api/ [36m302 [0m3.799 ms - 66[0m
-[0mGET /api/public [36m304 [0m57.435 ms - -[0m
-[0mGET /stylesheets/style.css [36m304 [0m0.777 ms - -[0m
-[0mGET /api/Leonora [32m200 [0m37.828 ms - 797[0m
-[0mGET /stylesheets/style.css [36m304 [0m0.559 ms - -[0m
-[0mGET /api/ [36m302 [0m0.819 ms - 66[0m
-[0mGET /api/public [36m304 [0m23.286 ms - -[0m
-[0mGET /stylesheets/style.css [36m304 [0m0.717 ms - -[0m
+GET /msgs?1000 403 7.922 ms -
+GET /msgs?1000 403 6.568 ms -
+GET /msgs?1000 403 3.006 ms -
+GET /msgs?10 403 6.537 ms -
