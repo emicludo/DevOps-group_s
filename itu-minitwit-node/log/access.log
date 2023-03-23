@@ -1,4 +1,0 @@
-GET /msgs?1000 403 7.922 ms -
-GET /msgs?1000 403 6.568 ms -
-GET /msgs?1000 403 3.006 ms -
-GET /msgs?10 403 6.537 ms -
