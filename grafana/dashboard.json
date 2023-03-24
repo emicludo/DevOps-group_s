@@ -1,7 +1,45 @@
 {
   "dashboard": {
     "id": null,
-    "title": "My Dashboard"
+    "title": "Sample Dashboard",
+    "panels": [
+      {
+        "id": 1,
+        "type": "graph",
+        "title": "Sample Graph",
+        "datasource": "Prometheus",
+        "targets": [
+          {
+            "expr": "up"
+          }
+        ],
+        "legend": {
+          "show": true
+        },
+        "xaxis": {
+          "show": true
+        },
+        "yaxes": [
+          {
+            "show": true,
+            "format": "short"
+          },
+          {
+            "show": true,
+            "format": "short"
+          }
+        ],
+        "gridPos": {
+          "x": 0,
+          "y": 0,
+          "w": 12,
+          "h": 8
+        }
+      }
+    ],
+    "timezone": "",
+    "schemaVersion": 21,
+    "version": 0
   },
   "folderId": null,
   "overwrite": false

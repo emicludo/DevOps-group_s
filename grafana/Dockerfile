@@ -1,16 +1,9 @@
-FROM grafana/grafana:4.5.2
+FROM grafana/grafana:latest
 
-# Install plugins
-RUN grafana-cli plugins install grafana-piechart-panel
-RUN grafana-cli plugins install grafana-worldmap-panel
+COPY prometheus.yaml /etc/grafana/provisioning/datasources/
+COPY dashboard.json /var/lib/grafana/dashboards/
 
-# Copy custom dashboard
-COPY dashboard.json /usr/share/grafana/conf/provisioning/dashboards/
-
-# Configure Prometheus datasource
-COPY datasources.json /usr/share/grafana/conf/provisioning/datasources/
-
-COPY grafana.ini /usr/share/grafana/conf/
+RUN chown -R grafana:grafana /etc/grafana/provisioning /var/lib/grafana/dashboards/
 
 # Expose Grafana port
 EXPOSE 3000
