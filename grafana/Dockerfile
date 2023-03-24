@@ -1,4 +1,4 @@
-FROM grafana/grafana:latest
+FROM grafana/grafana:4.5.2
 
 COPY prometheus.yaml /etc/grafana/provisioning/datasources/
 COPY dashboard.json /var/lib/grafana/dashboards/

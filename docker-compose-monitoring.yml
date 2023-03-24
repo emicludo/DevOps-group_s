@@ -1,11 +1,17 @@
 version: '3.5'
 
+networks:
+  main:
+    name: itu-minitwit-network
+
 services:
   prometheus:
     image: prom/prometheus
     container_name: prometheus
+    networks:
+      - main
     volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus-monitoring.yml
+      - ./prometheus-monitoring.yml:/etc/prometheus/prometheus.yml
     ports:
       - "9090:9090"
 
@@ -16,7 +22,7 @@ services:
     image: emigiusto/grafana
     ports:
       - 3005:3000
+    networks:
+      - main
     depends_on:
       - prometheus
-    environment:
-      - GF_SECURITY_ADMIN_PASSWORD=admin
