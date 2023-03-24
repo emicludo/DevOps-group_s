@@ -6,6 +6,10 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var rfs = require('rotating-file-stream');
 
+//Prometheus metrics
+const client = require('prom-client');
+const collectDefaultMetrics = client.collectDefaultMetrics;
+
 //Routing
 var indexRouter = require('./src/routes/index');
 var messageRouter = require('./src/routes/message');
