@@ -2,25 +2,199 @@
   "annotations": {
     "list": []
   },
+  "editMode": false,
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
   "hideControls": false,
-  "id": 1,
+  "id": 2,
   "links": [],
   "rows": [
     {
       "collapse": false,
-      "height": "250px",
+      "height": 250,
       "panels": [
         {
           "aliasColors": {},
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "Prom",
+          "datasource": "Group-S",
+          "description": "displaying CPU usage over time",
           "fill": 1,
-          "id": 1,
+          "id": 3,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "process_cpu_seconds_total",
+              "format": "time_series",
+              "intervalFactor": 2,
+              "legendFormat": "CPU usage",
+              "refId": "A",
+              "step": 40
+            },
+            {
+              "expr": "",
+              "format": "time_series",
+              "intervalFactor": 2,
+              "legendFormat": "",
+              "refId": "B",
+              "step": 20
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "CPU USAGE",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "s",
+              "label": "CPU usage in seconds",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "bits",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ]
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": null,
+          "fill": 1,
+          "id": 4,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "process_resident_memory_bytes",
+              "format": "time_series",
+              "intervalFactor": 2,
+              "legendFormat": "Memory Usage",
+              "refId": "A",
+              "step": 40
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Memory Usage of Web App",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "bytes",
+              "label": "Memory usage",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ]
+        }
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": false,
+      "title": "Dashboard Row",
+      "titleSize": "h6"
+    },
+    {
+      "collapse": false,
+      "height": 250,
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": null,
+          "fill": 1,
+          "id": 5,
           "legend": {
             "avg": false,
             "current": false,
@@ -45,17 +219,18 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "prometheus_http_requests_total",
+              "expr": "promhttp_metric_handler_requests_total",
               "format": "time_series",
               "intervalFactor": 2,
-              "refId": "B",
-              "step": 30
+              "legendFormat": "Total HTTP requests",
+              "refId": "A",
+              "step": 20
             }
           ],
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Http Requests Total",
+          "title": "Prometheus Endpoint Traffic",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -72,7 +247,7 @@
           "yaxes": [
             {
               "format": "short",
-              "label": null,
+              "label": "Number of Requests",
               "logBase": 1,
               "max": null,
               "min": null,
@@ -133,6 +308,6 @@
     ]
   },
   "timezone": "",
-  "title": "Minitwit Dashboard",
-  "version": 1
+  "title": "New dashboard Copy",
+  "version": 3
 }
