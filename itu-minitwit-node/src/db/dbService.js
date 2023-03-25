@@ -61,7 +61,7 @@ class Database {
 //Database Service
 const schema = fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf-8');
 //DB initialization
-const database = new Database('./src/db/minitwit.db');
+const database = new Database('./../../minitwit.db');
 //database.run(schema);
 
 module.exports = database;
