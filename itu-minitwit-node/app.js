@@ -4,6 +4,9 @@ var session = require('express-session');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 
+//Utils
+/* var logger = require('./src/logger/logger'); */
+
 //Prometheus metrics
 const client = require('prom-client');
 const collectDefaultMetrics = client.collectDefaultMetrics;
