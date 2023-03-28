@@ -13,7 +13,7 @@ const logger = createLogger({
     // - Write all logs with importance level of `error` or less to `error.log`
     // - Write all logs with importance level of `info` or less to `combined.log`
     //
-    new transports.File({ filename: './logs/error.log', level: 'error' }),
+    new transports.File({ filename: './../../logs/error.log', level: 'error' }),
     //new transports.File({ filename: './logs/combined.log' }),
   ],
 });
