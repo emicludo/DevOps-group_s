@@ -5,10 +5,10 @@ on:
   push:
     # Run workflow every time something is pushed to the main branch
     branches:
-      - main
+      - CI/CD
   pull_request:
     branches: 
-      - main 
+      - CI/CD 
   # allow manual triggers for now too
   workflow_dispatch:
     manual: true
