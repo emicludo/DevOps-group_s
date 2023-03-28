@@ -1,0 +1,57 @@
+version: '3.3'
+
+networks:
+  main:
+  elk:
+    driver: bridge
+
+services:
+
+  minitwitimage:
+    image: ${DOCKER_USERNAME}/minitwitimage
+    container_name: minitwit
+    networks:
+      - main
+    ports:
+        - '5000:5000'
+    #If we self host the mysql database, we need to uncomment this
+    #depends_on:
+    #  - mysqlminitwit
+
+  flagtool:
+    image: ${DOCKER_USERNAME}/flag-tool
+    container_name: flag-tool
+    networks:
+      - main
+    command: tail -f /dev/null
+    #If we self host the mysql database, we need to uncomment this
+    #depends_on:
+    #  - mysqlminitwit
+  
+
+  elasticsearch:
+    image: elasticsearch:7.17.9
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    networks:
+      - elk
+  
+  logstash:
+    image: logstash:7.17.9
+    container_name: logstash
+    volumes:
+      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    networks:
+      - elk
+
+  kibana:
+    image: kibana:7.17.9
+    container_name: kibana
+    ports:
+      - "5601:5601"
+    networks:
+      - elk

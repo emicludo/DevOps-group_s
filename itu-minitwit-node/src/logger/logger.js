@@ -1,7 +1,20 @@
-const { createLogger, format, transports } = require('winston');
-const { combine, timestamp, prettyPrint } = format;
+/* const { createLogger, format, transports } = require('winston');
+const { combine, timestamp, prettyPrint } = format; */
 
-const logger = createLogger({
+const winston = require('winston');
+const LogstashTransport = require('winston-logstash-transport');
+
+const logger = winston.createLogger({
+  transports: [
+    new LogstashTransport({
+      host: 'logstash',
+      port: 5044
+    })
+  ]
+});
+
+
+/* const logger = createLogger({
   level: 'info',
   format: combine(
     timestamp(),
@@ -16,7 +29,7 @@ const logger = createLogger({
     new transports.File({ filename: './logs/error.log', level: 'error' }),
     //new transports.File({ filename: './logs/combined.log' }),
   ],
-});
+}); */
 
 //
 // If we're not in production then log to the `console` with the format:

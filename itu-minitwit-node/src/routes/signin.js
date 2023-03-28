@@ -11,7 +11,7 @@ router.get('/', function(req, res, next) {
   } else {
     const errorMessage = req.session.errorMessage;
     const username = req.session.username;
-
+    logger.info('Hello, world!');
     delete req.session.errorMessage;
     delete req.session.username;
     res.render('signin', {errorMessage: errorMessage, username: username});
