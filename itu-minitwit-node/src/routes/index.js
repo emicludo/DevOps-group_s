@@ -41,7 +41,7 @@ router.get('/', function(req, res, next) {
 
     if (err) {
       console.error(err);
-      res.status(500).render('error');
+      res.status(500).send(err);
       return;
     }
     
@@ -66,7 +66,7 @@ router.get('/public', function (req, res, next) {
 
     if (err) {
       console.error(err);
-      res.status(500).render('error');
+      res.status(500).send(err);
       return;
     }
     
