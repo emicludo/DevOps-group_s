@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var logger = require('../logger/logger');    
 
 const database = require('../db/dbService')
 
@@ -44,7 +45,13 @@ router.get('/', function(req, res, next) {
       res.status(500).render('error');
       return;
     }
-    
+
+    logger.info({
+      message: 'retrieving workiiiiing',
+      user: 'userr',
+      file: 'hej',
+      project: 'projeeeekt'
+    });    
     console.log('Successfully retrieved ' + rows.length + ' messages');
     res.render('index', { messages: rows, flash: flash, path: req.path, user: req.session.user, gravatar: gravatar});
     });

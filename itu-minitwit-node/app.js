@@ -4,6 +4,8 @@ var session = require('express-session');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 
+const logger = require('./src/logger/logger')
+
 //Utils
 /* var logger = require('./src/logger/logger'); */
 
@@ -39,6 +41,8 @@ app.use(session({
   resave: false,
   saveUninitialized: false
 }));
+
+app.use(require('morgan')('combined', {'stream': logger.stream}))
 
 // view engine setup
 app.set('views', path.join(__dirname, '/src/views'));
