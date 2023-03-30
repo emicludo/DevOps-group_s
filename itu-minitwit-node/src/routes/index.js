@@ -1,9 +1,19 @@
+require('dotenv').config()
+
 var express = require('express');
 var router = express.Router();
+const db = {};
 
 const { Sequelize } = require('sequelize');
-const database = require('../db/dbService')
+const database = require('../db/dbService');
+/*
+db.Sequelize = Sequelize;
+db.sequelize = sequelizeInstance;
 
+db.users = require("../db/models/user.js")(sequelizeInstance, Sequelize);
+db.followers = require("../db/models/follower.js")(sequelizeInstance, Sequelize);
+db.messages = require("../db/models/message.js")(sequelizeInstance, Sequelize);
+*/
 const crypto = require('crypto');
 
 const gravatar = function gravatarUrl(email, size = 80) {
@@ -12,8 +22,10 @@ const gravatar = function gravatarUrl(email, size = 80) {
 }
 
 // Sequelize constructor
-const sequelize = new Sequelize('defaultdb', 'doadmin', 'AVNS_ugdlCpCDd2M2GITdcrn', {
-  host: 'db-mysql-fra1-97923-do-user-13586602-0.b.db.ondigitalocean.com',
+// OLD ONE -- UPDATE DB CONNECTION in .env BEFORE MERGE
+const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USERNAME, process.env.DB_PASSWORD, {
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
   dialect: 'mysql'
 });
 
@@ -28,6 +40,7 @@ async function test_connection() {
 }
 
 test_connection(); 
+
 
 /**
  * GET /
@@ -181,3 +194,4 @@ router.get('/:username', function(req, res, next) {
 });
 
 module.exports = router;
+//module.exports = db;

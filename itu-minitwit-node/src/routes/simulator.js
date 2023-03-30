@@ -12,8 +12,8 @@ const latestService = new LatestService();
 //Utils
 var logger = require('../logger/logger');
 
-const getAllUsers = require('../model/user');
-const getFollowersFromUser = require('../model/followers.js');
+const getAllUsers = require('../model/get-all-users');
+const getFollowersFromUser = require('../model/get-followers-from-user.js');
 
 router.get('/latest', function (req, res, next) {
   res.send({ latest: latestService.getLatest() });
