@@ -2,13 +2,22 @@
   "annotations": {
     "list": []
   },
-  "editMode": false,
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
   "hideControls": false,
-  "id": 2,
-  "links": [],
+  "id": 1,
+  "links": [
+    {
+      "icon": "dashboard",
+      "tags": [],
+      "targetBlank": true,
+      "title": "",
+      "tooltip": "",
+      "type": "link",
+      "url": "http://64.226.65.220:3005/dashboard/db/minitwit-group-s-dashboard?orgId=1"
+    }
+  ],
   "rows": [
     {
       "collapse": false,
@@ -19,7 +28,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "Group-S",
+          "datasource": "group s",
           "description": "displaying CPU usage over time",
           "fill": 1,
           "id": 3,
@@ -52,15 +61,7 @@
               "intervalFactor": 2,
               "legendFormat": "CPU usage",
               "refId": "A",
-              "step": 40
-            },
-            {
-              "expr": "",
-              "format": "time_series",
-              "intervalFactor": 2,
-              "legendFormat": "",
-              "refId": "B",
-              "step": 20
+              "step": 60
             }
           ],
           "thresholds": [],
@@ -308,6 +309,6 @@
     ]
   },
   "timezone": "",
-  "title": "New dashboard Copy",
-  "version": 3
+  "title": "Minitwit Group S Dashboard",
+  "version": 2
 }
