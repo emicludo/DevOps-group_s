@@ -18,6 +18,7 @@
       "url": "http://64.226.65.220:3005/dashboard/db/minitwit-group-s-dashboard?orgId=1"
     }
   ],
+  "refresh": false,
   "rows": [
     {
       "collapse": false,
@@ -28,7 +29,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "group s",
+          "datasource": "-- Grafana --",
           "description": "displaying CPU usage over time",
           "fill": 1,
           "id": 3,
@@ -271,6 +272,99 @@
       "showTitle": false,
       "title": "Dashboard Row",
       "titleSize": "h6"
+    },
+    {
+      "collapse": false,
+      "height": 250,
+      "panels": [
+        {
+          "cacheTimeout": null,
+          "colorBackground": false,
+          "colorValue": true,
+          "colors": [
+            "rgba(10, 217, 0, 0.97)",
+            "rgba(253, 253, 253, 0.89)",
+            "rgba(242, 0, 0, 0.9)"
+          ],
+          "datasource": "group s prometheus",
+          "format": "none",
+          "gauge": {
+            "maxValue": 100,
+            "minValue": 0,
+            "show": false,
+            "thresholdLabels": false,
+            "thresholdMarkers": true
+          },
+          "id": 6,
+          "interval": null,
+          "links": [],
+          "mappingType": 1,
+          "mappingTypes": [
+            {
+              "name": "value to text",
+              "value": 1
+            },
+            {
+              "name": "range to text",
+              "value": 2
+            }
+          ],
+          "maxDataPoints": 100,
+          "nullPointMode": "connected",
+          "nullText": null,
+          "postfix": "",
+          "postfixFontSize": "50%",
+          "prefix": "",
+          "prefixFontSize": "50%",
+          "rangeMaps": [
+            {
+              "from": "null",
+              "text": "N/A",
+              "to": "null"
+            }
+          ],
+          "span": 12,
+          "sparkline": {
+            "fillColor": "rgba(31, 118, 189, 0.18)",
+            "full": false,
+            "lineColor": "rgb(31, 120, 193)",
+            "show": true
+          },
+          "tableColumn": "",
+          "targets": [
+            {
+              "expr": "up{job=\"itu-minittwit-app\"}",
+              "format": "time_series",
+              "intervalFactor": 2,
+              "refId": "A",
+              "step": 600
+            }
+          ],
+          "thresholds": "",
+          "title": "App status",
+          "type": "singlestat",
+          "valueFontSize": "80%",
+          "valueMaps": [
+            {
+              "op": "=",
+              "text": "Online",
+              "value": "1"
+            },
+            {
+              "op": "=",
+              "text": "Offline",
+              "value": "0"
+            }
+          ],
+          "valueName": "avg"
+        }
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": false,
+      "title": "Dashboard Row",
+      "titleSize": "h6"
     }
   ],
   "schemaVersion": 14,
@@ -280,8 +374,8 @@
     "list": []
   },
   "time": {
-    "from": "now-6h",
-    "to": "now"
+    "from": "2023-03-30T02:03:25.101Z",
+    "to": "2023-03-30T14:03:25.101Z"
   },
   "timepicker": {
     "refresh_intervals": [
@@ -310,5 +404,5 @@
   },
   "timezone": "",
   "title": "Minitwit Group S Dashboard",
-  "version": 2
+  "version": 6
 }
