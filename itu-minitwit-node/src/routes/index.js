@@ -1,20 +1,10 @@
 require('dotenv').config()
+const { Sequelize } = require('sequelize');
+const database = require('../db/dbService');
+const crypto = require('crypto');
 
 var express = require('express');
 var router = express.Router();
-const db = {};
-
-const { Sequelize } = require('sequelize');
-const database = require('../db/dbService');
-/*
-db.Sequelize = Sequelize;
-db.sequelize = sequelizeInstance;
-
-db.users = require("../db/models/user.js")(sequelizeInstance, Sequelize);
-db.followers = require("../db/models/follower.js")(sequelizeInstance, Sequelize);
-db.messages = require("../db/models/message.js")(sequelizeInstance, Sequelize);
-*/
-const crypto = require('crypto');
 
 const gravatar = function gravatarUrl(email, size = 80) {
   const hash = crypto.createHash('md5').update(email.trim().toLowerCase()).digest('hex');
@@ -22,7 +12,6 @@ const gravatar = function gravatarUrl(email, size = 80) {
 }
 
 // Sequelize constructor
-// OLD ONE -- UPDATE DB CONNECTION in .env BEFORE MERGE
 const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USERNAME, process.env.DB_PASSWORD, {
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
@@ -54,7 +43,6 @@ test_connection();
  */
 
 
-// TODO: Switch to "personal" timeline if logged in. Currently only shows public timeline. 
 router.get('/', function(req, res, next) {
 
   if (!req.session.user) {
@@ -193,5 +181,7 @@ router.get('/:username', function(req, res, next) {
   
 });
 
-module.exports = router;
-//module.exports = db;
+module.exports = {
+  router, 
+  sequelize
+}
