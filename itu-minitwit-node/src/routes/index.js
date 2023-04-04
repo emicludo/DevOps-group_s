@@ -25,6 +25,18 @@ async function assertDatabaseConnectionOk() {
   }
   assertDatabaseConnectionOk()
 
+  async function test() {
+    try {
+      const user = sequelize.model("user").findAll({limit: 1})
+      console.log("herehrherheh " + user.user_id)
+    } catch (error) {
+      console.log('ERROR:');
+      console.log(error.message);
+      process.exit(1);
+    }
+  }
+  test()
+
 /**
  * GET /
  *
