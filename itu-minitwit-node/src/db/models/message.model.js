@@ -16,7 +16,7 @@ module.exports = (sequelize) => {
       allowNull: false,
     },
     pub_date: {
-      type: DataTypes.INTEGER
+      type: DataTypes.BIGINT
     }, 
     flagged: {
       type: DataTypes.INTEGER
