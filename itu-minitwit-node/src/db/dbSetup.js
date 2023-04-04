@@ -7,14 +7,14 @@ const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USERNAME, pr
     dialect: 'mysql'
   });
 
-// const modelDefiners = [
-// 	require('./models/follower-model'),
-// 	require('./models/message-model'),
-// 	require('./models/user-model')
-// ];
+const modelDefiners = [
+	require('./models/follower.model'),
+	require('./models/message.model'),
+	require('./models/user.model')
+];
 
-// for (const modelDefiner of modelDefiners) {
-// 	modelDefiner(sequelize);
-// }
+for (const modelDefiner of modelDefiners) {
+	modelDefiner(sequelize);
+}
 
 module.exports = sequelize;

@@ -1,23 +1,23 @@
-module.exports = (sequelize, Sequelize) => {
-    const User = sequelize.define("student", {
+  const { DataTypes } = require('sequelize');
+
+  module.exports = (sequelize) => {
+    sequelize.define('user', {
       user_id: {
-        type: Sequelize.INTEGER,
+        type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
       },
       username:{
-        type:Sequelize.STRING, 
+        type:DataTypes.STRING, 
         allowNull: false,
       },
       email: {
-        type: Sequelize.STRING, 
+        type: DataTypes.STRING, 
         allowNull: false,
       },
       pw_hash: {
-        type: Sequelize.STRING, 
+        type: DataTypes.STRING, 
         allowNull: false,
       }
     });
-  
-    return User;
   };

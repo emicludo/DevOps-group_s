@@ -1,25 +1,25 @@
-module.exports = (sequelize, Sequelize) => {
-    const Message = sequelize.define("student", {
-      message_id: {
-        type: Sequelize.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
-      },
-      author_id:{
-        type:Sequelize.INTEGER, 
-        allowNull: false,
-      },
-      text: {
-        type: Sequelize.STRING, 
-        allowNull: false,
-      },
-      pub_date: {
-        type: Sequelize.INTEGER
-      }, 
-      flagged: {
-        type: Sequelize.INTEGER
-      }, 
-    });
-  
-    return Message;
-  };
+const { DataTypes } = require('sequelize');
+
+module.exports = (sequelize) => {
+	sequelize.define('message', {
+		message_id: {
+			type: DataTypes.INTEGER,
+			autoIncrement: true,
+			primaryKey: true,
+		},
+		author_id:{
+      type:DataTypes.INTEGER, 
+      allowNull: false,
+    },
+    text: {
+      type: DataTypes.STRING, 
+      allowNull: false,
+    },
+    pub_date: {
+      type: DataTypes.INTEGER
+    }, 
+    flagged: {
+      type: DataTypes.INTEGER
+    }, 
+	});
+};
