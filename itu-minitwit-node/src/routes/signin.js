@@ -3,11 +3,7 @@ var router = express.Router();
 
 const database = require('../db/dbService')
 
-//dummy hash function
-function hash(password) {
-  return password;
-}
-
+const hash = require('../utils/hash')
 router.get('/', function(req, res, next) {
 
   if (req.session.user) {

@@ -1,6 +1,6 @@
 - var convert = function(epoch){  
--   var date = new Date(epoch*1000)
--   var formatted = date.getFullYear() + '-' + date.getMonth()+1 + '-' + date.getDate() + ' @ ' + date.getHours() + ':' + date.getMinutes() 
+-   var date = new Date(epoch)
+-   var formatted = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + (date.getDate()) + ' @ ' + date.getHours() + ':' + date.getMinutes() 
 -   return formatted
 - }
 

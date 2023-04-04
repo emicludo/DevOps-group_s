@@ -18,8 +18,8 @@ class Database {
     });
   }
 
-  run(sql, callback) {
-    this.db.run(sql,function (err) {
+  run(sql, values, callback) {
+    this.db.run(sql, values, function(err) {
       if (err) {
         throw err;
       }
@@ -29,8 +29,8 @@ class Database {
 
   add(table, data, callback) {
     const columns = Object.keys(data).join(', ');
+    const placeholders = Object.keys(data).map(() => '?').join(', ');
     const values = Object.values(data);
-    const placeholders = values.map(() => '?').join(', ');
     const sql = `INSERT INTO ${table} (${columns}) VALUES (${placeholders})`;
     this.run(sql, values, callback);
   }
@@ -61,7 +61,7 @@ class Database {
 //Database Service
 const schema = fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf-8');
 //DB initialization
-const database = new Database('./src/db/minitwit.db');
+const database = new Database('./../../minitwit.db');
 //database.run(schema);
 
 module.exports = database;

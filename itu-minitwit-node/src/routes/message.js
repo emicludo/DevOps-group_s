@@ -46,7 +46,7 @@ router.post('/', function (req, res, next) {
 
   if (req.body.text) {
 
-    database.all("insert into message (author_id, text, pub_date, flagged) values (?, ?, ?, 0)", [req.session.user.user_id, req.body.text, Math.floor(Date.now()/1000)], (err, rows) => {
+    database.all("insert into message (author_id, text, pub_date, flagged) values (?, ?, ?, 0)", [req.session.user.user_id, req.body.text, Date.now()], (err, rows) => {
 
       if (err) {
         console.error(err);
