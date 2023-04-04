@@ -1,8 +1,7 @@
-require('dotenv').config()
-const { Sequelize } = require('sequelize');
-const database = require('../db/dbService');
-const crypto = require('crypto');
+const database = require('../db/dbService'); // old db - to be deleted
 
+require('dotenv').config()
+const crypto = require('crypto');
 var express = require('express');
 var router = express.Router();
 
@@ -11,25 +10,20 @@ const gravatar = function gravatarUrl(email, size = 80) {
   return `http://www.gravatar.com/avatar/${hash}?d=identicon&s=${size}`;
 }
 
-// Sequelize constructor
-const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USERNAME, process.env.DB_PASSWORD, {
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
-  dialect: 'mysql'
-});
+const sequelize = require('../db/dbSetup');
 
-// Test connection 
-async function test_connection() {
-  try {
-    await sequelize.authenticate();
-    console.log('Connection has been established successfully.');
-  } catch (error) {
-    console.error('Unable to connect to the database:', error);
+async function assertDatabaseConnectionOk() {
+	console.log(`Checking database connection...`);
+    try {
+      await sequelize.authenticate();
+      console.log('Database connection OK!');
+    } catch (error) {
+      console.log('Unable to connect to the database:');
+      console.log(error.message);
+      process.exit(1);
+    }
   }
-}
-
-test_connection(); 
-
+  assertDatabaseConnectionOk()
 
 /**
  * GET /

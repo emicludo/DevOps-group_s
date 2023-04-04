@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-const database = require('../db/dbService');
+const database = require('../db/dbService'); // to be deleted 
 
 /* Adds the current user as follower of the given user.*/
 router.get('/:username', function(req, res, next) {
