@@ -1,14 +1,13 @@
-const { DataTypes } = require('sequelize');
+const Sequelize = require('sequelize');
+const sequelize = require("../dbSetup")
 
-  // We export a function that defines the model.
-  // This function will automatically receive as parameter the Sequelize connection object.
-  module.exports = (sequelize) => {
-    sequelize.define('follower', {
-      who_id: {
-        type: DataTypes.INTEGER
-      },
-      whom_id: {
-        type: DataTypes.INTEGER
-      }
-    });
-  };
+const Follower = sequelize.define('follower', {
+  who_id: {
+    type: Sequelize.INTEGER
+  },
+  whom_id: {
+    type: Sequelize.INTEGER
+  }
+});
+
+module.exports = Follower; 

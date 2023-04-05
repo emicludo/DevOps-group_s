@@ -11,11 +11,12 @@ const gravatar = function gravatarUrl(email, size = 80) {
 }
 
 const sequelize = require('../db/dbSetup');
+const User = require("../db/models/user.model")
 
-async function assertDatabaseConnectionOk() {
+function assertDatabaseConnectionOk() {
 	console.log(`Checking database connection...`);
     try {
-      await sequelize.authenticate();
+      sequelize.authenticate();
       console.log('Database connection OK!');
     } catch (error) {
       console.log('Unable to connect to the database:');
@@ -25,17 +26,20 @@ async function assertDatabaseConnectionOk() {
   }
   assertDatabaseConnectionOk()
 
-  async function test() {
-    try {
-      const user = sequelize.model("user").findAll({limit: 1})
-      console.log("herehrherheh " + user.user_id)
-    } catch (error) {
-      console.log('ERROR:');
-      console.log(error.message);
-      process.exit(1);
-    }
-  }
-  test()
+sequelize.sync().then((result) => {
+  console.log("success! " + result);
+}).catch((err) => {
+  console.log("error! " + err);
+})
+
+
+async function getAllMessages() {
+  var user = null; 
+  user = await User.findAll({where: {user_id: 1}});
+  console.log(user);
+} 
+getAllMessages()
+
 
 /**
  * GET /
