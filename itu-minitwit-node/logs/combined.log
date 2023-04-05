@@ -1,0 +1,11 @@
+{"@timestamp":"2023-04-05T17:47:41.538Z","log.level":"info","message":"Request received in /","ecs":{"version":"1.6.0"},"url":{},"method":"GET","requestBody":{}}
+{"@timestamp":"2023-04-05T17:47:41.577Z","log.level":"info","message":"Request received in /public","ecs":{"version":"1.6.0"},"url":{},"method":"GET","requestBody":{}}
+{"@timestamp":"2023-04-05T17:48:32.900Z","log.level":"info","message":"Request received in /","ecs":{"version":"1.6.0"},"url":{},"method":"GET","requestBody":{}}
+{"@timestamp":"2023-04-05T17:48:33.034Z","log.level":"info","message":"Request received in /public","ecs":{"version":"1.6.0"},"url":{},"method":"GET","requestBody":{}}
+{"@timestamp":"2023-04-05T17:48:38.182Z","log.level":"info","message":"Request received in /public","ecs":{"version":"1.6.0"},"url":{},"method":"GET","requestBody":{}}
+{"@timestamp":"2023-04-05T17:50:11.720Z","log.level":"info","message":"Request received in /public","ecs":{"version":"1.6.0"},"url":{},"method":"GET","requestBody":{}}
+{"@timestamp":"2023-04-05T17:50:11.759Z","log.level":"info","message":"Response sent back from public timeline with 30 messages","ecs":{"version":"1.6.0"},"url":{},"method":"GET","requestBody":{}}
+{"@timestamp":"2023-04-05T17:50:36.026Z","log.level":"info","message":"Request received in /public","ecs":{"version":"1.6.0"},"url":{},"method":"GET","requestBody":{}}
+{"@timestamp":"2023-04-05T17:50:36.063Z","log.level":"info","message":"Response sent back from public timeline with 30 messages","ecs":{"version":"1.6.0"},"url":{},"method":"GET","requestBody":{}}
+{"@timestamp":"2023-04-05T17:51:00.237Z","log.level":"info","message":"Request received in /","ecs":{"version":"1.6.0"},"url":{},"method":"GET","requestBody":{}}
+{"@timestamp":"2023-04-05T17:51:00.308Z","log.level":"info","message":"Response sent back from public timeline with 30 messages","ecs":{"version":"1.6.0"},"url":{},"method":"GET","requestBody":{}}
