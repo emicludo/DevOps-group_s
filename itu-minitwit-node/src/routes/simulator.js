@@ -28,7 +28,7 @@ router.post("/register", async function (req, res, next) {
     const password = req.body.pwd;
 
     if (!isSimulator(header)) {
-      logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 403, message: "You are not authorized to use this resource!" });
+      logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 403, message: "Invalid simulator credentials" });
       res.status(403).send({ status: 403, error_msg: "You are not authorized to use this resource!" });
       return;
     }
@@ -65,7 +65,7 @@ router.post("/register", async function (req, res, next) {
           logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , message: err });
           console.error(err.message);
         } else {
-          console.log('New user added successfully with id: ' + lasdId);
+          logger.log('info',  { url: req.url ,method: req.method, requestBody: req.body , message: 'New user added successfully with id: ' + lasdId + ' and username: ' + username});
           res.status(204).send("");
         }
       });

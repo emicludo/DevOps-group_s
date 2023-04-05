@@ -3,6 +3,9 @@ var router = express.Router();
 
 const database = require('../db/dbService')
 
+//Utils
+var logger = require('../logger/logger');
+
 const crypto = require('crypto');
 
 const gravatar = function gravatarUrl(email, size = 80) {
@@ -44,8 +47,7 @@ router.get('/', function(req, res, next) {
       res.status(500).send(err);
       return;
     }
-    
-    console.log('Successfully retrieved ' + rows.length + ' messages');
+    logger.log('info',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 200, message: 'Successfully retrieved ' + rows.length + ' messages' });
     res.render('index', { messages: rows, flash: flash, path: req.path, user: req.session.user, gravatar: gravatar});
     });
   

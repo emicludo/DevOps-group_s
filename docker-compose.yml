@@ -1,0 +1,65 @@
+version: '3.3'
+
+networks:
+  elk:
+
+volumes:
+    elk_elasticsearch_data:
+
+services:
+
+  minitwitimage:
+    build:
+      context: .
+      dockerfile: itu-minitwit-node/Dockerfile
+    image: minitwitimage
+    container_name: minitwit
+    networks:
+      - elk
+    ports:
+        - '5000:5000'
+    volumes:
+      - /app/logs:/app/logs
+
+  elasticsearch:
+    image: "docker.elastic.co/elasticsearch/elasticsearch:7.17.1"
+    container_name: elasticsearch
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+        - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+        - "discovery.type=single-node"
+    volumes:
+        - elk_elasticsearch_data:/usr/share/elasticsearch/data
+    networks:
+        - elk
+
+  kibana:
+    image: "docker.elastic.co/kibana/kibana:7.17.1"
+    container_name: kibana
+    environment:
+        elasticsearch.hosts: '["http://elasticsearch:9200"]'
+    ports:
+      - "5601:5601"
+    networks:
+        - elk
+
+  filebeat:
+    build:
+      context: .
+      dockerfile: filebeat/Dockerfile
+    image: filebeat
+    container_name: filebeat
+    command: filebeat -e -strict.perms=false
+    environment:
+      user: root
+    volumes:
+      - ./filebeat/filebeat.yml:/etc/filebeat/filebeat.yml:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /app/logs:/app/logs
+    networks:
+        - elk
+    depends_on:
+      - elasticsearch
