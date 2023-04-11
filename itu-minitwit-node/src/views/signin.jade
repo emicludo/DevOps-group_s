@@ -4,7 +4,7 @@ block content
     h2 Sign In
 
     if errorMessage
-        .error
+        .error#error-msg
             strong Error: 
                | #{errorMessage}
 
@@ -14,11 +14,11 @@ block content
                 dt
                 | Username:
                 dd
-                input(type='text' name='username' size='30' id = 'username' value = username ? username : "")
+                input(type='text' name='username' size='30' id='username-form' value = username ? username : "")
                 dt
                 | Password:
                 dd
-                input(type='password' name='password' size='30' id = 'password')
+                input(type='password' name='password' size='30' id='password-form')
             .actions
-                    input(type='submit' value='Sign In')
+                    input(type='submit' value='Sign In' id='submit-btn')
 
