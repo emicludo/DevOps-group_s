@@ -25,5 +25,11 @@ Now the app should have metrics served in endpoint /metrics --- test manually
     Go to > Manage Users > Add new user
     Enter the credentials provided by Helge in the main repository
 
-### Now both container should be running on ports 9090 (prometheus), and 3005 (grafana) and listening to the app running on localhost:3000 (our Minitwit app)
 
+##Apply changes to droplet##
+
+    Go to the left bar > Admin
+    Go to > Manage Users > Add new user
+    Enter the credentials provided by Helge in the main repository
+
+### Now both container should be running on ports 9090 (prometheus), and 3005 (grafana) and listening to the app running on localhost:3000 (our Minitwit app)
