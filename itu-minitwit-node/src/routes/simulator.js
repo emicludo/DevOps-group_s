@@ -60,12 +60,12 @@ router.post("/register", async function (req, res, next) {
         email: email,
         pw_hash: hash(password)
       };
-      database.add('user', body, function (lasdId, err) {
+      database.add('user', body, function (response, err) {
         if (err) {
-          logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , message: err });
+          console.log(err)
+          logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , message: err.toString() });
           console.error(err.message);
         } else {
-          console.log('New user added successfully with id: ' + lasdId);
           res.status(204).send("");
         }
       });
@@ -109,7 +109,7 @@ router.get('/msgs', function (req, res, next) {
 
     database.all(query, [no_msgs], (err, rows) => {
       if (err) {
-        console.error(err);
+        console.log(err);
         logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , message: err });
         res.status(500).render('error');
         return;
@@ -168,6 +168,7 @@ router.get('/msgs/:username', async function (req, res, next) {
 
     database.all(query, [userId, no_msgs], (err, rows) => {
       if (err) {
+        console.log(err)
         logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err });
         res.status(500).render('error');
         return;
@@ -223,12 +224,12 @@ router.post('/msgs/:username', async function (req, res, next) {
       pub_date: Date.now(),
       flagged: 0
     };
-    database.add('message', body, function (lasdId, err) {
+    database.add('message', body, function (err, response) {
       if (err) {
-        logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body, message: err });
-        console.error(err.message);
+        console.log(err)
+        logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body, message: err.toString() });
       } else {
-        console.log('New message added successfully with id: ' + lasdId);
+        logger.log('info',  { url: req.url ,method: req.method, requestBody: req.body, message: "Message added successfully with id: " + response.insertId });
         res.status(204).send("");
       }
     });
@@ -271,6 +272,7 @@ router.get('/fllws/:username', async function (req, res, next) {
     const no_followers = parseInt(req.query.no) || 100;
     database.all(query, [userId, no_followers], (err, rows) => {
       if (err) {
+        console.log(err)
         logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err });
         res.status(500).send({ status: 500, error_msg: "Internal Server Error" });
         return;
@@ -333,9 +335,9 @@ router.post('/fllws/:username', async function (req, res, next) {
       const followsUserId = followsUser.user_id;
       const query = "INSERT INTO follower (who_id, whom_id) values (?, ?)";
 
-      database.run(query, [userId, followsUserId], function (result, err) {
+      database.run(query, [userId, followsUserId], function (err, result) {
         if (err) {
-          logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err });
+          logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err.toString() });
           res.status(500).send({ status: 500, error_msg: err });
           return;
         }
@@ -360,9 +362,9 @@ router.post('/fllws/:username', async function (req, res, next) {
       }
 
       const query = "DELETE FROM follower WHERE who_id=? and whom_id=?";
-      database.run(query, [userId, unfollowsUserId], function (result, err) {
+      database.run(query, [userId, unfollowsUserId], function (err, result) {
         if (err) {
-          console.error(err);
+          logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err.toString() });
           res.status(500).send({ status: 500, error_msg: err});
           return;
         }
