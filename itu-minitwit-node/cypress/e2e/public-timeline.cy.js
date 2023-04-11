@@ -4,7 +4,6 @@ describe('Testing the public timeline', () => {
     })
 
     it('title is "Public Timeline"', () => {
-        cy.visit('/')
         cy.contains('h2', 'Public Timeline')
     })
 })
