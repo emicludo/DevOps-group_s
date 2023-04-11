@@ -2,3 +2,5 @@ node_modules
 .vagrant
 itu-minitwit
 src/db/minitwit.db
+.env
+/logs

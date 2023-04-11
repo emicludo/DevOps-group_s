@@ -27,6 +27,7 @@ router.get('/', function(req, res, next) {
 
   if (!req.session.user) {
     res.redirect('/api/public');
+    return;
   }
   
   const flash = req.session.flash;
@@ -45,7 +46,6 @@ router.get('/', function(req, res, next) {
       return;
     }
     
-    console.log('Successfully retrieved ' + rows.length + ' messages');
     res.render('index', { messages: rows, flash: flash, path: req.path, user: req.session.user, gravatar: gravatar});
     });
   
@@ -69,8 +69,7 @@ router.get('/public', function (req, res, next) {
       res.status(500).send(err);
       return;
     }
-    
-    console.log('Successfully retrieved ' + rows.length + ' messages');
+
     res.render('index', { messages: rows, path: req.path, flash: flash, user: req.session.user, gravatar: gravatar});
     });
 });
