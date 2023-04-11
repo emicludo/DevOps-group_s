@@ -3,4 +3,4 @@ node_modules
 itu-minitwit
 src/db/minitwit.db
 .env
-logs
+/logs
