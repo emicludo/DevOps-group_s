@@ -25,6 +25,16 @@ Now the app should have metrics served in endpoint /metrics --- test manually
     Go to > Manage Users > Add new user
     Enter the credentials provided by Helge in the main repository
 
+<<<<<<< HEAD
+=======
+### Tear down and re build containers
+
+1. From DevOps-group_s run:  docker-compose -f ./docker-compose-monitoring.yml down -v
+2. git pull
+3. docker-compose -f ./docker-compose-monitoring.yml up -d --build
+
+### Now both container should be running on ports 9090 (prometheus), and 3005 (grafana) and listening to the app running on localhost:3000 (our Minitwit app)
+>>>>>>> 0c66b2372909b3d9fc8ac6ea1d31cadffa3cf323
 
 ##Apply changes to droplet##
 
