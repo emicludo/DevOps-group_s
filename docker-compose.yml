@@ -7,7 +7,6 @@ volumes:
     elk_elasticsearch_data:
 
 services:
-
   minitwitimage:
     build:
       context: .
@@ -63,3 +62,11 @@ services:
         - elk
     depends_on:
       - elasticsearch
+
+  flagtool:
+    build:
+      context: .
+      dockerfile: flag_tool/Dockerfile
+    image: flag-tool
+    container_name: flag-tool
+    command: tail -f /dev/null
