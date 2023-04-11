@@ -1,2 +1,4 @@
 itu-minitwit
 itu-minitwit-node/minitwit.db
+*.dll
+.DS_Store
