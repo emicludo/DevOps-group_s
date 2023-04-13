@@ -47,20 +47,6 @@ jobs:
           tags: ${{ secrets.DOCKER_USERNAME }}/minitwitimage:latest
           cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/minitwitimage:webbuildcache
           cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/minitwitimage:webbuildcache,mode=max
-          secrets: |
-            "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}"
-            "MYSQL_USERNAME= ${{ secrets.MYSQL_USERNAME }}"
-            "MYSQL_HOST= ${{ secrets.MYSQL_HOST }}"
-            "MYSQL_PORT= ${{ secrets.MYSQL_PORT }}"
-            "MYSQL_DATABASE:= ${{ secrets.MYSQL_DATABASE }}"
-
-      - name: Print environment variables
-        run: |
-          echo "MYSQL_PASSWORD=${MYSQL_PASSWORD}"
-          echo "MYSQL_USERNAME=${MYSQL_USERNAME}"
-          echo "MYSQL_HOST=${MYSQL_HOST}"
-          echo "MYSQL_PORT=${MYSQL_PORT}"
-          echo "MYSQL_DATABASE=${MYSQL_DATABASE}"
 
       - name: Build and push Flag tool image
         uses: docker/build-push-action@v2
@@ -76,9 +62,20 @@ jobs:
         run: |
           mkdir -p ~/.ssh/
           echo "$SSH_KEY" > ~/.ssh/minitwit.key
+          export MYSQL_PASSWORD=${MYSQL_PASSWORD}
+          export MYSQL_USERNAME=${MYSQL_USERNAME}
+          export MYSQL_HOST=${MYSQL_HOST}
+          export MYSQL_PORT=${MYSQL_PORT}
+          export MYSQL_DATABASE=${MYSQL_DATABASE}
+          echo "$MYSQL_USERNAME"
           chmod 600 ~/.ssh/minitwit.key
-        env:
+        env: 
           SSH_KEY: ${{ secrets.SSH_KEY }}
+          MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+          MYSQL_USERNAME: ${{ secrets.MYSQL_USERNAME }}
+          MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
+          MYSQL_PORT: ${{ secrets.MYSQL_PORT }}
+          MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
 
       - name: Deploy to server
         # Configure the ~./bash_profile and deploy.sh file on the Vagrantfile
