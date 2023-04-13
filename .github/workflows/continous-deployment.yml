@@ -62,22 +62,16 @@ jobs:
         run: |
           mkdir -p ~/.ssh/
           echo "$SSH_KEY" > ~/.ssh/minitwit.key
-          echo "$MYSQL_USERNAME"
           chmod 600 ~/.ssh/minitwit.key
         env: 
           SSH_KEY: ${{ secrets.SSH_KEY }}
-          MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
-          MYSQL_USERNAME: ${{ secrets.MYSQL_USERNAME }}
-          MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
-          MYSQL_PORT: ${{ secrets.MYSQL_PORT }}
-          MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
 
       - name: Deploy to server
         # Configure the ~./bash_profile and deploy.sh file on the Vagrantfile
         run: >
           ssh $SSH_USER@$SSH_HOST
           -i ~/.ssh/minitwit.key -o StrictHostKeyChecking=no
-          './minitwit/deploy.sh'
+          './minitwit/deploy.sh "${{ secrets.MYSQL_PASSWORD }}" "${{ secrets.MYSQL_USERNAME }}" "${{ secrets.MYSQL_HOST }}" "${{ secrets.MYSQL_PORT }}" "${{ secrets.MYSQL_DATABASE }}"'
           
         env:
           SSH_USER: ${{ secrets.SSH_USER }}
