@@ -1,0 +1,26 @@
+version: '3.3'
+
+networks:
+  main:
+
+services:
+  minitwitimage:
+    build:
+      context: .
+      dockerfile: itu-minitwit-node/Dockerfile
+    image: minitwitimage
+    container_name: minitwit
+    networks:
+      - main
+    ports:
+        - '3000:3000'
+    volumes:
+      - /app/logs:/app/logs
+
+  flagtool:
+    build:
+      context: .
+      dockerfile: flag_tool/Dockerfile
+    image: flag-tool
+    container_name: flag-tool
+    command: tail -f /dev/null
