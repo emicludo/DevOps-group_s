@@ -11,6 +11,12 @@ services:
       - main
     ports:
         - '3000:3000'
+    environment:
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_USERNAME: ${MYSQL_USERNAME}
+      MYSQL_HOST: ${MYSQL_HOST}
+      MYSQL_PORT: ${MYSQL_PORT}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
 
   flagtool:
     image: ${DOCKER_USERNAME}/flag-tool
