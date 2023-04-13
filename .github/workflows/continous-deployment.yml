@@ -57,7 +57,7 @@ jobs:
       - name: Print environment variables
         run: |
           echo "MYSQL_PASSWORD=${MYSQL_PASSWORD}"
-          echo "MYSQL_USERNAME=${MYSQL_USERNAME}"
+          echo "MYSQL_USERNAME=${secrets.MYSQL_USERNAME}"
           echo "MYSQL_HOST=${MYSQL_HOST}"
           echo "MYSQL_PORT=${MYSQL_PORT}"
           echo "MYSQL_DATABASE=${MYSQL_DATABASE}"
