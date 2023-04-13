@@ -4,17 +4,19 @@ networks:
   main:
 
 services:
-
   minitwitimage:
     image: ${DOCKER_USERNAME}/minitwitimage
     container_name: minitwit
     networks:
       - main
     ports:
-        - '5000:5000'
-    #If we self host the mysql database, we need to uncomment this
-    #depends_on:
-    #  - mysqlminitwit
+        - '3000:3000'
+    environment:
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_USERNAME: ${MYSQL_USERNAME}
+      MYSQL_HOST: ${MYSQL_HOST}
+      MYSQL_PORT: ${MYSQL_PORT}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
 
   flagtool:
     image: ${DOCKER_USERNAME}/flag-tool
@@ -22,6 +24,3 @@ services:
     networks:
       - main
     command: tail -f /dev/null
-    #If we self host the mysql database, we need to uncomment this
-    #depends_on:
-    #  - mysqlminitwit
