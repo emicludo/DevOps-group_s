@@ -47,17 +47,16 @@ jobs:
           tags: ${{ secrets.DOCKER_USERNAME }}/minitwitimage:latest
           cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/minitwitimage:webbuildcache
           cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/minitwitimage:webbuildcache,mode=max
-        env:
-          MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
-          MYSQL_USERNAME: ${{ secrets.MYSQL_USERNAME }}
-          MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
-          MYSQL_PORT: ${{ secrets.MYSQL_PORT }}
-          MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
+          secrets: |
+            "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}"
+            "MYSQL_USERNAME= ${{ secrets.MYSQL_USERNAME }}"
+            "MYSQL_HOST= ${{ secrets.MYSQL_HOST }}"
+            "MYSQL_PORT= ${{ secrets.MYSQL_PORT }}"
+            "MYSQL_DATABASE:= ${{ secrets.MYSQL_DATABASE }}"
 
       - name: Print environment variables
         run: |
           echo "MYSQL_PASSWORD=${MYSQL_PASSWORD}"
-          echo "${secrets.MYSQL_PASSWORD}"
           echo "MYSQL_USERNAME=${MYSQL_USERNAME}"
           echo "MYSQL_HOST=${MYSQL_HOST}"
           echo "MYSQL_PORT=${MYSQL_PORT}"
