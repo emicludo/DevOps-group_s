@@ -55,3 +55,7 @@ http://localhost:3000/
 ## Running as virtual machine with Vagrant and Virtual Box
 
 ## Deploy to DigitalOcean
+
+## Running the cypress tests 
+
+You can run the cypress tests either open or closed. Use ``npm run cy:open`` to run through a browser and seeing the emulator, or use ``npm run cy:closed`` to just run the tests in the command line. 
