@@ -18,7 +18,9 @@ services:
     ports:
         - '5000:5000'
     volumes:
-      - /app/logs:/app/logs
+      - elk_elasticsearch_data:/app/logs
+      #- /app/logs:/app/logs
+      
 
   elasticsearch:
     image: "docker.elastic.co/elasticsearch/elasticsearch:7.17.1"
@@ -30,7 +32,7 @@ services:
         - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
         - "discovery.type=single-node"
     volumes:
-        - elk_elasticsearch_data:/usr/share/elasticsearch/data
+        - elk_elasticsearch_data:/var/lib/elasticsearch/data
     networks:
         - elk
 
@@ -57,7 +59,9 @@ services:
       - ./filebeat/filebeat.yml:/etc/filebeat/filebeat.yml:ro
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
       - /var/run/docker.sock:/var/run/docker.sock
-      - /app/logs:/app/logs
+      - elk_elasticsearch_data:/app/logs
+      #- /app/logs:/app/logs
+    
     networks:
         - elk
     depends_on:

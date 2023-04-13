@@ -1,67 +1,58 @@
-const sqlite3 = require('sqlite3').verbose();
-const fs = require('fs');
-var path = require('path');
+const mysql = require('mysql2');
+require('dotenv').config();
 
 class Database {
-  constructor(file) {
-    this.db = new sqlite3.Database(file, (err) => {
-      if (err) {
-        console.error(err.message);
+  constructor(config) {
+    this.connection = mysql.createConnection(config);
+     // Test the database connection when the object is created
+     this.connection.connect((error) => {
+      if (error) {
+        console.error('Database connection failed: ' + error.stack);
+        process.exit(1); // Exit the Node.js process with an error code
       }
-      console.log(`Connected to the database: ${file}`);
+
+      console.log('Connected to database.');
+
     });
   }
 
-  all(sql, params = [], callback) {
-    this.db.all(sql, params, (err, rows) => {
-      callback(err, rows);
-    });
+  all(sql, params, callback) {
+    this.connection.query(sql, params, callback);
   }
 
-  run(sql, values, callback) {
-    this.db.run(sql, values, function(err) {
-      if (err) {
-        throw err;
-      }
-      callback(this.lastID);
-    });
+  run(sql, params, callback) {
+    this.connection.query(sql, params, callback);
+  }
+
+  delete(table, conditions, callback) {
+    const sql = `DELETE FROM ${table} WHERE ${conditions}`;
+    this.connection.query(sql, callback);
+  }
+
+  edit(table, data, conditions, callback) {
+    const keys = Object.keys(data);
+    const values = Object.values(data).map(value => `'${value}'`);
+    const assignments = keys.map((key, index) => `${key} = ${values[index]}`).join(', ');
+    const sql = `UPDATE ${table} SET ${assignments} WHERE ${conditions}`;
+    this.connection.query(sql, callback);
   }
 
   add(table, data, callback) {
-    const columns = Object.keys(data).join(', ');
-    const placeholders = Object.keys(data).map(() => '?').join(', ');
-    const values = Object.values(data);
-    const sql = `INSERT INTO ${table} (${columns}) VALUES (${placeholders})`;
-    this.run(sql, values, callback);
-  }
-
-  delete(table, id, callback) {
-    const sql = `DELETE FROM ${table} WHERE id = ?`;
-    this.run(sql, [id], callback);
-  }
-
-  edit(table, id, data, callback) {
-    const sets = Object.entries(data).map(([column, value]) => `${column} = ?`).join(', ');
-    const values = Object.values(data);
-    values.push(id);
-    const sql = `UPDATE ${table} SET ${sets} WHERE id = ?`;
-    this.run(sql, values, callback);
-  }
-
-  close() {
-    this.db.close((err) => {
-      if (err) {
-        console.error(err.message);
-      }
-      console.log('Closed the database connection.');
-    });
+    const keys = Object.keys(data).join(', ');
+    const values = Object.values(data).map(value => `'${value}'`).join(', ');
+    const sql = `INSERT INTO ${table} (${keys}) VALUES (${values})`;
+    this.connection.query(sql, callback);
   }
 }
 
-//Database Service
-const schema = fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf-8');
-//DB initialization
-const database = new Database('./../../minitwit.db');
-//database.run(schema);
+const config = {
+  host: process.env.MYSQL_HOST || 'localhost',
+  user: process.env.MYSQL_USERNAME || 'root',
+  password: process.env.MYSQL_PASSWORD || 'root',
+  port: process.env.MYSQL_PORT || 3306,
+  database: process.env.MYSQL_DATABASE || 'defaultdb'
+};
 
-module.exports = database;
+const db = new Database(config);
+
+module.exports = db;
