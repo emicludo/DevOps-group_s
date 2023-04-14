@@ -1,6 +1,7 @@
 const mysql = require('mysql2');
 require('dotenv').config();
 
+const { queryDurationHistogram, queryErrorCounter } = require('../metrics/metrics');
 class Database {
   constructor(config) {
     this.connection = mysql.createConnection(config);
@@ -10,14 +11,25 @@ class Database {
         console.error('Database connection failed: ' + error.stack);
         process.exit(1); // Exit the Node.js process with an error code
       }
-
       console.log('Connected to database.');
 
     });
   }
 
   all(sql, params, callback) {
-    this.connection.query(sql, params, callback);
+    const queryStartTime = process.hrtime();
+    this.connection.query(sql, params, (error, results, fields) => {
+      const queryDuration = process.hrtime(queryStartTime);
+      const queryDurationSeconds = queryDuration[0] + queryDuration[1] / 1e9;
+      const query = this.connection.format(sql, params);
+      if (error) {
+        queryErrorCounter.labels(query, error.code).inc();
+        callback(error, results, fields);
+      } else {
+        queryDurationHistogram.observe(queryDurationSeconds);
+        callback(error, results, fields);
+      }
+    });
   }
 
   run(sql, params, callback) {
