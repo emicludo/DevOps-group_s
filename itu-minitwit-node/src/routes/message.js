@@ -25,7 +25,7 @@ var logger = require('../logger/logger');
  *  - 500: An error occurred while retrieving the message
  */
 router.get('/', async function (req, res, next) {
-  database.all("SELECT * FROM message", [], (err, rows) => {
+  database.all("SELECT * FROM message limit 100000", [], (err, rows) => { //add this line to limit the number of messages returned
     if (err) {
       logger.log('error', { url: req.url, method: req.method, requestBody: req.body, responseStatus: 500, message: err.toString() });
       var error = new Error("Error retrieving messages from our database");
