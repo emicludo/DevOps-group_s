@@ -118,7 +118,7 @@ router.get('/msgs', function (req, res, next) {
 
     database.all(query, [no_msgs], (err, rows) => {
       if (err) {
-        logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , message: err });
+        logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err });
         var error = new Error("Error retrieving messages from our database");
         error.status = 500;
         next(error);
@@ -249,10 +249,13 @@ router.post('/msgs/:username', async function (req, res, next) {
     };
     database.add('message', body, function (err, response) {
       if (err) {
-        console.log(err)
-        logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body, message: err.toString() });
+        logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err.toString() });
+        var error = new Error(err.toString());
+        error.status = 500;
+        next(error);
+        return;
       } else {
-        logger.log('info',  { url: req.url ,method: req.method, requestBody: req.body, message: "Message added successfully with id: " + response.insertId });
+        logger.log('info',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 204, message: "Message added successfully with id: " + response.insertId });
         res.status(204).send("");
       }
     });
@@ -400,7 +403,6 @@ router.post('/fllws/:username', async function (req, res, next) {
       //Validates if user is following the unfollows user
       const userFollowsList = await getFollowersFromUser(userId, null);
       if (!userFollowsList.includes(unfollowsUser.username)) {
-        //logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 403, message: "User is not following the user with name " + unfollowsUser.username });
         res.status(200).send({ status: 200, error_msg: "User is not following the user with name " + unfollowsUser.username});
         return
       }
