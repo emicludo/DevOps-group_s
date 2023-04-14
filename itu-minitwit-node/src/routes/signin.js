@@ -22,11 +22,10 @@ router.get('/', function(req, res, next) {
 router.post('/', function (req, res, next) {
 
   database.all('SELECT * FROM user WHERE username = ?', req.body.username, (err, rows) => {
-    
     if (err) {
-      console.error(err);
-      res.status(500).send({ error: 'An error occurred while retrieving user', description: err.toString() });
-      
+      var error = new Error("An error occurred while retrieving user");
+      error.status = 500;
+      next(error);
       return;
     }
 
