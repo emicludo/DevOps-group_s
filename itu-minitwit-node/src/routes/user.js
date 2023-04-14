@@ -3,53 +3,45 @@ var router = express.Router();
 
 const database = require('../db/dbService')
 
-router.get('/:userId', async function(req, res, next) {
+//Utils
+var logger = require('../logger/logger');
 
-    // Display's a users tweets.
+router.get('/:userId', async function (req, res, next) {
 
-    database.all("SELECT * FROM user where user_id = ?", [req.params.userId], (err, rows) => {
+  // Display's a users tweets.
+  database.all("SELECT * FROM user where user_id = ?", [req.params.userId], (err, rows) => {
+    if (err) {
+      logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body, responseStatus: 500, message: err.toString() });
+      var error = new Error('An error occurred while retrieving user');
+      error.status = 500;
+      next(error);
+      return;
+    }
 
-      if (err) {
-        console.error(err);
-        res.status(500).send({ error: 'An error occurred while retrieving user', description: err.toString() });
+    // if user does not exist
+    if (rows.length == 0) {
+      logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 404, message: "User is not on our database" });
+      var error = new Error("User is not on our database");
+      error.status = 404;
+      next(error);
+      return;
+    }
+
+    let profile_user = rows[0];
+
+    database.all('SELECT message.*, user.* from message, user where user.user_id = message.author_id and user.user_id = ? order by message.pub_date desc limit 30', [profile_user.user_id], (err2, rows2) => {
+      if (err2) {
+        logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body, responseStatus: 500, message: err2.toString() });
+        var error = new Error('An error occurred while retrieving data from database');
+        error.status = 500;
+        next(error);
         return;
       }
-
-      // preparation for when we have a 404 page
-
-      // if user does not exist
-      if (rows.length == 0) {
-        console.log("The user does not exist");
-        res.status(400).send({ error: 'User does not exist'});
-        return;
-      }
-
-      let profile_user = rows[0];
-
-      // preparation for when we have a login
-      /* let followed = false;
-      if g.user:
-        followed = query_db('''select 1 from follower where
-            follower.who_id = ? and follower.whom_id = ?''',
-            [session['user_id'], profile_user['user_id']], one=True) is not None */
-
-      database.all('SELECT message.*, user.* from message, user where user.user_id = message.author_id and user.user_id = ? order by message.pub_date desc limit 30', [profile_user.user_id], (err2, rows2) => {
-        if (err2) {
-          console.error(err2);
-          res.status(500).send({ error: 'An error occurred while retrieving data', description: err2.toString() });
-          return;
-        }
-
-        console.log('Successfully retrieved ' + rows2.length + ' length');
-        res.send({ data: rows2 });
-      }
-      )
-
-      /* console.log('Successfully retrieved ' + rows.length + ' user');
-      res.send({ user: rows }); */
-    });
-    
+      res.send({ data: rows2 });
+    })
   });
-  
-  
-  module.exports = router;
+
+});
+
+
+module.exports = router;

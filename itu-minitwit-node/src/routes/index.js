@@ -5,6 +5,9 @@ const database = require('../db/dbService')
 
 const crypto = require('crypto');
 
+//Utils
+var logger = require('../logger/logger');
+
 const gravatar = function gravatarUrl(email, size = 80) {
   const hash = crypto.createHash('md5').update(email.trim().toLowerCase()).digest('hex');
   return `http://www.gravatar.com/avatar/${hash}?d=identicon&s=${size}`;
@@ -65,6 +68,7 @@ router.get('/public', function (req, res, next) {
     , [], (err, rows) => {
 
     if (err) {
+      logger.log('error', { url: req.url, method: req.method, requestBody: req.body, responseStatus: 500, message: err.toString() });
       var error = new Error('An error ocurrer while retrieving messages');
       error.status = 500;
       next(error);
@@ -82,7 +86,8 @@ router.get('/:username', function(req, res, next) {
 
   database.all("SELECT * FROM user where username = ?", [req.params.username], (err, rows) => {
     if (err) {
-      var error = new Error("An error occurred while retrieving user");
+      logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body, responseStatus: 500, message: err.toString() });
+      var error = new Error("An error occurred while retrieving user data");
       error.status = 500;
       next(error);
       return;
@@ -90,7 +95,8 @@ router.get('/:username', function(req, res, next) {
 
     // if user does not exist
     if (rows.length == 0) {
-      var error = new Error("The user does not exist");
+      logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 400, message: "User is not on our database" });
+      var error = new Error("User is not on our database");
       error.status = 400;
       next(error);
       return;
@@ -101,7 +107,8 @@ router.get('/:username', function(req, res, next) {
     if (req.session.user) {
       database.all("select 1 from follower where follower.who_id = ? and follower.whom_id = ?", [req.session.user.user_id, profile.user_id], (err, rows2) => {
         if (err) {
-          var error = new Error("An error occurred while retrieving user");
+          logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err.toString() });
+          var error = new Error("An error occurred while retrieving followers");
           error.status = 500;
           next(error);
           return;
@@ -114,7 +121,8 @@ router.get('/:username', function(req, res, next) {
           order by message.pub_date desc limit 30", [profile.user_id], (err, rows3) => {
             
             if (err) {
-              var error = new Error("An error occurred while retrieving user");
+              logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err.toString() });
+              var error = new Error("An error occurred while retrieving data from database");
               error.status = 500;
               next(error);
               return;
@@ -128,7 +136,8 @@ router.get('/:username', function(req, res, next) {
           user.user_id = message.author_id and user.user_id = ? \
           order by message.pub_date desc limit 30", [profile.user_id], (err, rows3) => {
             if (err) {
-              var error = new Error("An error occurred while retrieving user");
+              logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err.toString() });
+              var error = new Error("An error occurred while retrieving data from database");
               error.status = 500;
               next(error);
               return;
