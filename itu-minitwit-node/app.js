@@ -14,7 +14,12 @@ var signoutRouter = require('./src/routes/signout');
 var simulatorRouter = require('./src/routes/simulator');
 
 //Prometheus metrics import
-const { register, httpRequestDurationMicroseconds, httpRequestCounter, httpRequestErrorCounter } = require('./src/metrics/metrics');
+const { register, 
+        httpRequestDurationMicroseconds,
+        httpRequestCounter, 
+        httpRequestErrorCounter, 
+        httpErrorCodeCounter 
+      } = require('./src/metrics/metrics');
 
 var app = express();
 
@@ -74,6 +79,7 @@ app.use('/', simulatorRouter);
 // Add middleware to catch errors and increment the counter
 app.use((err, req, res, next) => {
   httpRequestErrorCounter.inc();
+  httpErrorCodeCounter.labels(res.statusCode.toString(), req.originalUrl).inc();
   res.status(err.status || 500).json({ error: err.message });
 });
 
