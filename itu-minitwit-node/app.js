@@ -22,6 +22,8 @@ const { register,
         upMetric
       } = require('./src/metrics/metrics');
 
+const database = require('./src/db/dbService')
+
 var app = express();
 
 //Express session configuration
@@ -54,10 +56,12 @@ const measureDurationMiddleware = (req, res, next) => {
   next();
 };
 app.use(measureDurationMiddleware);
+
 //Http requests Counter and up Gauge:
-app.use((req, res, next) => {
+app.use(async (req, res, next) => {
   httpRequestCounter.inc({ method: req.method, status: res.statusCode });
   upMetric.set({ app: 'minitwit-app' }, 1);
+  database.healthCheck();
   next();
 });
 
@@ -69,7 +73,8 @@ app.use('/api/signup', signupRouter);
 app.use('/api/signin', signinRouter);
 app.use('/api/signout', signoutRouter);
 app.use('/api/', indexRouter);
-//Metrics endpoint - consumed by Prometheus
+
+//Metrics endpoint
 app.get('/metrics', async (req, res) => {
   res.set('Content-Type', register.contentType);
   res.send(await register.metrics());

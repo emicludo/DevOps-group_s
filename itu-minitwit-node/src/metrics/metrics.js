@@ -71,7 +71,7 @@ const upMetric = new Gauge({
 upMetric.set({ app: 'minitwit-app' }, 0);
 
 // Prometheus gauge to track the health status of the MySQL database
-const mysqlHealthGauge = new prometheus.Gauge({
+const mysqlHealthGauge = new Gauge({
   name: 'mysql_health',
   help: '1 if MySQL database is healthy, 0 otherwise',
 });
