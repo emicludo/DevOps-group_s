@@ -18,7 +18,8 @@ const { register,
         httpRequestDurationMicroseconds,
         httpRequestCounter, 
         httpRequestErrorCounter, 
-        httpErrorCodeCounter 
+        httpErrorCodeCounter,
+        upMetric
       } = require('./src/metrics/metrics');
 
 var app = express();
@@ -53,9 +54,10 @@ const measureDurationMiddleware = (req, res, next) => {
   next();
 };
 app.use(measureDurationMiddleware);
-//Http requests counter:
+//Http requests Counter and up Gauge:
 app.use((req, res, next) => {
   httpRequestCounter.inc({ method: req.method, status: res.statusCode });
+  upMetric.set({ app: 'minitwit-app' }, 1);
   next();
 });
 
@@ -74,7 +76,6 @@ app.get('/metrics', async (req, res) => {
 });
 //Simulator routing
 app.use('/', simulatorRouter);
-
 
 // Add middleware to catch errors and increment the counter
 app.use((err, req, res, next) => {

@@ -1,4 +1,4 @@
-const { Registry, collectDefaultMetrics, Histogram, Counter } = require('prom-client');
+const { Registry, collectDefaultMetrics, Histogram, Gauge, Counter } = require('prom-client');
 
 // Create a Registry which registers the metrics
 const register = new Registry();
@@ -9,7 +9,13 @@ register.setDefaultLabels({
 });
 
 // Enable the collection of default metrics
-collectDefaultMetrics({ register });
+collectDefaultMetrics({
+  app: 'minitwit-monitoring-app',
+  prefix: 'minitwit_node_',
+  timeout: 10000,
+  gcDurationBuckets: [0.001, 0.01, 0.1, 1, 2, 5],
+  register
+});
 
 // Histogram on duration of http requests
 const httpRequestDurationMicroseconds = new Histogram({
@@ -55,6 +61,21 @@ const queryErrorCounter = new Counter({
   labelNames: ['query', 'error'],
 });
 
+// Prometheus gauge to track the up status
+const upMetric = new Gauge({
+  name: 'up',
+  help: '1 if the service is up, 0 if the service is down',
+  labelNames: ['app'],
+});
+// Set the value of the up metric to 1 when the service is up
+upMetric.set({ app: 'minitwit-app' }, 0);
+
+// Prometheus gauge to track the health status of the MySQL database
+const mysqlHealthGauge = new prometheus.Gauge({
+  name: 'mysql_health',
+  help: '1 if MySQL database is healthy, 0 otherwise',
+});
+
 // Registers the histograms and counters
 register.registerMetric(queryDurationHistogram);
 register.registerMetric(queryErrorCounter);
@@ -62,6 +83,8 @@ register.registerMetric(httpRequestDurationMicroseconds);
 register.registerMetric(httpRequestCounter);
 register.registerMetric(httpRequestErrorCounter);
 register.registerMetric(httpErrorCodeCounter);
+register.registerMetric(upMetric);
+register.registerMetric(mysqlHealthGauge);
 
 module.exports = {
   register,
@@ -70,5 +93,7 @@ module.exports = {
   httpRequestErrorCounter,
   queryDurationHistogram,
   queryErrorCounter,
-  httpErrorCodeCounter
+  httpErrorCodeCounter,
+  upMetric,
+  mysqlHealthGauge
 };
