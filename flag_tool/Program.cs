@@ -54,7 +54,7 @@ namespace flag_tool
                 return;
             }
 
-            var cs = @"server=mysql-emi-migration-do-user-13676874-0.b.db.ondigitalocean.com;port=25060;database=defaultdb;sslmode=REQUIRED;user=doadmin;password=<your-password>;";
+            var cs = $"Server={Environment.GetEnvironmentVariable("MYSQL_HOST")};Port={Environment.GetEnvironmentVariable("MYSQL_PORT")};Database={Environment.GetEnvironmentVariable("MYSQL_DATABASE")};Uid={Environment.GetEnvironmentVariable("MYSQL_USERNAME")};Pwd={Environment.GetEnvironmentVariable("MYSQL_PASSWORD")};SslMode=Required;";
             using var con = new MySqlConnection(cs);
             try
             {
