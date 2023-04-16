@@ -67,10 +67,6 @@ router.post("/register", async function (req, res, next) {
       };
       database.add('user', body, function (err, response) {
         if (err) {
-          console.log(err)
-          console.log(username)
-          console.log(email)
-          console.log(password)
           logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , message: err.toString() });
           var newError = new Error("Error adding user to our database");
           newError.status = 500;
