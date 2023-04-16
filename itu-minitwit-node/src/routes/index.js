@@ -5,19 +5,7 @@ const database = require('../db/dbService')
 
 const gravatar = require('../utils/gravatar')
 
-/**
- * GET /
- *
- * Checks whether the user is logged in.
- * If not logged in, retrieves most recent messages from the database and returns them (public timeline).
- * If logged in, retrieves most recent messages (follower and own) from the database and returns them.
- * 
- * Errors:
- *  - 500: An error occurred while retrieving the message
- */
-
-
-// TODO: Switch to "personal" timeline if logged in. Currently only shows public timeline. 
+ 
 router.get('/', function(req, res, next) {
 
   if (!req.session.user) {
