@@ -2,6 +2,7 @@ var express = require('express');
 var session = require('express-session');
 var path = require('path');
 var cookieParser = require('cookie-parser');
+const url = require('url');
 
 //Routers
 var indexRouter = require('./src/routes/index');
@@ -48,7 +49,8 @@ const measureDurationMiddleware = (req, res, next) => {
   // Start the timer
   const end = httpRequestDurationMicroseconds.startTimer();
   // Remove parameters from the path
-  const route = "/" + req.path.split('/')[1] + "/"
+  const parsedUrl = url.parse( req.path);
+  const route = "/" + parsedUrl.pathname.split('/')[1] + "/";
   // Attach the `end` function to the `res` object so that it can be called later
   res.on('finish', () => {
     // End the timer and set the labels
@@ -88,7 +90,9 @@ app.use('/', simulatorRouter);
 app.use((err, req, res, next) => {
   if (err) {
     httpRequestErrorCounter.inc();
-    httpErrorCodeCounter.labels(res.statusCode.toString(), req.originalUrl).inc();
+    const parsedUrl = url.parse(req.originalUrl);
+    const route = "/" + parsedUrl.pathname.split('/')[1] + "/";
+    httpErrorCodeCounter.labels(res.statusCode.toString(), route).inc();
     res.status(res.statusCode).json({ error: err.message });
   }
   res.status(err.status || 500).json({ error: err.message });
