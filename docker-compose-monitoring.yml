@@ -19,7 +19,7 @@ services:
     build:
       context: ./grafana
       dockerfile: Dockerfile
-    image: emigiusto/grafana
+    image: minitwit/grafana
     ports:
       - 3005:3000
     networks:
