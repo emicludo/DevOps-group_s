@@ -63,7 +63,9 @@ app.use(measureDurationMiddleware);
 
 //Http requests Counter and up Gauge:
 app.use(async (req, res, next) => {
-  httpRequestCounter.inc({ method: req.method, status: res.statusCode });
+  const parsedUrl = url.parse(req.originalUrl);
+  const route = "/" + parsedUrl.pathname.split('/')[1] + "/";
+  httpRequestCounter.inc({ method: req.method, status: res.statusCode, endpoint: route});
   upMetric.set({ app: 'minitwit-app' }, 1);
   database.healthCheck();
   next();

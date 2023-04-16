@@ -29,7 +29,7 @@ const httpRequestDurationMicroseconds = new Histogram({
 const httpRequestCounter = new Counter({
   name: 'http_requests_total',
   help: 'Total number of HTTP requests',
-  labelNames: ['method', 'status']
+  labelNames: ['method', 'status', 'endpoint']
 });
 
 // Prometheus counter to track HTTP error count
