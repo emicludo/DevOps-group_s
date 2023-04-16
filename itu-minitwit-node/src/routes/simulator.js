@@ -75,6 +75,7 @@ router.post("/register", async function (req, res, next) {
           var newError = new Error("Error adding user to our database");
           newError.status = 500;
           next(newError);
+          return;
         } else {
           res.status(204).send("");
         }
