@@ -54,7 +54,7 @@ namespace flag_tool
                 return;
             }
 
-            var cs = @"server=172.17.0.2;userid=root;password=root;database=minitwit";
+            var cs = @"server=mysql-emi-migration-do-user-13676874-0.b.db.ondigitalocean.com;port=25060;database=defaultdb;sslmode=REQUIRED;user=doadmin;password=<your-password>;";
             using var con = new MySqlConnection(cs);
             try
             {
