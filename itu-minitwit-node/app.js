@@ -48,7 +48,7 @@ const measureDurationMiddleware = (req, res, next) => {
   // Start the timer
   const end = httpRequestDurationMicroseconds.startTimer();
   // Remove parameters from the path
-  const route = req.path.split(/[?&]/)[0];
+  const route = "/" + req.path.split('/')[1] + "/"
   // Attach the `end` function to the `res` object so that it can be called later
   res.on('finish', () => {
     // End the timer and set the labels
