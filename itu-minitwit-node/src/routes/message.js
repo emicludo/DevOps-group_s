@@ -22,7 +22,7 @@ const database = require('../db/dbService')
  *  - 500: An error occurred while retrieving the message
  */
 router.get('/', async function(req, res, next) {
-  database.all("SELECT * FROM message", [], (err, rows) => {
+  database.all("SELECT * FROM message LIMIT 5000", [], (err, rows) => {
     if (err) {
       console.error(err);
       res.status(500).send({ error: 'An error occurred while retrieving  messages', description: err.toString() });
