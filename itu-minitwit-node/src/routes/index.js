@@ -33,11 +33,18 @@ router.get('/', function(req, res, next) {
   const flash = req.session.flash;
   delete req.session.flash;
 
-  database.all("select message.*, user.* from message, user \
-                where message.flagged = 0 \
-                and message.author_id = user.user_id \
-                and (user.user_id = ? or user.user_id in (select whom_id from follower where who_id = ?)) \
-                order by message.pub_date desc limit 30"
+  database.all(`SELECT message.*, user.*
+                FROM message
+                INNER JOIN user ON message.author_id = user.user_id
+                WHERE message.flagged = 0
+                AND user.user_id = ?
+                OR user.user_id IN (
+                    SELECT follower.whom_id
+                    FROM follower
+                    WHERE follower.who_id = ?
+                )
+                ORDER BY message.pub_date DESC
+                LIMIT 30;`
     , [req.session.user.user_id, req.session.user.user_id], (err, rows) => {
 
     if (err) {
@@ -58,10 +65,12 @@ router.get('/public', function (req, res, next) {
   const flash = req.session.flash;
   delete req.session.flash;
   
-  database.all("select message.*, user.* from message, user \
-                where message.flagged = 0 \
-                and message.author_id = user.user_id \
-                order by message.pub_date desc limit 30"
+  database.all(`SELECT message.*, user.*
+                FROM message
+                INNER JOIN user ON message.author_id = user.user_id
+                WHERE message.flagged = 0
+                ORDER BY message.pub_date DESC
+                LIMIT 30;`
     , [], (err, rows) => {
 
     if (err) {
@@ -109,10 +118,12 @@ router.get('/:username', function(req, res, next) {
 
         // if they are not followed
         if (rows2.length == 0) {
-          database.all("select message.*, user.* from message, user where \
-          user.user_id = message.author_id and user.user_id = ? \
-          order by message.pub_date desc limit 30", [profile.user_id], (err, rows3) => {
-            
+          database.all(`SELECT m.*, u.*
+                        FROM message m
+                        JOIN user u ON m.author_id = u.user_id
+                        WHERE m.flagged = 0
+                        ORDER BY m.pub_date DESC
+                        LIMIT 30;`, [profile.user_id], (err, rows3) => {
             if (err) {
               console.error(err);
               res.status(500).send({ error: 'An error occurred while retrieving user', description: err.toString() });
@@ -124,9 +135,12 @@ router.get('/:username', function(req, res, next) {
           })
         } else { // if they are followed
 
-          database.all("select message.*, user.* from message, user where \
-          user.user_id = message.author_id and user.user_id = ? \
-          order by message.pub_date desc limit 30", [profile.user_id], (err, rows3) => {
+          database.all(`SELECT m.*, u.*
+                        FROM message m
+                        JOIN user u ON m.author_id = u.user_id
+                        WHERE m.flagged = 0
+                        ORDER BY m.pub_date DESC
+                        LIMIT 30;`, [profile.user_id], (err, rows3) => {
             
             if (err) {
               console.error(err);
@@ -142,9 +156,12 @@ router.get('/:username', function(req, res, next) {
       })
 
     } else {
-      database.all("select message.*, user.* from message, user where \
-          user.user_id = message.author_id and user.user_id = ? \
-          order by message.pub_date desc limit 30", [profile.user_id], (err, rows4) => {
+      database.all(`SELECT m.*, u.*
+                    FROM message m
+                    JOIN user u ON m.author_id = u.user_id
+                    WHERE m.flagged = 0
+                    ORDER BY m.pub_date DESC
+                    LIMIT 30;`, [profile.user_id], (err, rows4) => {
             
             if (err) {
               console.error(err);
