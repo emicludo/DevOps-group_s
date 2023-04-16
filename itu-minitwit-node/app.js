@@ -84,8 +84,11 @@ app.use('/', simulatorRouter);
 
 // Add middleware to catch errors and increment the counter
 app.use((err, req, res, next) => {
-  httpRequestErrorCounter.inc();
-  httpErrorCodeCounter.labels(res.statusCode.toString(), req.originalUrl).inc();
+  if (err) {
+    httpRequestErrorCounter.inc();
+    httpErrorCodeCounter.labels(res.statusCode.toString(), req.originalUrl).inc();
+    res.status(res.statusCode).json({ error: err.message });
+  }
   res.status(err.status || 500).json({ error: err.message });
 });
 
