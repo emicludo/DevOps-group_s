@@ -54,7 +54,14 @@ class Database {
 
   add(table, data, callback) {
     const keys = Object.keys(data).join(', ');
-    const values = Object.values(data).map(value => `'${value}'`).join(', ');
+    const values = Object.values(data).map(value => {
+      if (typeof value === 'string') {
+        value = value.replace(/'/g, "\\'").replace(/\n/g, '');
+        return `'${value}'`;
+      } else {
+        return value;
+      }
+    }).join(', ');
     const sql = `INSERT INTO ${table} (${keys}) VALUES (${values})`;
     this.pool.query(sql, callback);
   }
