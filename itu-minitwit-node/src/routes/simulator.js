@@ -1,20 +1,23 @@
 var express = require('express');
 var router = express.Router();
 
-const isSimulator = require('../utils/authorizationValidator');
-const hash = require('../utils/hash')
-
 const database = require('../db/dbService')
 
+//Services
 const LatestService = require('../services/LatestService');
 const latestService = new LatestService();
 
 //Utils
 var logger = require('../logger/logger');
+const hash = require('../utils/hash')
+const isSimulator = require('../utils/authorizationValidator');
 
+//Models
 const getAllUsers = require('../model/user');
 const getFollowersFromUser = require('../model/followers.js');
 
+
+//Routing
 router.get('/latest', function (req, res, next) {
   res.send({ latest: latestService.getLatest() });
 })
@@ -83,7 +86,7 @@ router.post("/register", async function (req, res, next) {
   } catch (error) {
     logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: error });
     var newError = new Error(error.toString());
-    newError.status = 400;
+    newError.status = 500;
     next(newError);
   }
 });
