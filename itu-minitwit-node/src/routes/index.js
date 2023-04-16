@@ -5,6 +5,7 @@ const database = require('../db/dbService')
 
 const gravatar = require('../utils/gravatar')
 
+// TO DO: disecting more functions in order to unit test them
  
 router.get('/', function(req, res, next) {
 
