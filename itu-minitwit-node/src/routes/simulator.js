@@ -65,7 +65,7 @@ router.post("/register", async function (req, res, next) {
         email: email,
         pw_hash: hash(password)
       };
-      database.add('user', body, function (response, err) {
+      database.add('user', body, function (err, response) {
         if (err) {
           console.log(err)
           console.log(username)
