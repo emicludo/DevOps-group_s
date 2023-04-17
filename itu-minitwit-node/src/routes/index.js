@@ -4,9 +4,6 @@ var router = express.Router();
 const database = require('../db/dbService')
 
 const gravatar = require('../utils/gravatar')
-
-// TO DO: disecting more functions in order to unit test them
-// also, in timeline jade, the function convert needs to be tested separatedly
  
 router.get('/', function(req, res, next) {
 
