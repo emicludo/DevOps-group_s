@@ -4,6 +4,8 @@ var router = express.Router();
 const database = require('../db/dbService')
 
 const hash = require('../utils/hash')
+
+
 router.get('/', function(req, res, next) {
 
   if (req.session.user) {
