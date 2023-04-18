@@ -3,6 +3,9 @@ var router = express.Router();
 
 const database = require('../db/dbService')
 
+//Utils
+var logger = require('../logger/logger');
+
 /**
  * GET /message
  *
@@ -21,53 +24,46 @@ const database = require('../db/dbService')
  * Errors:
  *  - 500: An error occurred while retrieving the message
  */
-router.get('/', async function(req, res, next) {
-  database.all("SELECT * FROM message", [], (err, rows) => {
+router.get('/', async function (req, res, next) {
+  database.all("SELECT * FROM message limit 1000", [], (err, rows) => { //add this line to limit the number of messages returned
     if (err) {
-      console.error(err);
-      res.status(500).send({ error: 'An error occurred while retrieving  messages', description: err.toString() });
+      logger.log('error', { url: req.url, method: req.method, requestBody: req.body, responseStatus: 500, message: err.toString() });
+      var error = new Error("Error retrieving messages from our database");
+      error.status = 500;
+      next(error);
       return;
     }
-
-    console.log('Successfully retrieved ' + rows.length + ' messages');
     res.send({ messages: rows });
   });
-  
 });
 
 /* Registers a new message for the user. */
 router.post('/', function (req, res, next) {
-
   if (!req.session.user) {
-    console.log("You are not logged in, so you cannot create message.");
-    res.status(400).send({ error: 'You must be logged in to post.'});
-    return;
+    logger.log('error', { url: req.url, method: req.method, requestBody: req.body, responseStatus: 400, message: "You must be logged in to create a message." });
+    var error = new Error("You must be logged in to create a message.");
+    error.status = 400;
+    next(error);
   }
 
   if (req.body.text) {
-
     database.all("insert into message (author_id, text, pub_date, flagged) values (?, ?, ?, 0)", [req.session.user.user_id, req.body.text, Date.now()], (err, rows) => {
-
       if (err) {
-        console.error(err);
-        res.status(500).send({ error: 'An error occurred while registering', description: err.toString() });
-        
+        logger.log('error', { url: req.url, method: req.method, requestBody: req.body, responseStatus: 500, message: err.toString() });
+        var error = new Error('An error occurred while creating message');
+        error.status = 500;
+        next(error);
         return;
       }
 
       req.session.flash = 'Your message was recorded';
       res.redirect('/api');
       return;
-
     })
 
   } else {
-
     res.redirect('/api');
-
   }
-
 });
-
 
 module.exports = router;
