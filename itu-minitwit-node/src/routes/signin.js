@@ -25,7 +25,7 @@ router.get('/', function(req, res, next) {
 router.post('/', function (req, res, next) {
   database.all('SELECT * FROM user WHERE username = ?', req.body.username, (err, rows) => {
     if (err) {
-      logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body, responseStatus: 500, message: err.toString() });
+      logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body, responseStatus: 500, message: err });
       var error = new Error("An error occurred while retrieving user");
       error.status = 500;
       next(error);

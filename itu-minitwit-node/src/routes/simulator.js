@@ -65,7 +65,7 @@ router.post("/register", async function (req, res, next) {
       };
       database.add('user', body, function (err, response) {
         if (err) {
-          logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , message: err.toString() });
+          logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , message: err });
           var newError = new Error("Error adding user to our database");
           newError.status = 500;
           next(newError);
@@ -78,13 +78,13 @@ router.post("/register", async function (req, res, next) {
     } else {
       //Send error
       logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 400, message: error });
-      var newError = new Error(error.toString());
+      var newError = new Error(error);
       newError.status = 400;
       next(newError);
     }
   } catch (error) {
     logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: error });
-    var newError = new Error(error.toString());
+    var newError = new Error(error);
     newError.status = 500;
     next(newError);
   }
@@ -138,7 +138,7 @@ router.get('/msgs', function (req, res, next) {
     });
   } catch (error) {
     logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: error });
-    var newError = new Error(error.toString());
+    var newError = new Error(error);
     newError.status = 500;
     next(newError);
   }
@@ -206,7 +206,7 @@ router.get('/msgs/:username', async function (req, res, next) {
     });
   } catch (error) {
     logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: error });
-    var newError = new Error(error.toString());
+    var newError = new Error(error);
     newError.status = 500;
     next(newError);
   }
@@ -249,8 +249,8 @@ router.post('/msgs/:username', async function (req, res, next) {
     };
     database.add('message', body, function (err, response) {
       if (err) {
-        logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err.toString() });
-        var error = new Error(err.toString());
+        logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err });
+        var error = new Error(err);
         error.status = 500;
         next(error);
         return;
@@ -261,7 +261,7 @@ router.post('/msgs/:username', async function (req, res, next) {
     });
   } catch (error) {
     logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: error });
-    var newError = new Error(error.toString());
+    var newError = new Error(error);
     newError.status = 500;
     next(newError);
   }
@@ -318,7 +318,7 @@ router.get('/fllws/:username', async function (req, res, next) {
     });
   } catch (error) {
     logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: error });
-    var newError = new Error(error.toString());
+    var newError = new Error(error);
     newError.status = 500;
     next(newError);
   }
@@ -378,8 +378,8 @@ router.post('/fllws/:username', async function (req, res, next) {
 
       database.run(query, [userId, followsUserId], function (err, result) {
         if (err) {
-          logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err.toString() });
-          var error = new Error(err.toString());
+          logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err });
+          var error = new Error(err);
           error.status = 500;
           next(error);
           return;
@@ -409,8 +409,8 @@ router.post('/fllws/:username', async function (req, res, next) {
       const query = "DELETE FROM follower WHERE who_id=? and whom_id=?";
       database.run(query, [userId, unfollowsUserId], function (err, result) {
         if (err) {
-          logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err.toString() });
-          var error = new Error(err.toString());
+          logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err });
+          var error = new Error(err);
           error.status = 500;
           next(error);
           return;
@@ -426,7 +426,7 @@ router.post('/fllws/:username', async function (req, res, next) {
     }
   } catch (error) {
     logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: error });
-    var newError = new Error(error.toString());
+    var newError = new Error(error);
     newError.status = 500;
     next(newError);
   }

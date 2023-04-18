@@ -11,7 +11,7 @@ router.get('/:userId', async function (req, res, next) {
   // Display's a users tweets.
   database.all("SELECT * FROM user where user_id = ?", [req.params.userId], (err, rows) => {
     if (err) {
-      logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body, responseStatus: 500, message: err.toString() });
+      logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body, responseStatus: 500, message: err });
       var error = new Error('An error occurred while retrieving user');
       error.status = 500;
       next(error);
@@ -31,7 +31,7 @@ router.get('/:userId', async function (req, res, next) {
 
     database.all('SELECT message.*, user.* from message, user where user.user_id = message.author_id and user.user_id = ? order by message.pub_date desc limit 30', [profile_user.user_id], (err2, rows2) => {
       if (err2) {
-        logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body, responseStatus: 500, message: err2.toString() });
+        logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body, responseStatus: 500, message: err2 });
         var error = new Error('An error occurred while retrieving data from database');
         error.status = 500;
         next(error);

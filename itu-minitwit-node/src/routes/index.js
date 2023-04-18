@@ -77,7 +77,7 @@ router.get('/public', function (req, res, next) {
     , [], (err, rows) => {
 
     if (err) {
-      logger.log('error', { url: req.url, method: req.method, requestBody: req.body, responseStatus: 500, message: err.toString() });
+      logger.log('error', { url: req.url, method: req.method, requestBody: req.body, responseStatus: 500, message: err });
       var error = new Error('An error ocurrer while retrieving messages');
       error.status = 500;
       next(error);
@@ -95,7 +95,7 @@ router.get('/:username', function(req, res, next) {
 
   database.all("SELECT * FROM user where username = ?", [req.params.username], (err, rows) => {
     if (err) {
-      logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body, responseStatus: 500, message: err.toString() });
+      logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body, responseStatus: 500, message: err });
       var error = new Error("An error occurred while retrieving user data");
       error.status = 500;
       next(error);
@@ -116,7 +116,7 @@ router.get('/:username', function(req, res, next) {
     if (req.session.user) {
       database.all("select 1 from follower where follower.who_id = ? and follower.whom_id = ?", [req.session.user.user_id, profile.user_id], (err, rows2) => {
         if (err) {
-          logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err.toString() });
+          logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err });
           var error = new Error("An error occurred while retrieving followers");
           error.status = 500;
           next(error);
@@ -132,7 +132,7 @@ router.get('/:username', function(req, res, next) {
                         ORDER BY m.pub_date DESC
                         LIMIT 30;`, [profile.user_id], (err, rows3) => {
             if (err) {
-              logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err.toString() });
+              logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err });
               var error = new Error("An error occurred while retrieving data from database");
               error.status = 500;
               next(error);
@@ -150,7 +150,7 @@ router.get('/:username', function(req, res, next) {
                         ORDER BY m.pub_date DESC
                         LIMIT 30;`, [profile.user_id], (err, rows3) => {
             if (err) {
-              logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err.toString() });
+              logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err });
               var error = new Error("An error occurred while retrieving data from database");
               error.status = 500;
               next(error);
