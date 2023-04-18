@@ -62,7 +62,7 @@ router.post('/', function (req, res, next) {
   database.all('SELECT * FROM user WHERE username = ?', req.body.username, (err, rows) => {
 
     if (err) {
-      logger.log('error', { url: req.url, method: req.method, requestBody: req.body, responseStatus: 500, message: err.toString() });
+      logger.log('error', { url: req.url, method: req.method, requestBody: req.body, responseStatus: 500, message: err });
       var error = new Error('An error occurred while retrieving user');
       error.status = 500;
       next(error);
@@ -80,7 +80,7 @@ router.post('/', function (req, res, next) {
       // if everything's fine
       database.all('INSERT INTO user (username, email, pw_hash) values (?, ?, ?)', [req.body.username, req.body.email, hash(req.body.password)], (err, rows) => {
         if (err) {
-          logger.log('error', { url: req.url, method: req.method, requestBody: req.body, responseStatus: 500, message: err.toString() });
+          logger.log('error', { url: req.url, method: req.method, requestBody: req.body, responseStatus: 500, message: err });
           var error = new Error('An error occurred while registering user');
           error.status = 500;
           next(error);
