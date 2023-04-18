@@ -1,6 +1,6 @@
 - var convert = function(epoch){  
 -   var date = new Date(epoch)
--   var formatted = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + (date.getDate()) + ' @ ' + date.getHours() + ':' + date.getMinutes() 
+-   var formatted = date.getUTCFullYear() + '-' + ('0' + (date.getUTCMonth() + 1)).slice(-2) + '-' +  date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); 
 -   return formatted
 - }
 
