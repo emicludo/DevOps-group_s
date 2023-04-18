@@ -1,8 +1,10 @@
 const request = require('supertest');
 const app = require('../../app');
 const getAllUsers = require('../model/user');
+const database = require('../db/dbService')
 
 jest.mock('../model/user');
+jest.mock('../db/dbService');
 
 describe('POST /register', () => {
 
@@ -74,5 +76,25 @@ describe('POST /register', () => {
     expect(response.body).toHaveProperty('status');
     expect(response.body).toHaveProperty('error_msg');
     expect(getAllUsers).toHaveBeenCalled();
+  });
+
+  test.only('returns 200 if all fine', async () => {
+
+    getAllUsers.mockResolvedValue([]);
+    database.add = jest.fn((table, data, callback) => {
+      callback('Success', null);
+    });
+
+    const response = await request(app)
+      .post('/register')
+      .set('Authorization', 'Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh')
+      .send({
+        username: 'testuser',
+        email: 'testuser@example.com',
+        pwd: 'testpassword'
+      });
+
+    expect(response.status).toBe(204);
+    expect(database.add).toHaveBeenCalled();
   });
 });
