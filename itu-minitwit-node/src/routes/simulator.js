@@ -204,9 +204,9 @@ router.get('/msgs/:username', async function (req, res, next) {
         res.status(200).send(filteredMsgs);
       }
     });
-  } catch (error) {
-    logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: error });
-    var newError = new Error(error.toString());
+  } catch (err) {
+    logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err });
+    var newError = new Error(err);
     newError.status = 500;
     next(newError);
   }
