@@ -1,20 +1,22 @@
 var express = require('express');
 var router = express.Router();
 
-const isSimulator = require('../utils/authorizationValidator');
-const hash = require('../utils/hash')
-
 const database = require('../db/dbService')
 
+//Services
 const LatestService = require('../services/LatestService');
 const latestService = new LatestService();
 
 //Utils
 var logger = require('../logger/logger');
+const hash = require('../utils/hash')
+const isSimulator = require('../utils/authorizationValidator');
 
+//Models
 const getUserByUsername = require('../model/user');
 const getFollowersFromUser = require('../model/followers.js');
 
+//Routing
 router.get('/latest', function (req, res, next) {
   res.send({ latest: latestService.getLatest() });
 })
@@ -29,7 +31,9 @@ router.post("/register", async function (req, res, next) {
 
     if (!isSimulator(header)) {
       logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 403, message: "You are not authorized to use this resource!" });
-      res.status(403).send({ status: 403, error_msg: "You are not authorized to use this resource!" });
+      var error = new Error("You are not authorized to use this resource");
+      error.status = 403;
+      next(error);
       return;
     }
 
@@ -59,11 +63,13 @@ router.post("/register", async function (req, res, next) {
         email: email,
         pw_hash: hash(password)
       };
-      database.add('user', body, function (response, err) {
+      database.add('user', body, function (err, response) {
         if (err) {
-          console.log(err)
           logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , message: err.toString() });
-          console.error(err.message);
+          var newError = new Error("Error adding user to our database");
+          newError.status = 500;
+          next(newError);
+          return;
         } else {
           res.status(204).send("");
         }
@@ -72,11 +78,15 @@ router.post("/register", async function (req, res, next) {
     } else {
       //Send error
       logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 400, message: error });
-      res.status(400).send({ status: 400, error_msg: error });
+      var newError = new Error(error.toString());
+      newError.status = 400;
+      next(newError);
     }
   } catch (error) {
     logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: error });
-    res.status(500).send({ status: 500, error_msg: error });
+    var newError = new Error(error.toString());
+    newError.status = 500;
+    next(newError);
   }
 });
 
@@ -86,7 +96,9 @@ router.get('/msgs', function (req, res, next) {
     const header = req.headers.authorization;
     if (!isSimulator(header)) {
       logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 403, message: "You are not authorized to use this resource!" });
-      res.status(403).send({ status: 403, error_msg: "You are not authorized to use this resource!" });
+      var error = new Error("You are not authorized to use this resource");
+      error.status = 403;
+      next(error);
       return;
     }
 
@@ -108,9 +120,10 @@ router.get('/msgs', function (req, res, next) {
 
     database.all(query, [no_msgs], (err, rows) => {
       if (err) {
-        console.log(err);
-        logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , message: err });
-        res.status(500).render('error');
+        logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err });
+        var error = new Error("Error retrieving messages from our database");
+        error.status = 500;
+        next(error);
         return;
       }
       const filteredMsgs = [];
@@ -122,12 +135,12 @@ router.get('/msgs', function (req, res, next) {
         filteredMsgs.push(filteredMsg);
       }
       res.send(filteredMsgs);
-
-
     });
   } catch (error) {
     logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: error });
-    res.status(500).send({ status: 500, error_msg: error });
+    var newError = new Error(error.toString());
+    newError.status = 500;
+    next(newError);
   }
 });
 
@@ -138,7 +151,9 @@ router.get('/msgs/:username', async function (req, res, next) {
     const header = req.headers.authorization;
     if (!isSimulator(header)) {
       logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 403, message: "You are not authorized to use this resource!" });
-      res.status(403).send({ status: 403, error_msg: "You are not authorized to use this resource!" });
+      var error = new Error("You are not authorized to use this resource");
+      error.status = 403;
+      next(error);
       return;
     }
     //Updates Latest
@@ -155,7 +170,10 @@ router.get('/msgs/:username', async function (req, res, next) {
     const userSelected = await getUserByUsername(username)
     if (!userSelected) {
       logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 404, message: "User is not on our database" });
-      res.status(404).send({ status: 404, error_msg: "User is not on our database" });
+      var error = new Error("User is not on our database");
+      error.status = 404;
+      next(error);
+      return;
     }
     const userId = userSelected.user_id
 
@@ -166,9 +184,10 @@ router.get('/msgs/:username', async function (req, res, next) {
 
     database.all(query, [userId, no_msgs], (err, rows) => {
       if (err) {
-        console.log(err)
         logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err });
-        res.status(500).render('error');
+        var error = new Error("Error retrieving messages from our database");
+        error.status = 500;
+        next(error);
         return;
       }
       const filteredMsgs = [];
@@ -187,7 +206,9 @@ router.get('/msgs/:username', async function (req, res, next) {
     });
   } catch (error) {
     logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: error });
-    res.status(500).send({ status: 500, error_msg: error });
+    var newError = new Error(error.toString());
+    newError.status = 500;
+    next(newError);
   }
 })
 
@@ -199,7 +220,9 @@ router.post('/msgs/:username', async function (req, res, next) {
     const header = req.headers.authorization;
     if (!isSimulator(header)) {
       logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 403, message:"You are not authorized to use this resource!" });
-      res.status(403).send({ status: 403, error_msg: "You are not authorized to use this resource!" });
+      var error = new Error("You are not authorized to use this resource");
+      error.status = 403;
+      next(error);
       return;
     }
     //Updates Latest
@@ -211,7 +234,10 @@ router.post('/msgs/:username', async function (req, res, next) {
     const userSelected = await getUserByUsername(username)
     if (!userSelected) {
       logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 404, message: "User is not on our database" });
-      res.status(404).send({ status: 404, error_msg: "User is not on our database" });
+      var error = new Error("User is not on our database");
+      error.status = 404;
+      next(error);
+      return;
     }
     const userId = userSelected.user_id
 
@@ -223,16 +249,21 @@ router.post('/msgs/:username', async function (req, res, next) {
     };
     database.add('message', body, function (err, response) {
       if (err) {
-        console.log(err)
-        logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body, message: err.toString() });
+        logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err.toString() });
+        var error = new Error(err.toString());
+        error.status = 500;
+        next(error);
+        return;
       } else {
-        logger.log('info',  { url: req.url ,method: req.method, requestBody: req.body, message: "Message added successfully with id: " + response.insertId });
+        logger.log('info',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 204, message: "Message added successfully with id: " + response.insertId });
         res.status(204).send("");
       }
     });
   } catch (error) {
     logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: error });
-    res.status(500).send({ status: 500, error_msg: error });
+    var newError = new Error(error.toString());
+    newError.status = 500;
+    next(newError);
   }
 })
 
@@ -243,7 +274,9 @@ router.get('/fllws/:username', async function (req, res, next) {
     const header = req.headers.authorization;
     if (!isSimulator(header)) {
       logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 403, message: "You are not authorized to use this resource!" });
-      res.status(403).send({ status: 403, error_msg: "You are not authorized to use this resource!" });
+      var error = new Error("You are not authorized to use this resource");
+      error.status = 403;
+      next(error);
       return;
     }
     //Updates Latest
@@ -255,7 +288,9 @@ router.get('/fllws/:username', async function (req, res, next) {
     const userSelected = await getUserByUsername(username)
     if (!userSelected) {
       logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 404, message: "User is not on our database" });
-      res.status(404).send({ status: 404, error_msg: "User is not on our database" });
+      var error = new Error("User is not on our database");
+      error.status = 404;
+      next(error);
       return;
     }
     const userId = userSelected.user_id;
@@ -268,9 +303,10 @@ router.get('/fllws/:username', async function (req, res, next) {
     const no_followers = parseInt(req.query.no) || 100;
     database.all(query, [userId, no_followers], (err, rows) => {
       if (err) {
-        console.log(err)
         logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err });
-        res.status(500).send({ status: 500, error_msg: "Internal Server Error" });
+        var error = new Error("Error retrieving followers from our database");
+        error.status = 500;
+        next(error);
         return;
       }
       const filteredFllws = [];
@@ -282,7 +318,9 @@ router.get('/fllws/:username', async function (req, res, next) {
     });
   } catch (error) {
     logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: error });
-    res.status(500).send({ status: 500, error_msg: error });
+    var newError = new Error(error.toString());
+    newError.status = 500;
+    next(newError);
   }
 });
 
@@ -293,7 +331,9 @@ router.post('/fllws/:username', async function (req, res, next) {
     const header = req.headers.authorization;
     if (!isSimulator(header)) {
       logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 403, message: "You are not authorized to use this resource!" });
-      res.status(403).send({ status: 403, error_msg: "You are not authorized to use this resource!" });
+      var error = new Error("You are not authorized to use this resource");
+      error.status = 403;
+      next(error);
       return;
     }
 
@@ -306,7 +346,9 @@ router.post('/fllws/:username', async function (req, res, next) {
     const userSelected = await getUserByUsername(username)
     if (!userSelected) {
       logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 404, message: "User is not on our database" });
-      res.status(404).send({ status: 404, error_msg: "User is not on our database" });
+      var error = new Error("User is not on our database");
+      error.status = 404;
+      next(error);
       return;
     }
     const userId = userSelected.user_id;
@@ -316,14 +358,18 @@ router.post('/fllws/:username', async function (req, res, next) {
       const followsUser = users.find(user => user.username === followUsername);
       if (!followsUser) {
         logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 404, message: "Follows user is not on our database" });
-        res.status(404).send({ status: 404, error_msg: "Follows user is not on our database" });
+        var error = new Error("User to be followed is not on our database");
+        error.status = 404;
+        next(error);
         return;
       }
 
       const userFollowsList = await getFollowersFromUser(userId, null);
       if (userFollowsList.includes(followsUser.username)) {
         logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 403, message: "User already follows this user" });
-        res.status(403).send({ status: 403, error_msg: "User already follows this user" });
+        var error = new Error("User already follows this user");
+        error.status = 403;
+        next(error);
         return
       }
       
@@ -333,7 +379,9 @@ router.post('/fllws/:username', async function (req, res, next) {
       database.run(query, [userId, followsUserId], function (err, result) {
         if (err) {
           logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err.toString() });
-          res.status(500).send({ status: 500, error_msg: err });
+          var error = new Error(err.toString());
+          error.status = 500;
+          next(error);
           return;
         }
         res.status(204).send("");
@@ -343,7 +391,9 @@ router.post('/fllws/:username', async function (req, res, next) {
       const unfollowsUser = users.find(user => user.username === unfollowUsername);
       if (!unfollowsUser) {
         logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 404, message: "Unfollows user is not on our database" });
-        res.status(404).send({ status: 404, error_msg: "Unfollows user is not on our database" });
+        var error = new Error("Unfollows user is not on our database");
+        error.status = 404;
+        next(error);
         return;
       }
       const unfollowsUserId = unfollowsUser.user_id;
@@ -360,18 +410,25 @@ router.post('/fllws/:username', async function (req, res, next) {
       database.run(query, [userId, unfollowsUserId], function (err, result) {
         if (err) {
           logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err.toString() });
-          res.status(500).send({ status: 500, error_msg: err});
+          var error = new Error(err.toString());
+          error.status = 500;
+          next(error);
           return;
         }
         res.status(204).send("");
       });
     } else {
       logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 400, message: "Invalid request body" });
-      res.status(400).send({ status: 400, error_msg: "Invalid request body" });
+      var error = new Error("Invalid request body");
+      error.status = 400;
+      next(error);
+      return;
     }
   } catch (error) {
     logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: error });
-    res.status(500).send({ status: 500, error_msg: error });
+    var newError = new Error(error.toString());
+    newError.status = 500;
+    next(newError);
   }
 });
 
