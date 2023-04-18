@@ -33,7 +33,7 @@ router.post("/register", async function (req, res, next) {
       return;
     }
 
-    //Updates Latest
+    // Updates Latest
     var latest = req.query.latest;
     if (latest !== undefined && parseInt(latest) !== NaN) {
       latestService.updateLatest(parseInt(latest));
