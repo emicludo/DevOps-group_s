@@ -78,7 +78,7 @@ describe('POST /register', () => {
     expect(getAllUsers).toHaveBeenCalled();
   });
 
-  test.only('returns 200 if all fine', async () => {
+  test('returns 200 if all fine', async () => {
 
     getAllUsers.mockResolvedValue([]);
     database.add = jest.fn((table, data, callback) => {
@@ -96,5 +96,24 @@ describe('POST /register', () => {
 
     expect(response.status).toBe(204);
     expect(database.add).toHaveBeenCalled();
+  });
+
+  test('returns 500 if there database does not work properly', async () => {
+
+    getAllUsers.mockRejectedValue(new Error('Database error'));
+    database.add = jest.fn((table, data, callback) => {
+      callback('Success', null);
+    });
+
+    const response = await request(app)
+      .post('/register')
+      .set('Authorization', 'Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh')
+      .send({
+        username: 'testuser',
+        email: 'testuser@example.com',
+        pwd: 'testpassword'
+      });
+
+    expect(response.status).toBe(500);
   });
 });
