@@ -13,9 +13,8 @@ const hash = require('../utils/hash')
 const isSimulator = require('../utils/authorizationValidator');
 
 //Models
-const getAllUsers = require('../model/user');
+const getUserByUsername = require('../model/user');
 const getFollowersFromUser = require('../model/followers.js');
-
 
 //Routing
 router.get('/latest', function (req, res, next) {
@@ -45,8 +44,7 @@ router.post("/register", async function (req, res, next) {
     }
 
     //Checks if username is taken
-    const users = await getAllUsers()
-    const userFound = users.find(user => user.username == username)
+    const userSelected = await getUserByUsername(username)
 
     var error = null
     if (username === null) {
@@ -169,8 +167,7 @@ router.get('/msgs/:username', async function (req, res, next) {
       no_msgs = 100;
     }
 
-    const users = await getAllUsers()
-    const userSelected = users.find(user => user.username = username)
+    const userSelected = await getUserByUsername(username)
     if (!userSelected) {
       logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 404, message: "User is not on our database" });
       var error = new Error("User is not on our database");
@@ -234,8 +231,7 @@ router.post('/msgs/:username', async function (req, res, next) {
       latestService.updateLatest(parseInt(latest));
     }
 
-    const users = await getAllUsers()
-    const userSelected = users.find(user => user.username == username)
+    const userSelected = await getUserByUsername(username)
     if (!userSelected) {
       logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 404, message: "User is not on our database" });
       var error = new Error("User is not on our database");
@@ -289,8 +285,7 @@ router.get('/fllws/:username', async function (req, res, next) {
       latestService.updateLatest(parseInt(latest));
     }
 
-    const users = await getAllUsers();
-    const userSelected = users.find(user => user.username === username);
+    const userSelected = await getUserByUsername(username)
     if (!userSelected) {
       logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 404, message: "User is not on our database" });
       var error = new Error("User is not on our database");
@@ -348,8 +343,7 @@ router.post('/fllws/:username', async function (req, res, next) {
       latestService.updateLatest(parseInt(latest));
     }
 
-    const users = await getAllUsers();
-    const userSelected = users.find(user => user.username === username);
+    const userSelected = await getUserByUsername(username)
     if (!userSelected) {
       logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 404, message: "User is not on our database" });
       var error = new Error("User is not on our database");
