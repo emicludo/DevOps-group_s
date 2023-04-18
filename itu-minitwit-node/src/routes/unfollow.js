@@ -19,7 +19,7 @@ router.get('/:username', function(req, res, next) {
 
   database.all("SELECT * FROM user where username = ?", [req.params.username], (err, rows) => {
     if (err) {
-      logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body, responseStatus: 500, message: err.toString() });
+      logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body, responseStatus: 500, message: err });
       var error = new Error('An error occurred while retrieving user');
       error.status = 500;
       next(error);
@@ -35,7 +35,7 @@ router.get('/:username', function(req, res, next) {
     } else {
       database.all("delete from follower where who_id=? and whom_id=?", [req.session.user.user_id, rows[0].user_id], (err2, rows2) => {
         if (err2) {
-          logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body, responseStatus: 500, message: err2.toString() });
+          logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body, responseStatus: 500, message: err2 });
           var error = new Error('An error occurred while unfollowing user');
           error.status = 500;
           next(error);
