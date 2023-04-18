@@ -24,8 +24,8 @@
                 div(class="twitbox")
                     h3 What's on your mind #{user.username}?
                     form(action='/api/message' method='post')
-                            input(type='text' name='text' size='60')
-                            input(type='submit' value='Share')
+                            input(type='text' name='text' size='60' id='twit-form')
+                            input(type='submit' value='Share' id='twit-submit-btn')
             
 
         

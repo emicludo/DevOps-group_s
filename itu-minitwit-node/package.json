@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "cy:open": "cypress open", 
+    "cy:open": "cypress open",
     "cy:closed": "cypress run"
   },
   "dependencies": {
@@ -23,6 +23,6 @@
     "winston": "^3.8.2"
   },
   "devDependencies": {
-    "cypress": "^12.9.0"
+    "cypress": "^12.10.0"
   }
 }

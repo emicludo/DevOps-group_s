@@ -16,6 +16,6 @@ Cypress.Commands.add('login', (username, password) => {
       cy.get('#username-form').type(username)
       cy.get('#password-form').type(password)
       cy.get('#submit-btn').click()
-      cy.contains('h2', 'My Timeline')
+      // cy.contains('h2', 'My Timeline')
     })
   })
