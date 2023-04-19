@@ -98,7 +98,7 @@ describe('POST /register', () => {
     expect(database.add).toHaveBeenCalled();
   });
 
-  test('returns 500 if there database does not work properly', async () => {
+  test('returns 500 if the database does not work properly', async () => {
 
     getAllUsers.mockRejectedValue(new Error('Database error'));
     database.add = jest.fn((table, data, callback) => {

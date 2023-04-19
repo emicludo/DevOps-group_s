@@ -1,9 +1,7 @@
 const request = require('supertest');
 const app = require('../../app');
-const getAllUsers = require('../model/user');
 const database = require('../db/dbService');
 
-jest.mock('../model/user');
 jest.mock('../db/dbService');
 
 describe('GET /msgs', () => {
@@ -15,5 +13,24 @@ describe('GET /msgs', () => {
     
         expect(response.status).toBe(403);
       });
+
+    // TO DO
+      test('returns 500 if the database does not work properly', async () => {
+      
+      database.add = jest.fn((table, data, callback) => {
+        callback('Success', null);
+      });
+
+      const response = await request(app)
+        .post('/register')
+        .set('Authorization', 'Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh')
+        .send({
+          username: 'testuser',
+          email: 'testuser@example.com',
+          pwd: 'testpassword'
+        });
+
+      expect(response.status).toBe(500);
+    });
 
 });
