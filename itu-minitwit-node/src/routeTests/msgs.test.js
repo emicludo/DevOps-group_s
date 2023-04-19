@@ -8,6 +8,12 @@ jest.mock('../db/dbService');
 
 describe('GET /msgs', () => {
 
-
+    test('returns 403 if authorization header is not correct', async () => {
+        const response = await request(app)
+          .get('/msgs')
+          .set('Authorization', 'incorrect_token');
+    
+        expect(response.status).toBe(403);
+      });
 
 });
