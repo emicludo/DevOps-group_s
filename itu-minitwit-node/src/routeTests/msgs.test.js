@@ -5,3 +5,9 @@ const database = require('../db/dbService');
 
 jest.mock('../model/user');
 jest.mock('../db/dbService');
+
+describe('GET /msgs', () => {
+
+
+
+});
