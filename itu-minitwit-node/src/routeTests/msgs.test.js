@@ -14,7 +14,7 @@ describe('GET /msgs', () => {
         expect(response.status).toBe(403);
     });
 
-    test.only('returns 500 if the database does not work properly', async () => {  
+    test('returns 500 if the database does not work properly', async () => {  
       database.all = jest.fn((sql, params, callback) => {
         callback('Error', null);
       });
@@ -22,6 +22,16 @@ describe('GET /msgs', () => {
         .get('/msgs')
         .set('Authorization', 'Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh')
       expect(response.status).toBe(500);
+    });
+
+    test('returns messages if everything is fine', async () => {  
+      database.all = jest.fn((sql, params, callback) => {
+        callback(null, [{text: 'hello world', pubDate: '20-4-2020', username: 'testuser'}]);
+      });
+      const response = await request(app)
+        .get('/msgs')
+        .set('Authorization', 'Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh')
+        expect(response.body).toEqual([{content: 'hello world', pubDate: '20-4-2020', user: 'testuser'}]);
     });
 
 });
