@@ -17,20 +17,22 @@ async function getAllUsers() {
 }
 
 async function addUser(username) {
-  const body = {
-    username: username,
-    email: username.replace(" ", "+") + '@itu.dk',
-    pw_hash: "1234"
-  };
-  database.add('user', body, function (err, response) {
-    if (err) {
-      console.log(err)
-      reject(err, null);
-    } else {
-      console.log("Creating user to fix the database")
-      logger.log('info', { message: "Creating user to fix the database" });
-      resolve(rows, null);
-    }
+  return new Promise((resolve, reject) => {
+    const body = {
+      username: username,
+      email: username.replace(" ", "+") + '@itu.dk',
+      pw_hash: "1234"
+    };
+    database.add('user', body, function (err, response) {
+      if (err) {
+        console.log(err);
+        reject(err);
+      } else {
+        console.log("Creating user to fix the database");
+        logger.log('info', { message: "Creating user to fix the database" });
+        resolve(response);
+      }
+    });
   });
 }
 
