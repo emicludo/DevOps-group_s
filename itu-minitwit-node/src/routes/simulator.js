@@ -230,6 +230,7 @@ router.post('/msgs/:username', async function (req, res, next) {
       if (err) {
         console.log(err)
         logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body, message: err.toString() });
+        res.status(500).render('error');
       } else {
         logger.log('info',  { url: req.url ,method: req.method, requestBody: req.body, message: "Message added successfully with id: " + response.insertId });
         res.status(204).send("");
