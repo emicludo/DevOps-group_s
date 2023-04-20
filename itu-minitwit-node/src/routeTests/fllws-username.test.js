@@ -29,7 +29,7 @@ describe('GET /fllws/:username', () => {
       expect(response.body.error_msg).toBe("User is not on our database");
     });
 
-    test.only('returns 500 if the database does not work properly', async () => {  
+    test('returns 500 if the database does not work properly', async () => {  
       
       getAllUsers.mockResolvedValue([{username: 'testuser'}]);
 
@@ -45,34 +45,20 @@ describe('GET /fllws/:username', () => {
         expect(response.body.error_msg).toBe("Internal Server Error");
     });
 
-    test('returns 200 and messages if everything is fine', async () => {
+    test('returns followers if everything is fine', async () => {
 
       getAllUsers.mockResolvedValue([{username: 'testuser'}]);
 
       database.all = jest.fn((sql, params, callback) => {
-        callback(null, [{text: 'hello world', pubDate: '20-4-2020', username: 'testuser'}]);
+        callback(null, [{username: "one"}, {username: "two"}]);
       });
+
       const response = await request(app)
-        .get('/msgs/testuser')
+        .get('/fllws/testuser')
         .set('Authorization', 'Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh')
-        expect(response.body).toEqual([{content: 'hello world', pubDate: '20-4-2020', user: 'testuser'}]);
-        expect(response.status).toEqual(200);
+
+        expect(response.body).toEqual({follows: ["one", "two"]});
     });
-
-    test('returns 204 if everything is fine, but there are no messages', async () => {
-
-      getAllUsers.mockResolvedValue([{username: 'testuser'}]);
-
-      database.all = jest.fn((sql, params, callback) => {
-        callback(null, []);
-      });
-      const response = await request(app)
-        .get('/msgs/testuser')
-        .set('Authorization', 'Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh')
-        expect(response.body).toEqual({});
-        expect(response.status).toEqual(204);
-    });
-
 });
 
 describe('POST /msgs/:username', () => {
