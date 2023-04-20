@@ -44,14 +44,32 @@ describe('GET /msgs/:username', () => {
         expect(response.status).toBe(500);
     });
 
-    /* test('returns messages if everything is fine', async () => {  
+    test('returns 200 and messages if everything is fine', async () => {
+
+      getAllUsers.mockResolvedValue([{username: 'testuser'}]);
+
       database.all = jest.fn((sql, params, callback) => {
         callback(null, [{text: 'hello world', pubDate: '20-4-2020', username: 'testuser'}]);
       });
       const response = await request(app)
-        .get('/msgs')
+        .get('/msgs/testuser')
         .set('Authorization', 'Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh')
         expect(response.body).toEqual([{content: 'hello world', pubDate: '20-4-2020', user: 'testuser'}]);
-    }); */
+        expect(response.status).toEqual(200);
+    });
+
+    test.only('returns 204 if everything is fine, but there are no messages', async () => {
+
+      getAllUsers.mockResolvedValue([{username: 'testuser'}]);
+
+      database.all = jest.fn((sql, params, callback) => {
+        callback(null, []);
+      });
+      const response = await request(app)
+        .get('/msgs/testuser')
+        .set('Authorization', 'Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh')
+        expect(response.body).toEqual({});
+        expect(response.status).toEqual(204);
+    });
 
 });
