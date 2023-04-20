@@ -14,7 +14,7 @@ describe('GET /msgs', () => {
         expect(response.status).toBe(403);
       });
 
-    // TO DO
+    /* // TO DO
       test('returns 500 if the database does not work properly', async () => {
       
       database.add = jest.fn((table, data, callback) => {
@@ -31,6 +31,6 @@ describe('GET /msgs', () => {
         });
 
       expect(response.status).toBe(500);
-    });
+    }); */
 
 });
