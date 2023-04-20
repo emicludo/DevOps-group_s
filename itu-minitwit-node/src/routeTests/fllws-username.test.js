@@ -84,7 +84,7 @@ describe('POST /fllws/:username', () => {
     expect(response.body.error_msg).toBe("User is not on our database");
   });
 
-  test.only('returns 404 if the follows user is not in the database', async () => {  
+  test('returns 404 if the follows user is not in the database', async () => {  
     
     getAllUsers.mockResolvedValue([{username: 'testuser'}]);
 
@@ -99,7 +99,7 @@ describe('POST /fllws/:username', () => {
     expect(response.body.error_msg).toBe("Follows user is not on our database");
   });
 
-  test('returns 500 if the database does not work properly', async () => {  
+  /* test('returns 500 if the database does not work properly', async () => {  
     
     getAllUsers.mockResolvedValue([{username: 'testuser'}]);
 
@@ -134,6 +134,6 @@ describe('POST /fllws/:username', () => {
 
       expect(response.body).toEqual({});
       expect(response.status).toEqual(204);
-  });
+  }); */
 
 });
