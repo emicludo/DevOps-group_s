@@ -68,6 +68,7 @@ app.use(async (req, res, next) => {
   httpRequestCounter.inc({ method: req.method, status: res.statusCode, endpoint: route});
   upMetric.set({ app: 'minitwit-app' }, 1);
   database.healthCheck();
+  console.log("Incoming request:" + req.originalUrl)
   next();
 });
 
@@ -90,7 +91,6 @@ app.use('/', simulatorRouter);
 
 // Add middleware to catch errors and increment the counter
 app.use((err, req, res, next) => {
-  console.log("Incoming request:" + req.originalUrl)
   if (err) {
     httpRequestErrorCounter.inc();
     const parsedUrl = url.parse(req.originalUrl);
