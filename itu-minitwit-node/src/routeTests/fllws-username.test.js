@@ -8,7 +8,7 @@ jest.mock('../model/user');
 
 describe('GET /fllws/:username', () => {
 
-    test.only('returns 403 if authorization header is not correct', async () => {
+    test('returns 403 if authorization header is not correct', async () => {
         const response = await request(app)
           .get('/fllws/testuser')
           .set('Authorization', 'incorrect_token');
@@ -17,12 +17,12 @@ describe('GET /fllws/:username', () => {
         expect(response.body.error_msg).toBe("You are not authorized to use this resource!");
     });
 
-    test('returns 404 if the user is not in the database', async () => {  
+    test.only('returns 404 if the user is not in the database', async () => {  
       
       getAllUsers.mockResolvedValue([{username: 'foo'}]);
 
       const response = await request(app)
-        .get('/msgs/testuser')
+        .get('/fllws/testuser')
         .set('Authorization', 'Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh');
 
       expect(response.status).toBe(404);
