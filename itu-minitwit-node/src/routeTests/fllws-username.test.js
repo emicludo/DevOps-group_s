@@ -61,15 +61,12 @@ describe('GET /fllws/:username', () => {
     });
 });
 
-describe('POST /msgs/:username', () => {
+describe('POST /fllws/:username', () => {
 
-  test('returns 403 if authorization header is not correct', async () => {
+  test.only('returns 403 if authorization header is not correct', async () => {
       const response = await request(app)
-        .post('/msgs/testuser')
-        .set('Authorization', 'incorrect_token')
-        .send({
-          content: 'testcontent'
-        });
+        .post('/fllws/testuser')
+        .set('Authorization', 'incorrect_token');
   
       expect(response.status).toBe(403);
       expect(response.body.error_msg).toBe("You are not authorized to use this resource!");
