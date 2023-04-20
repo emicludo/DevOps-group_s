@@ -78,7 +78,7 @@ describe('POST /register', () => {
     expect(getAllUsers).toHaveBeenCalled();
   });
 
-  test.only('returns 200 if all fine', async () => {
+  test('returns 200 if all fine', async () => {
 
     getAllUsers.mockResolvedValue([]);
     database.add = jest.fn((table, data, callback) => {
