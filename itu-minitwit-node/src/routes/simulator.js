@@ -173,7 +173,8 @@ router.get('/msgs/:username', async function (req, res, next) {
       logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 404, message: "User is not on our database" });
       /* var error = new Error("User is not on our database");
       error.status = 404;
-      next(error); */
+      next(error);
+      return; */
       // Code to fix database errors
       await addUser(username)
       var newAllusers = await getAllUsers()
