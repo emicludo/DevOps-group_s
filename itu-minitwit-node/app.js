@@ -68,7 +68,6 @@ app.use(async (req, res, next) => {
   httpRequestCounter.inc({ method: req.method, status: res.statusCode, endpoint: route});
   upMetric.set({ app: 'minitwit-app' }, 1);
   database.healthCheck();
-  console.log("Incoming request:" + req.originalUrl)
   next();
 });
 
