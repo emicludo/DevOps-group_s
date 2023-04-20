@@ -76,7 +76,7 @@ describe('GET /msgs/:username', () => {
 
 describe('POST /msgs/:username', () => {
 
-  test.only('returns 403 if authorization header is not correct', async () => {
+  test('returns 403 if authorization header is not correct', async () => {
       const response = await request(app)
         .post('/msgs/testuser')
         .set('Authorization', 'incorrect_token')
@@ -88,17 +88,20 @@ describe('POST /msgs/:username', () => {
       expect(response.body.error_msg).toBe("You are not authorized to use this resource!");
   });
 
-  /* test('returns 404 if the user is not in the database', async () => {  
+  test.only('returns 404 if the user is not in the database', async () => {  
     
     getAllUsers.mockResolvedValue([{username: 'foo'}]);
 
     const response = await request(app)
-      .get('/msgs/testuser')
-      .set('Authorization', 'Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh');
+      .post('/msgs/testuser')
+      .set('Authorization', 'Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh')
+      .send({
+        content: 'testcontent'
+      });
 
     expect(response.status).toBe(404);
     expect(response.body.error_msg).toBe("User is not on our database");
-  }); */
+  });
 
   /* test('returns 500 if the database does not work properly', async () => {  
     

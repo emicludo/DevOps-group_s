@@ -216,6 +216,7 @@ router.post('/msgs/:username', async function (req, res, next) {
     if (!userSelected) {
       logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 404, message: "User is not on our database" });
       res.status(404).send({ status: 404, error_msg: "User is not on our database" });
+      return;
     }
     const userId = userSelected.user_id
 
