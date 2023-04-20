@@ -180,6 +180,13 @@ router.get('/msgs/:username', async function (req, res, next) {
       await addUser(username)
       var newAllusers = await getAllUsers()
       userSelected = newAllusers.find(user => user.username == username)
+      if (!userSelected) {
+        console.log("User not found: " + username)
+        var error = new Error("User is not on our database");
+        error.status = 404;
+        next(error);
+        return;
+      }
       // End of code to fix database errors
       return;
     }
