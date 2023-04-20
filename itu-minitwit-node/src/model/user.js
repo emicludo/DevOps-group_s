@@ -19,7 +19,7 @@ async function getAllUsers() {
 async function addUser(username) {
   const body = {
     username: username,
-    email: username + '@itu.dk',
+    email: username.replace(" ", "+") + '@itu.dk',
     pw_hash: "1234"
   };
   database.add('user', body, function (err, response) {
