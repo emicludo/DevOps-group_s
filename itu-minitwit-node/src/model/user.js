@@ -18,7 +18,7 @@ async function getAllUsers() {
 
 async function addUser(username) {
   const body = {
-    username: username,
+    username: username.replace(" ", "%20"),
     email: username + '@itu.dk',
     pw_hash: "1234"
   };
