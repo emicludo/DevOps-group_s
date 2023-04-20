@@ -24,14 +24,12 @@ async function addUser(username) {
   };
   database.add('user', body, function (err, response) {
     if (err) {
-      if (err) {
-        console.log(err)
-        reject(err, null);
-      } else {
-        console.log("Creating user to fix the database")
-        logger.log('info', { message: "Creating user to fix the database" });
-        resolve(rows, null);
-      }
+      console.log(err)
+      reject(err, null);
+    } else {
+      console.log("Creating user to fix the database")
+      logger.log('info', { message: "Creating user to fix the database" });
+      resolve(rows, null);
     }
   });
 }
