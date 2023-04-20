@@ -29,7 +29,7 @@ describe('GET /msgs/:username', () => {
       expect(response.body.error_msg).toBe("User is not on our database");
     });
 
-    test.only('returns 500 if the database does not work properly', async () => {  
+    test('returns 500 if the database does not work properly', async () => {  
       
       getAllUsers.mockResolvedValue([{username: 'testuser'}]);
 
