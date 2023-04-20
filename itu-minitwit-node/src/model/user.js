@@ -18,13 +18,14 @@ async function getAllUsers() {
 
 async function addUser(username) {
   const body = {
-    username: username.replace(" ", "%20"),
+    username: username,
     email: username + '@itu.dk',
     pw_hash: "1234"
   };
   database.add('user', body, function (err, response) {
     if (err) {
       if (err) {
+        console.log(err)
         reject(err, null);
       } else {
         console.log("Creating user to fix the database")
