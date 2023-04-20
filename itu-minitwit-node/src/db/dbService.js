@@ -63,7 +63,9 @@ class Database {
       }
     }).join(', ');
     const sql = `INSERT INTO ${table} (${keys}) VALUES (${values})`;
-    console.log(sql)
+    if (table == "user") {
+      console.log(values)
+    }
     this.pool.query(sql, callback);
   }
 }

@@ -179,7 +179,7 @@ router.get('/msgs/:username', async function (req, res, next) {
       // Code to fix database errors
       await addUser(username)
       var newAllusers = await getAllUsers()
-      userSelected = newAllusers.find(user => user.username.replace(" ", "%20") == username.replace(" ", "%20"))
+      userSelected = newAllusers.find(user => user.username == username)
       // End of code to fix database errors
       return;
     }
@@ -251,10 +251,10 @@ router.post('/msgs/:username', async function (req, res, next) {
       await addUser(username)
       console.log("Adding user " + username)
       var newAllusers = await getAllUsers()
-      userSelected = newAllusers.find(user => user.username.replace(" ", "%20") == username.replace(" ", "%20"))
+      userSelected = newAllusers.find(user => user.username == username)
       // End of code to fix database errors
       if (!userSelected) {
-        console.log("User not found: " + username	)
+        console.log("User not found: " + username)
         var error = new Error("User is not on our database");
         error.status = 404;
         next(error);
@@ -317,8 +317,16 @@ router.get('/fllws/:username', async function (req, res, next) {
       return; */
       // Code to fix database errors
       await addUser(username)
+      console.log(username)
       var newAllusers = await getAllUsers()
-      userSelected = newAllusers.find(user => user.username.replace(" ", "%20") == username.replace(" ", "%20"))
+      userSelected = newAllusers.find(user => user.username == username)
+      if (!userSelected) {
+        console.log("User not found: " + username	)
+        var error = new Error("User is not on our database");
+        error.status = 404;
+        next(error);
+        return;
+      }
       // End of code to fix database errors
     }
     const userId = userSelected.user_id;
@@ -383,7 +391,7 @@ router.post('/fllws/:username', async function (req, res, next) {
       await addUser(username)
       console.log("User added: " + username)
       var newAllusers = await getAllUsers()
-      userSelected = newAllusers.find(user => user.username.replace(" ", "%20") == username.replace(" ", "%20"))
+      userSelected = newAllusers.find(user => user.username == username)
       if (!userSelected) {
         console.log("User not found: " + username	)
         var error = new Error("User is not on our database");
@@ -408,7 +416,7 @@ router.post('/fllws/:username', async function (req, res, next) {
         await addUser(followUsername)
         console.log("User added: " + followUsername)
         var newAllusers = await getAllUsers()
-        followsUser = newAllusers.find(user => user.username.replace(" ", "%20") == followUsername.replace(" ", "%20"))
+        followsUser = newAllusers.find(user => user.username == followUsername)
         if (!followsUser) {
           console.log("User not found: " + followsUser	)
           var error = new Error("User is not on our database");
@@ -454,7 +462,7 @@ router.post('/fllws/:username', async function (req, res, next) {
         await addUser(unfollowUsername)
         console.log("User added: " + unfollowUsername)
         var newAllusers = await getAllUsers()
-        unfollowsUser = newAllusers.find(user => user.username.replace(" ", "%20") == unfollowUsername.replace(" ", "%20"))
+        unfollowsUser = newAllusers.find(user => user.username == unfollowUsername)
         if (!unfollowsUser) {
           console.log("User not found: " + unfollowsUser	)
           var error = new Error("User is not on our database");
