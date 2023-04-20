@@ -84,7 +84,22 @@ describe('POST /fllws/:username', () => {
     expect(response.body.error_msg).toBe("User is not on our database");
   });
 
-  test.only('returns 500 if the database does not work properly', async () => {  
+  test.only('returns 404 if the follows user is not in the database', async () => {  
+    
+    getAllUsers.mockResolvedValue([{username: 'testuser'}]);
+
+    const response = await request(app)
+      .post('/fllws/testuser')
+      .set('Authorization', 'Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh')
+      .send({
+        follow: "followuser"
+      });
+
+    expect(response.status).toBe(404);
+    expect(response.body.error_msg).toBe("Follows user is not on our database");
+  });
+
+  test('returns 500 if the database does not work properly', async () => {  
     
     getAllUsers.mockResolvedValue([{username: 'testuser'}]);
 
