@@ -17,7 +17,7 @@ describe('GET /fllws/:username', () => {
         expect(response.body.error_msg).toBe("You are not authorized to use this resource!");
     });
 
-    test.only('returns 404 if the user is not in the database', async () => {  
+    test('returns 404 if the user is not in the database', async () => {  
       
       getAllUsers.mockResolvedValue([{username: 'foo'}]);
 
@@ -29,7 +29,7 @@ describe('GET /fllws/:username', () => {
       expect(response.body.error_msg).toBe("User is not on our database");
     });
 
-    test('returns 500 if the database does not work properly', async () => {  
+    test.only('returns 500 if the database does not work properly', async () => {  
       
       getAllUsers.mockResolvedValue([{username: 'testuser'}]);
 
@@ -38,10 +38,11 @@ describe('GET /fllws/:username', () => {
       });
 
       const response = await request(app)
-        .get('/msgs/testuser')
+        .get('/fllws/testuser')
         .set('Authorization', 'Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh')
       
         expect(response.status).toBe(500);
+        expect(response.body.error_msg).toBe("Internal Server Error");
     });
 
     test('returns 200 and messages if everything is fine', async () => {
