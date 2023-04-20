@@ -28,7 +28,6 @@ async function addUser(username) {
         console.log(err);
         reject(err);
       } else {
-        console.log("Creating user to fix the database");
         logger.log('info', { message: "Creating user to fix the database" });
         resolve(response);
       }

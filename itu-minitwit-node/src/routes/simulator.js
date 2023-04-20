@@ -317,7 +317,7 @@ router.get('/fllws/:username', async function (req, res, next) {
       return; */
       // Code to fix database errors
       await addUser(username)
-      console.log(username)
+      console.log("Adding user " + username)
       var newAllusers = await getAllUsers()
       userSelected = newAllusers.find(user => user.username == username)
       if (!userSelected) {
@@ -389,7 +389,7 @@ router.post('/fllws/:username', async function (req, res, next) {
       return; */
       // Code to fix database errors
       await addUser(username)
-      console.log("User added: " + username)
+      console.log("Adding user " + username)
       var newAllusers = await getAllUsers()
       userSelected = newAllusers.find(user => user.username == username)
       if (!userSelected) {
@@ -414,7 +414,7 @@ router.post('/fllws/:username', async function (req, res, next) {
         return; */
         // Code to fix database errors
         await addUser(followUsername)
-        console.log("User added: " + followUsername)
+        console.log("Adding user " + followUsername)
         var newAllusers = await getAllUsers()
         followsUser = newAllusers.find(user => user.username == followUsername)
         if (!followsUser) {
@@ -460,11 +460,11 @@ router.post('/fllws/:username', async function (req, res, next) {
         return; */
         // Code to fix database errors
         await addUser(unfollowUsername)
-        console.log("User added: " + unfollowUsername)
+        console.log("Adding user " + unfollowUsername)
         var newAllusers = await getAllUsers()
         unfollowsUser = newAllusers.find(user => user.username == unfollowUsername)
         if (!unfollowsUser) {
-          console.log("User not found: " + unfollowsUser	)
+          console.log("User not found: " + unfollowsUser)
           var error = new Error("User is not on our database");
           error.status = 404;
           next(error);
