@@ -209,7 +209,7 @@ describe('POST /fllws/:username', () => {
     expect(response.status).toBe(500);
   });
 
-  test.only('returns 204 if all ok while unfollowing', async () => {  
+  test('returns 204 if all ok while unfollowing', async () => {  
     
     getAllUsers.mockResolvedValue([{username: 'testuser'}, {username: 'unfollowuser'}]);
     getFollowersFromUser.mockResolvedValue(['unfollowuser']);
@@ -226,6 +226,26 @@ describe('POST /fllws/:username', () => {
       });
 
     expect(response.status).toBe(204);
+  });
+
+  test.only('returns 400 if sth else than follow or unfollow', async () => {  
+    
+    getAllUsers.mockResolvedValue([{username: 'testuser'}, {username: 'unfollowuser'}]);
+    getFollowersFromUser.mockResolvedValue(['unfollowuser']);
+
+    database.run = jest.fn((sql, params, callback) => {
+      callback(null, 'Success');
+    });
+
+    const response = await request(app)
+      .post('/fllws/testuser')
+      .set('Authorization', 'Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh')
+      .send({
+        test: "unfollowuser"
+      });
+
+    expect(response.status).toBe(400);
+    expect(response.body.error_msg).toBe('Invalid request body');
   });
   
 });
