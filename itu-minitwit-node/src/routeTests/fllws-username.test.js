@@ -155,6 +155,26 @@ describe('POST /fllws/:username', () => {
     expect(response.status).toBe(204);
   });
 
+  test('returns 404 if unfollows user is not in the DB', async () => {  
+    
+    getAllUsers.mockResolvedValue([{username: 'testuser'}, {username: 'followuser'}]);
+    getFollowersFromUser.mockResolvedValue([]);
+
+    database.run = jest.fn((sql, params, callback) => {
+      callback(null, 'Success');
+    });
+
+    const response = await request(app)
+      .post('/fllws/testuser')
+      .set('Authorization', 'Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh')
+      .send({
+        unfollow: "unfollowuser"
+      });
+
+    expect(response.status).toBe(404);
+    expect(response.body.error_msg).toBe("Unfollows user is not on our database");
+  });
+
   test.only('returns 404 if unfollows user is not in the DB', async () => {  
     
     getAllUsers.mockResolvedValue([{username: 'testuser'}, {username: 'followuser'}]);
