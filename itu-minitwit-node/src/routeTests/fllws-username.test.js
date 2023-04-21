@@ -2,9 +2,11 @@ const request = require('supertest');
 const app = require('../../app');
 const database = require('../db/dbService');
 const getAllUsers = require('../model/user');
+const getFollowersFromUser = require('../model/followers.js');
 
 jest.mock('../db/dbService');
 jest.mock('../model/user');
+jest.mock('../model/followers.js');
 
 describe('GET /fllws/:username', () => {
 
@@ -97,6 +99,22 @@ describe('POST /fllws/:username', () => {
 
     expect(response.status).toBe(404);
     expect(response.body.error_msg).toBe("Follows user is not on our database");
+  });
+
+  test.only('returns 403 if the user already follows the follows user', async () => {  
+    
+    getAllUsers.mockResolvedValue([{username: 'testuser'}, {username: 'followuser'}]);
+    getFollowersFromUser.mockResolvedValue((['followuser']));
+
+    const response = await request(app)
+      .post('/fllws/testuser')
+      .set('Authorization', 'Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh')
+      .send({
+        follow: "followuser"
+      });
+
+    expect(response.status).toBe(403);
+    expect(response.body.error_msg).toBe("User already follows this user");
   });
 
   /* test('returns 500 if the database does not work properly', async () => {  
