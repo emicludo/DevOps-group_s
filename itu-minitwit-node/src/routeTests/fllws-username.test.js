@@ -101,7 +101,7 @@ describe('POST /fllws/:username', () => {
     expect(response.body.error_msg).toBe("Follows user is not on our database");
   });
 
-  test.only('returns 403 if the user already follows the follows user', async () => {  
+  test('returns 403 if the user already follows the follows user', async () => {  
     
     getAllUsers.mockResolvedValue([{username: 'testuser'}, {username: 'followuser'}]);
     getFollowersFromUser.mockResolvedValue((['followuser']));
@@ -115,6 +115,44 @@ describe('POST /fllws/:username', () => {
 
     expect(response.status).toBe(403);
     expect(response.body.error_msg).toBe("User already follows this user");
+  });
+
+  test('returns 500 if the database fails while following', async () => {  
+    
+    getAllUsers.mockResolvedValue([{username: 'testuser'}, {username: 'followuser'}]);
+    getFollowersFromUser.mockResolvedValue([]);
+
+    database.run = jest.fn((sql, params, callback) => {
+      callback('Error', null);
+    });
+
+    const response = await request(app)
+      .post('/fllws/testuser')
+      .set('Authorization', 'Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh')
+      .send({
+        follow: "followuser"
+      });
+
+    expect(response.status).toBe(500);
+  });
+
+  test.only('returns 204 if all fine while following', async () => {  
+    
+    getAllUsers.mockResolvedValue([{username: 'testuser'}, {username: 'followuser'}]);
+    getFollowersFromUser.mockResolvedValue([]);
+
+    database.run = jest.fn((sql, params, callback) => {
+      callback(null, 'Success');
+    });
+
+    const response = await request(app)
+      .post('/fllws/testuser')
+      .set('Authorization', 'Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh')
+      .send({
+        follow: "followuser"
+      });
+
+    expect(response.status).toBe(204);
   });
 
   /* test('returns 500 if the database does not work properly', async () => {  
