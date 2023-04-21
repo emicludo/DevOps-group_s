@@ -360,7 +360,7 @@ router.post('/fllws/:username', async function (req, res, next) {
       const userFollowsList = await getFollowersFromUser(userId, null);
       if (!userFollowsList.includes(unfollowsUser.username)) {
         logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 204, message: "User is not following the user with name " + unfollowsUser.username });
-        res.status(204).send("");
+        res.status(404).send("");
         return
       }
 

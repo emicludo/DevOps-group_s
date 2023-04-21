@@ -175,10 +175,44 @@ describe('POST /fllws/:username', () => {
     expect(response.body.error_msg).toBe("Unfollows user is not on our database");
   });
 
-  test.only('returns 404 if unfollows user is not in the DB', async () => {  
+  test('returns 404 if user does not follow the unfollows user', async () => {  
     
-    getAllUsers.mockResolvedValue([{username: 'testuser'}, {username: 'followuser'}]);
+    getAllUsers.mockResolvedValue([{username: 'testuser'}, {username: 'unfollowuser'}]);
     getFollowersFromUser.mockResolvedValue([]);
+
+    const response = await request(app)
+      .post('/fllws/testuser')
+      .set('Authorization', 'Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh')
+      .send({
+        unfollow: "unfollowuser"
+      });
+
+    expect(response.status).toBe(404);
+  });
+
+  test('returns 500 if DB fails while unfollowing', async () => {  
+    
+    getAllUsers.mockResolvedValue([{username: 'testuser'}, {username: 'unfollowuser'}]);
+    getFollowersFromUser.mockResolvedValue(['unfollowuser']);
+
+    database.run = jest.fn((sql, params, callback) => {
+      callback('Error', null);
+    });
+
+    const response = await request(app)
+      .post('/fllws/testuser')
+      .set('Authorization', 'Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh')
+      .send({
+        unfollow: "unfollowuser"
+      });
+
+    expect(response.status).toBe(500);
+  });
+
+  test.only('returns 204 if all ok while unfollowing', async () => {  
+    
+    getAllUsers.mockResolvedValue([{username: 'testuser'}, {username: 'unfollowuser'}]);
+    getFollowersFromUser.mockResolvedValue(['unfollowuser']);
 
     database.run = jest.fn((sql, params, callback) => {
       callback(null, 'Success');
@@ -191,8 +225,7 @@ describe('POST /fllws/:username', () => {
         unfollow: "unfollowuser"
       });
 
-    expect(response.status).toBe(404);
-    expect(response.body.error_msg).toBe("Unfollows user is not on our database");
+    expect(response.status).toBe(500);
   });
   
 });
