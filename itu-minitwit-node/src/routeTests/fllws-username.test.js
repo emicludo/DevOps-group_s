@@ -225,7 +225,7 @@ describe('POST /fllws/:username', () => {
         unfollow: "unfollowuser"
       });
 
-    expect(response.status).toBe(500);
+    expect(response.status).toBe(204);
   });
   
 });
