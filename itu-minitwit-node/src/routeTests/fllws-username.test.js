@@ -136,7 +136,7 @@ describe('POST /fllws/:username', () => {
     expect(response.status).toBe(500);
   });
 
-  test.only('returns 204 if all fine while following', async () => {  
+  test('returns 204 if all fine while following', async () => {  
     
     getAllUsers.mockResolvedValue([{username: 'testuser'}, {username: 'followuser'}]);
     getFollowersFromUser.mockResolvedValue([]);
@@ -155,41 +155,24 @@ describe('POST /fllws/:username', () => {
     expect(response.status).toBe(204);
   });
 
-  /* test('returns 500 if the database does not work properly', async () => {  
+  test.only('returns 404 if unfollows user is not in the DB', async () => {  
     
-    getAllUsers.mockResolvedValue([{username: 'testuser'}]);
+    getAllUsers.mockResolvedValue([{username: 'testuser'}, {username: 'followuser'}]);
+    getFollowersFromUser.mockResolvedValue([]);
 
-    database.add = jest.fn((table, data, callback) => {
-      callback('Error', null);
+    database.run = jest.fn((sql, params, callback) => {
+      callback(null, 'Success');
     });
 
     const response = await request(app)
-    .post('/msgs/testuser')
-    .set('Authorization', 'Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh')
-    .send({
-      content: 'testcontent'
-    });
-    
-    expect(response.status).toBe(500);
+      .post('/fllws/testuser')
+      .set('Authorization', 'Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh')
+      .send({
+        unfollow: "unfollowuser"
+      });
+
+    expect(response.status).toBe(404);
+    expect(response.body.error_msg).toBe("Unfollows user is not on our database");
   });
-
-  test('returns 204 if everything is fine', async () => {
-
-    getAllUsers.mockResolvedValue([{username: 'testuser'}]);
-
-    database.add = jest.fn((table, data, callback) => {
-      callback(null, "Success");
-    });
-    
-    const response = await request(app)
-    .post('/msgs/testuser')
-    .set('Authorization', 'Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh')
-    .send({
-      content: 'testcontent'
-    });
-
-      expect(response.body).toEqual({});
-      expect(response.status).toEqual(204);
-  }); */
-
+  
 });
