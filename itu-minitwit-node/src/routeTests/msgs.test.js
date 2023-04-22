@@ -1,6 +1,7 @@
 const request = require('supertest');
 const app = require('../../app');
 const database = require('../db/dbService');
+jest.useFakeTimers();
 
 jest.mock('../db/dbService');
 

@@ -2,6 +2,7 @@ const request = require('supertest');
 const app = require('../../app');
 const database = require('../db/dbService');
 const getAllUsers = require('../model/user');
+jest.useFakeTimers();
 
 jest.mock('../db/dbService');
 jest.mock('../model/user');
