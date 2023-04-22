@@ -32,7 +32,7 @@ jobs:
       - name: Install dependencies
         run: npm ci --prefix=itu-minitwit-node
       - name: Run Jest tests  
-        run: npm test 
+        run: npm test --prefix=itu-minitwit-node
         continue-on-error: false
 
       - name: Login to Docker Hub
