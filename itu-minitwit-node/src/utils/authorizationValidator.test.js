@@ -1,6 +1,4 @@
 const isSimulator = require('./authorizationValidator');
-jest.useFakeTimers();
-
 test('recognizesSimulator', () => {
     expect(isSimulator('Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh')).toBe(true);
 })

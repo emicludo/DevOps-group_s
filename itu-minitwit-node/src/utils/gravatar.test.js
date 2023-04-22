@@ -1,6 +1,5 @@
 const gravatar = require('./gravatar');
 const crypto = require('crypto');
-jest.useFakeTimers();
 
 describe('gravatar function', () => {
   test('should return the correct URL for a given email and size', () => {

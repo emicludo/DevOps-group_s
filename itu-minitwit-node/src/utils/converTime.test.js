@@ -1,5 +1,4 @@
 const convert = require('./convertTime');
-jest.useFakeTimers();
 
 describe('convert', () => {
   test('converting an epoch time to a correct format', () => {

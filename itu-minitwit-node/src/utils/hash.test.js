@@ -1,5 +1,4 @@
 const hash = require('./hash');
-jest.useFakeTimers();
 
 describe('hash function', () => {
     test('returns a hash string', () => {

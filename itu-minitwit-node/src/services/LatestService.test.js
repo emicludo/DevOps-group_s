@@ -1,5 +1,4 @@
 const LatestService = require('./LatestService');
-jest.useFakeTimers();
 
 const latestService = new LatestService();
 

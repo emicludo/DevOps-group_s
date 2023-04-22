@@ -228,7 +228,7 @@ describe('POST /fllws/:username', () => {
     expect(response.status).toBe(204);
   });
 
-  test.only('returns 400 if sth else than follow or unfollow', async () => {  
+  test('returns 400 if sth else than follow or unfollow', async () => {  
     
     getAllUsers.mockResolvedValue([{username: 'testuser'}, {username: 'unfollowuser'}]);
     getFollowersFromUser.mockResolvedValue(['unfollowuser']);
