@@ -5,10 +5,10 @@ on:
   push:
     # Run workflow every time something is pushed to the main branch
     branches:
-      - main
+      - w10-unitTests
   pull_request:
     branches: 
-      - main
+      - w10-unitTests
   # allow manual triggers for now too
   workflow_dispatch:
     manual: true
