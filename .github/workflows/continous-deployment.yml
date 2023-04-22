@@ -5,10 +5,10 @@ on:
   push:
     # Run workflow every time something is pushed to the main branch
     branches:
-      - w10-unitTests
+      - main
   pull_request:
     branches: 
-      - w10-unitTests
+      - main
   # allow manual triggers for now too
   workflow_dispatch:
     manual: true
@@ -48,16 +48,6 @@ jobs:
           cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/minitwitimage:webbuildcache
           cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/minitwitimage:webbuildcache,mode=max
 
-      - name: Test minitwit
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          file: ./itu-minitwit-node/Dockerfile-test
-          push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/minitwitimagetest:latest
-          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/minitwitimagetest:webbuildcache
-          cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/minitwitimagetest:webbuildcache,mode=max
-
       - name: Build and push Flag tool image
         uses: docker/build-push-action@v2
         with:
@@ -75,3 +65,14 @@ jobs:
           chmod 600 ~/.ssh/minitwit.key
         env: 
           SSH_KEY: ${{ secrets.SSH_KEY }}
+
+      - name: Deploy to server
+        # Configure the ~./bash_profile and deploy.sh file on the Vagrantfile
+        run: >
+          ssh $SSH_USER@$SSH_HOST
+          -i ~/.ssh/minitwit.key -o StrictHostKeyChecking=no
+          './minitwit/deploy.sh "${{ secrets.MYSQL_PASSWORD }}" "${{ secrets.MYSQL_USERNAME }}" "${{ secrets.MYSQL_HOST }}" "${{ secrets.MYSQL_PORT }}" "${{ secrets.MYSQL_DATABASE }}"'
+          
+        env:
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
