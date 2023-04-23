@@ -372,9 +372,9 @@ router.post('/fllws/:username', async function (req, res, next) {
 
       const userFollowsList = await getFollowersFromUser(userId, null);
       if (userFollowsList.includes(followsUser.username)) {
-        logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 403, message: "User already follows this user" });
+        logger.log('warn',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 204, message: "User already follows this user" });
         var error = new Error("User already follows this user");
-        error.status = 403;
+        error.status = 204;
         next(error);
         return
       }
@@ -407,7 +407,7 @@ router.post('/fllws/:username', async function (req, res, next) {
       //Validates if user is following the unfollows user
       const userFollowsList = await getFollowersFromUser(userId, null);
       if (!userFollowsList.includes(unfollowsUser.username)) {
-        logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 204, message: "User is not following the user with name " + unfollowsUser.username });
+        logger.log('warn',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 204, message: "User is not following the user with name " + unfollowsUser.username });
         res.status(204).send("");
         return
       }
