@@ -5,13 +5,13 @@ FROM node:latest
 WORKDIR /app
 
 # Copy package.json and package-lock.json to the working directory
-COPY ../package*.json ./
+COPY itu-minitwit-node/package*.json ./
 
 # Install app dependencies
 RUN npm install
 
 # Copy the current directory contents into the container at /app
-COPY ../ .
+COPY itu-minitwit-node .
 
 # Set the environment variable PORT to 5000
 ENV PORT=3000
