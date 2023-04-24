@@ -70,7 +70,7 @@ jobs:
 
       - name: Test minitwit
         run: |
-          docker build -t $DOCKER_USERNAME/minitwit-tests -f ./itu-minitwit-node/tests/Dockerfile ./itu-minitwit-node/tests
+          docker build -t $DOCKER_USERNAME/minitwit-tests -f ./itu-minitwit-node/tests/Dockerfile .
           yes 2>/dev/null | docker-compose up -d
           docker run docker run   --name test   -p 3000:3000   -e MYSQL_PASSWORD=$MYSQL_PASSWORD   -e MYSQL_USERNAME=$MYSQL_USERNAME   -e MYSQL_HOST=$MYSQL_HOST   -e MYSQL_PORT=$MYSQL_PORT   -e MYSQL_DATABASE=$MYSQL_DATABASE $DOCKER_USERNAME/minitwit-tests
         env:
