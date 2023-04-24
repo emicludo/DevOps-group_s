@@ -2,6 +2,7 @@ version: '3.3'
 
 networks:
   main:
+    name: itu-minitwit-network
 
 services:
   minitwitimage:
