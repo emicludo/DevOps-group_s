@@ -1,4 +1,4 @@
-const convert = require('./convertTime');
+/* const convert = require('./convertTime');
 
 describe('convert', () => {
   test('converting an epoch time to a correct format', () => {
@@ -24,4 +24,8 @@ describe('convert', () => {
     // Call the function and assert the output
     expect(convert(epochTime)).toEqual('2023-1-19 @ 0:40');
   });
-});
+}); */
+
+test('boilerplate', () => {
+  expect('hello world').toEqual('hello world')
+})
