@@ -16,7 +16,8 @@
     "http-errors": "^2.0.0",
     "iconv-lite": "^0.6.3",
     "jade": "~1.11.0",
-    "mysql2": "^3.2.3",
+    "jsdom": "^21.1.1",
+    "mysql2": "^3.2.4",
     "nodemon": "^2.0.20",
     "path": "^0.12.7",
     "prom-client": "^14.2.0",
@@ -24,6 +25,8 @@
   },
   "devDependencies": {
     "jest": "^29.5.0",
+    "jest-environment-jsdom": "^29.5.0",
+    "mocha": "^10.2.0",
     "supertest": "^6.3.3"
   }
 }

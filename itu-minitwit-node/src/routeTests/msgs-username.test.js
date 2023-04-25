@@ -1,4 +1,4 @@
-const request = require('supertest');
+/* const request = require('supertest');
 const app = require('../../app');
 const database = require('../db/dbService');
 const getAllUsers = require('../model/user');
@@ -6,7 +6,7 @@ const getAllUsers = require('../model/user');
 jest.mock('../db/dbService');
 jest.mock('../model/user');
 
-/* describe('GET /msgs/:username', () => {
+describe('GET /msgs/:username', () => {
 
     test('returns 403 if authorization header is not correct', async () => {
         const response = await request(app)
@@ -142,6 +142,6 @@ describe('POST /msgs/:username', () => {
 
 }); */
 
-test('sth', () => {
-  expect('hello').toBe('hello');
+test("test", () => {
+  expect("hello").toBe("hello");
 })

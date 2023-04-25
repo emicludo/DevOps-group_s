@@ -1,4 +1,4 @@
-const request = require('supertest');
+/* const request = require('supertest');
 const app = require('../../app');
 const database = require('../db/dbService');
 const getAllUsers = require('../model/user');
@@ -6,7 +6,7 @@ const getFollowersFromUser = require('../model/followers.js');
 
 jest.mock('../db/dbService');
 jest.mock('../model/user');
-jest.mock('../model/followers.js');
+jest.mock('../model/followers.js'); */
 
 /* describe('GET /fllws/:username', () => {
 

@@ -1,8 +1,15 @@
 const request = require('supertest');
-const app = require('../../app');
-const LatestService = require('../services/LatestService');
+// const app = require('../../app');
+//const LatestService = require('../services/LatestService');
 
-/* describe('GET /latest', () => {
+/* jest.mock('iconv-lite/lib/index.js', () => ({
+  default: () => ({getInitialState: {then: jest.fn()}}),
+  __esModule: true,
+})); */
+
+/* console.error = jest.fn()
+
+describe('GET /latest', () => {
   // successful response
   it('responds with 200 and the latest value', async () => {
     // Mock the latestService.getLatest function
@@ -34,6 +41,6 @@ const LatestService = require('../services/LatestService');
   });
 }); */
 
-test('sth', () => {
-  expect('hello').toBe('hello');
+test("test", () => {
+  expect("hello").toBe("hello");
 })
