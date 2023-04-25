@@ -1,5 +1,8 @@
 const database = require('../db/dbService')
 
+//Utils
+var logger = require('../logger/logger');
+
 // Get all users
 async function getAllUsers() {
   return new Promise((resolve, reject) => {
@@ -13,4 +16,23 @@ async function getAllUsers() {
   })
 }
 
-module.exports = getAllUsers;
+async function addUser(username) {
+  return new Promise((resolve, reject) => {
+    const body = {
+      username: username,
+      email: username.replace(" ", "+") + '@itu.dk',
+      pw_hash: "1234"
+    };
+    database.add('user', body, function (err, response) {
+      if (err) {
+        console.log(err);
+        reject(err);
+      } else {
+        logger.log('info', { message: "Creating user to fix the database" });
+        resolve(response);
+      }
+    });
+  });
+}
+
+module.exports = { getAllUsers, addUser };
