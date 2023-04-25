@@ -72,6 +72,12 @@ jobs:
         run: |
           docker build -t minitwit-tests -f ./itu-minitwit-node/tests/Dockerfile .
           docker run --rm -e MYSQL_PASSWORD=$MYSQL_PASSWORD   -e MYSQL_USERNAME=$MYSQL_USERNAME   -e MYSQL_HOST=$MYSQL_HOST   -e MYSQL_PORT=$MYSQL_PORT   -e MYSQL_DATABASE=$MYSQL_DATABASE minitwit-tests
+        env:
+          MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+          MYSQL_USERNAME: ${{ secrets.MYSQL_USERNAME }}
+          MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
+          MYSQL_PORT: ${{ secrets.MYSQL_PORT }}
+          MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
 
       - name: Configure SSH
         run: |
