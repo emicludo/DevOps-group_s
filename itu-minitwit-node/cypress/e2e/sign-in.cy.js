@@ -25,5 +25,13 @@ describe('Signing in', () => {
         cy.get('#submit-btn').click()
         cy.get('#error-msg').should('be.visible')
     })
-    
+})
+
+describe('Signing out', () => {
+    it('clicking "sign out" signs you out', () => {
+        cy.login('test-user', 'password123')
+        cy.visit('/')
+        cy.get('#sign-out').click()
+        cy.contains('#message', 'You were logged out')
+    })
 })
