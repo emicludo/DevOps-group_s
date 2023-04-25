@@ -168,7 +168,7 @@ router.get('/msgs/:username', async function (req, res, next) {
     }
 
     const users = await getAllUsers()
-    var userSelected = users.find(user => user.username == username)
+    const userSelected = users.find(user => user.username == username)
     if (!userSelected) {
       logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 404, message: "User is not on our database" });
       /* var error = new Error("User is not on our database");
@@ -271,7 +271,7 @@ router.post('/msgs/:username', async function (req, res, next) {
 
     const body = {
       author_id: userId,
-      text: content,
+      text: content.replace(/'/g, "''"),
       pub_date: Date.now(),
       flagged: 0
     };
@@ -313,7 +313,8 @@ router.get('/fllws/:username', async function (req, res, next) {
       latestService.updateLatest(parseInt(latest));
     }
 
-    const userSelected = await getUserByUsername(username)
+    const users = await getAllUsers();
+    const userSelected = users.find(user => user.username == username);
     if (!userSelected) {
       logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 404, message: "User is not on our database" });
       /* var error = new Error("User is not on our database");
@@ -385,7 +386,7 @@ router.post('/fllws/:username', async function (req, res, next) {
     }
 
     const users = await getAllUsers();
-    var userSelected = users.find(user => user.username == username);
+    const userSelected = users.find(user => user.username == username);
     if (!userSelected) {
       logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 404, message: "User is not on our database" });
       /* var error = new Error("User is not on our database");
@@ -410,7 +411,7 @@ router.post('/fllws/:username', async function (req, res, next) {
 
     if (req.body.follow) {
       const followUsername = req.body.follow;
-      var followsUser = users.find(user => user.username === followUsername);
+      const followsUser = users.find(user => user.username == followUsername);
       if (!followsUser) {
         logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 404, message: "Follows user is not on our database" });
         /* var error = new Error("User to be followed is not on our database");
@@ -434,7 +435,7 @@ router.post('/fllws/:username', async function (req, res, next) {
 
       const userFollowsList = await getFollowersFromUser(userId, null);
       if (userFollowsList.includes(followsUser.username)) {
-        logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 204, message: "User already follows this user" });
+        logger.log('warn',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 204, message: "User already follows this user" });
         var error = new Error("User already follows this user");
         error.status = 204;
         next(error);
@@ -456,7 +457,7 @@ router.post('/fllws/:username', async function (req, res, next) {
       });
     } else if (req.body.unfollow) {
       const unfollowUsername = req.body.unfollow;
-      var unfollowsUser = users.find(user => user.username === unfollowUsername);
+      const unfollowsUser = users.find(user => user.username == unfollowUsername);
       if (!unfollowsUser) {
         logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 404, message: "Unfollows user is not on our database" });
         /*  var error = new Error("Unfollows user is not on our database");
@@ -482,8 +483,8 @@ router.post('/fllws/:username', async function (req, res, next) {
       //Validates if user is following the unfollows user
       const userFollowsList = await getFollowersFromUser(userId, null);
       if (!userFollowsList.includes(unfollowsUser.username)) {
-        logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 204, message: "User is not following the user with name " + unfollowsUser.username });
-        res.status(404).send("");
+        logger.log('warn',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 204, message: "User is not following the user with name " + unfollowsUser.username });
+        res.status(204).send("");
         return
       }
 
