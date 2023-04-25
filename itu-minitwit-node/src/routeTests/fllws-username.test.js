@@ -235,7 +235,7 @@ describe('POST /fllws/:username', () => {
 
     database.run = jest.fn((sql, params, callback) => {
       callback(null, 'Success');
-    });
+    }); //
 
     const response = await request(app)
       .post('/fllws/testuser')
