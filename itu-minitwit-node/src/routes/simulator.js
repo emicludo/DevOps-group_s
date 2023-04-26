@@ -243,7 +243,6 @@ router.post('/msgs/:username', async function (req, res, next) {
     var userSelected = users.find(user => user.username == username)
     if (!userSelected) {
       logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 404, message: "User is not on our database" });
-      console.log("User is not on our database")
       /* var error = new Error("User is not on our database");
       error.status = 404;
       next(error);
@@ -252,8 +251,8 @@ router.post('/msgs/:username', async function (req, res, next) {
       await addUser(username)
       var newAllusers = await getAllUsers()
       userSelected = newAllusers.find(user => user.username == username)
+      console.log("New user: " + userSelected.username)
       // End of code to fix database errors
-      
     }
     const userId = userSelected.user_id;
 
@@ -377,6 +376,7 @@ router.post('/fllws/:username', async function (req, res, next) {
       await addUser(username)
       var newAllusers = await getAllUsers()
       userSelected = newAllusers.find(user => user.username == username)
+      console.log("user added: " + userSelected.username)
       // End of code to fix database errors
     }
     const userId = userSelected.user_id;
