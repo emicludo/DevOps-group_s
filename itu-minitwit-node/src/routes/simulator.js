@@ -391,15 +391,15 @@ router.post('/fllws/:username', async function (req, res, next) {
         next(error);
         return; */
         // Code to fix database errors
-        await addUser(username)
+        await addUser(followUsername)
         var newAllusers = await getAllUsers()
-        followsUser = newAllusers.find(user => user.username == username)
+        followsUser = newAllusers.find(user => user.username == followUsername)
         // End of code to fix database errors
       }
 
       const userFollowsList = await getFollowersFromUser(userId, null);
       if (userFollowsList.includes(followsUser.username)) {
-        logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 403, message: "User already follows this user" });
+        logger.log('warn',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 403, message: "User already follows this user" });
         var error = new Error("User already follows this user");
         error.status = 403;
         next(error);
@@ -429,9 +429,9 @@ router.post('/fllws/:username', async function (req, res, next) {
         next(error);
         return; */
         // Code to fix database errors
-        await addUser(username)
+        await addUser(unfollowUsername)
         var newAllusers = await getAllUsers()
-        unfollowsUser = newAllusers.find(user => user.username == username)
+        unfollowsUser = newAllusers.find(user => user.username == unfollowUsername)
         // End of code to fix database errors
       }
       const unfollowsUserId = unfollowsUser.user_id;
