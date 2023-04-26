@@ -301,7 +301,7 @@ router.get('/fllws/:username', async function (req, res, next) {
     }
 
     const users = await getAllUsers();
-    const userSelected = users.find(user => user.username === username);
+    var userSelected = users.find(user => user.username === username);
     if (!userSelected) {
       logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 404, message: "User is not on our database" });
       /* var error = new Error("User is not on our database");
