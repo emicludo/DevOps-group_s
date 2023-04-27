@@ -118,14 +118,10 @@ describe('POST /fllws/:username', () => {
     expect(response.status).to.equal(403);
     expect(response.body.error_msg).to.equal("User already follows this user");
   });
-});
-
-  /* 
-  
 
   it('returns 500 if the database fails while following', async () => {
-    sinon.stub(getAllUsers, 'default').resolves([{username: 'testuser'}, {username: 'followuser'}]);
-    sinon.stub(getFollowersFromUser, 'default').resolves([]);
+    sinon.stub(getAllUsers.prototype, 'getAllUsers').resolves([{username: 'testuser'}, {username: 'followuser'}]);
+    sinon.stub(getFollowersFromUser.prototype, 'getFollowersFromUser').resolves([]);
     sinon.stub(database, 'run').callsArgWith(2, 'Error', null);
 
     const response = await request(app)
@@ -137,6 +133,10 @@ describe('POST /fllws/:username', () => {
 
     expect(response.status).to.equal(500);
   });
+});
 
+  
+
+  /* 
   it('returns 204 if all fine while following', async () => {
     sinon.stub(getAllUsers, 'default').resolves([{username */
