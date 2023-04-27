@@ -14,12 +14,18 @@ services:
     image: minitwitimage
     container_name: minitwit
     networks:
-      - elk
+      elk
     ports:
-        - '5000:5000'
+      '5000:5000'
     volumes:
-      - elk_elasticsearch_data:/app/logs
-      #- /app/logs:/app/logs
+      elk_elasticsearch_data:/app/logs
+      #/app/logs:/app/logs
+    deploy: 
+      replicas: 3
+      endpoint_mode: vip
+      placement:
+        constraints:
+          - "node.role==manager"
       
 
   elasticsearch:
@@ -32,9 +38,14 @@ services:
         - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
         - "discovery.type=single-node"
     volumes:
-        - elk_elasticsearch_data:/var/lib/elasticsearch/data
+        elk_elasticsearch_data:/var/lib/elasticsearch/data
     networks:
-        - elk
+        elk
+    deploy: 
+      endpoint_mode: vip
+      placement:
+        constraints:
+          "node.role==worker"
 
   kibana:
     image: "docker.elastic.co/kibana/kibana:7.17.1"
@@ -42,9 +53,14 @@ services:
     environment:
         elasticsearch.hosts: '["http://elasticsearch:9200"]'
     ports:
-      - "5601:5601"
+      "5601:5601"
     networks:
-        - elk
+      elk
+    deploy: 
+      endpoint_mode: vip
+      placement:
+        constraints:
+          "node.role==worker"
 
   filebeat:
     build:
@@ -61,11 +77,15 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - elk_elasticsearch_data:/app/logs
       #- /app/logs:/app/logs
-    
     networks:
-        - elk
+      elk
     depends_on:
-      - elasticsearch
+      elasticsearch
+    deploy: 
+      endpoint_mode: vip
+      placement:
+        constraints:
+          "node.role==manager"
 
   flagtool:
     build:
@@ -74,3 +94,9 @@ services:
     image: flag-tool
     container_name: flag-tool
     command: tail -f /dev/null
+    deploy: 
+      endpoint_mode: vip
+      placement:
+        constraints:
+          - "node.role==worker"
+          - "node.label==logging"
