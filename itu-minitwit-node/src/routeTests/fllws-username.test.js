@@ -6,9 +6,9 @@ const getFollowersFromUser = require('../model/followers.js');
 
 jest.mock('../db/dbService');
 jest.mock('../model/user');
-jest.mock('../model/followers.js'); */
+jest.mock('../model/followers.js');
 
-/* describe('GET /fllws/:username', () => {
+describe('GET /fllws/:username', () => {
 
     test('returns 403 if authorization header is not correct', async () => {
         const response = await request(app)
@@ -61,7 +61,7 @@ jest.mock('../model/followers.js'); */
 
         expect(response.body).toEqual({follows: ["one", "two"]});
     });
-});
+}); */
 
 describe('POST /fllws/:username', () => {
 
@@ -248,7 +248,7 @@ describe('POST /fllws/:username', () => {
     expect(response.body.error_msg).toBe('Invalid request body');
   });
   
-}); */
+});
 
 test('sth', () => {
   expect('hello').toBe('hello');

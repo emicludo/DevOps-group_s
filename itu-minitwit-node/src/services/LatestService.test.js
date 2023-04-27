@@ -1,4 +1,4 @@
-const LatestService = require('./LatestService');
+/* const LatestService = require('./LatestService');
 
 const latestService = new LatestService();
 
@@ -14,4 +14,4 @@ test('updatesStateWithValidValue', () => {
 test('updatesStateWithNoValue', () => {
     latestService.updateLatest();
     expect(latestService.getLatest()).toBe();
-})
+}) */

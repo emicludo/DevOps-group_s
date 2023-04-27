@@ -34,7 +34,7 @@ describe('GET /msgs', () => {
         expect(response.body).toEqual([{content: 'hello world', pubDate: '20-4-2020', user: 'testuser'}]);
     });
 
-}); */
+});
 test("test", () => {
   expect("hello").toBe("hello");
-})
+}) */
