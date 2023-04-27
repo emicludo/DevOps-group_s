@@ -18,8 +18,17 @@ const getFollowersFromUser = require('../model/followers.js');
 
 
 //Routing
-router.get('/latest', function (req, res, next) {
-  res.send({ latest: latestService.getLatest() });
+router.get('/latest', async function (req, res, next) {
+  try {
+    const latest = await latestService.getLatest();
+    res.status(200).send({latest: latest});
+  } catch (err) {
+    logger.log('error', { url: req.url, method: req.method, requestBody: req.body, responseStatus: 500, message: err });
+    var error = new Error("There was a problem retrieving latest value");
+    error.status = 500;
+    next(error);
+    return;
+  }
 })
 
 router.post("/register", async function (req, res, next) {
