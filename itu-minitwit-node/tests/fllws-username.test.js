@@ -78,10 +78,9 @@ describe('POST /fllws/:username', () => {
     expect(response.status).to.equal(403);
     expect(response.body.error_msg).to.equal("You are not authorized to use this resource!");
   });
-});
 
-  /* it('returns 404 if the user is not in the database', async () => {
-    sinon.stub(getAllUsers.prototype, 'default').resolves([{username: 'foo'}]);
+  it('returns 404 if the user is not in the database', async () => {
+    sinon.stub(getAllUsers.prototype, 'getAllUsers').resolves([{username: 'foo'}]);
 
     const response = await request(app)
       .post('/fllws/testuser')
@@ -92,7 +91,7 @@ describe('POST /fllws/:username', () => {
   });
 
   it('returns 404 if the follows user is not in the database', async () => {
-    sinon.stub(getAllUsers, 'default').resolves([{username: 'testuser'}]);
+    sinon.stub(getAllUsers.prototype, 'getAllUsers').resolves([{username: 'testuser'}]);
 
     const response = await request(app)
       .post('/fllws/testuser')
@@ -106,8 +105,8 @@ describe('POST /fllws/:username', () => {
   });
 
   it('returns 403 if the user already follows the follows user', async () => {
-    sinon.stub(getAllUsers, 'default').resolves([{username: 'testuser'}, {username: 'followuser'}]);
-    sinon.stub(getFollowersFromUser, 'default').resolves(['followuser']);
+    sinon.stub(getAllUsers.prototype, 'getAllUsers').resolves([{username: 'testuser'}, {username: 'followuser'}]);
+    sinon.stub(getFollowersFromUser.prototype, 'getFollowersFromUser').resolves(['followuser']);
 
     const response = await request(app)
       .post('/fllws/testuser')
@@ -119,6 +118,10 @@ describe('POST /fllws/:username', () => {
     expect(response.status).to.equal(403);
     expect(response.body.error_msg).to.equal("User already follows this user");
   });
+});
+
+  /* 
+  
 
   it('returns 500 if the database fails while following', async () => {
     sinon.stub(getAllUsers, 'default').resolves([{username: 'testuser'}, {username: 'followuser'}]);

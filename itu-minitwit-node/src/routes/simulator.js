@@ -14,7 +14,8 @@ var logger = require('../logger/logger');
 
 const GetAllUsers = require('../model/user');
 const getAllUsers = new GetAllUsers();
-const getFollowersFromUser = require('../model/followers.js');
+const GetFollowersFromUser = require('../model/followers.js');
+const getFollowersFromUser = new GetFollowersFromUser();
 
 router.get('/latest', function (req, res, next) {
   res.send({ latest: latestService.getLatest() });
@@ -329,7 +330,7 @@ router.post('/fllws/:username', async function (req, res, next) {
         return;
       }
 
-      const userFollowsList = await getFollowersFromUser(userId, null);
+      const userFollowsList = await getFollowersFromUser.getFollowersFromUser(userId, null);
       if (userFollowsList.includes(followsUser.username)) {
         logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 403, message: "User already follows this user" });
         res.status(403).send({ status: 403, error_msg: "User already follows this user" });
@@ -358,7 +359,7 @@ router.post('/fllws/:username', async function (req, res, next) {
       const unfollowsUserId = unfollowsUser.user_id;
 
       //Validates if user is following the unfollows user
-      const userFollowsList = await getFollowersFromUser(userId, null);
+      const userFollowsList = await getFollowersFromUser.getFollowersFromUser(userId, null);
       if (!userFollowsList.includes(unfollowsUser.username)) {
         logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 204, message: "User is not following the user with name " + unfollowsUser.username });
         res.status(404).send("");
