@@ -12,7 +12,8 @@ const latestService = new LatestService();
 //Utils
 var logger = require('../logger/logger');
 
-const getAllUsers = require('../model/user');
+const GetAllUsers = require('../model/user');
+const getAllUsers = new GetAllUsers();
 const getFollowersFromUser = require('../model/followers.js');
 
 router.get('/latest', function (req, res, next) {
@@ -40,7 +41,7 @@ router.post("/register", async function (req, res, next) {
     }
 
     //Checks if username is taken
-    const users = await getAllUsers()
+    const users = await getAllUsers.getAllUsers()
     const userFound = users.find(user => user.username == username)
 
     var error = null
@@ -153,7 +154,7 @@ router.get('/msgs/:username', async function (req, res, next) {
       no_msgs = 100;
     }
 
-    const users = await getAllUsers()
+    const users = await getAllUsers.getAllUsers()
     const userSelected = users.find(user => user.username == username)
     if (!userSelected) {
       logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 404, message: "User is not on our database" });
@@ -211,7 +212,7 @@ router.post('/msgs/:username', async function (req, res, next) {
       latestService.updateLatest(parseInt(latest));
     }
 
-    const users = await getAllUsers()
+    const users = await getAllUsers.getAllUsers()
     const userSelected = users.find(user => user.username == username)
     if (!userSelected) {
       logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 404, message: "User is not on our database" });
@@ -258,7 +259,7 @@ router.get('/fllws/:username', async function (req, res, next) {
       latestService.updateLatest(parseInt(latest));
     }
 
-    const users = await getAllUsers();
+    const users = await getAllUsers.getAllUsers();
     const userSelected = users.find(user => user.username === username);
     if (!userSelected) {
       logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 404, message: "User is not on our database" });
@@ -310,7 +311,7 @@ router.post('/fllws/:username', async function (req, res, next) {
       latestService.updateLatest(parseInt(latest));
     }
 
-    const users = await getAllUsers();
+    const users = await getAllUsers.getAllUsers();
     const userSelected = users.find(user => user.username === username);
     if (!userSelected) {
       logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 404, message: "User is not on our database" });
