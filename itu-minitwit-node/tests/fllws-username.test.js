@@ -133,6 +133,26 @@ describe('POST /fllws/:username', () => {
 
     expect(response.status).to.equal(500);
   });
+
+  it('returns 204 if all fine while following', async () => {
+    sinon.stub(getAllUsers.prototype, 'getAllUsers').resolves([{username: 'testuser'}, {username: 'followuser'}]);
+    sinon.stub(getFollowersFromUser.prototype, 'getFollowersFromUser').resolves([]);
+
+    sinon.stub(database, 'run').callsFake((sql, params, callback) => {
+      callback(null, 'Success');
+    });
+
+    const response = await request(app)
+      .post('/fllws/testuser')
+      .set('Authorization', 'Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh')
+      .send({
+        follow: "followuser"
+      });
+
+    expect(response.status).to.equal(204);
+
+    sinon.restore();
+  });
 });
 
   
