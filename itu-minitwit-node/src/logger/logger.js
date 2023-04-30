@@ -5,7 +5,7 @@ const ecsFormat = require('@elastic/ecs-winston-format')
 const esTransport = new ElasticsearchTransport({
   level: 'info',
   index: 'my-app-logs',
-  clientOpts: { node: 'http://elasticsearch:9200' },
+  clientOpts: { node: 'http://104.248.16.95:9200' },
 });
 
 
