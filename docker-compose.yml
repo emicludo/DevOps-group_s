@@ -2,6 +2,9 @@ version: '3.3'
 
 volumes:
     elk_elasticsearch_data:
+networks:
+  main:
+
 services:
   minitwitimage:
     build:
@@ -11,6 +14,8 @@ services:
     container_name: minitwit
     ports:
         - '3000:3000'
+    networks:
+      - main
     volumes:
       - elk_elasticsearch_data:/app/logs
       #- /app/logs:/app/logs
@@ -22,6 +27,8 @@ services:
     image: filebeat
     container_name: filebeat
     command: filebeat -e -strict.perms=false
+    networks:
+      - main
     environment:
       user: root
     volumes:
@@ -31,6 +38,7 @@ services:
       - elk_elasticsearch_data:/app/logs
       #- /app/logs:/app/logs
 
+
   flagtool:
     build:
       context: .
@@ -38,3 +46,5 @@ services:
     image: flag-tool
     container_name: flag-tool
     command: tail -f /dev/null
+    networks:
+      - main

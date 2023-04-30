@@ -54,7 +54,7 @@ namespace flag_tool
                 return;
             }
 
-            var cs = @"server=172.17.0.2;userid=root;password=root;database=minitwit";
+            var cs = $"Server={Environment.GetEnvironmentVariable("MYSQL_HOST")};Port={Environment.GetEnvironmentVariable("MYSQL_PORT")};Database={Environment.GetEnvironmentVariable("MYSQL_DATABASE")};Uid={Environment.GetEnvironmentVariable("MYSQL_USERNAME")};Pwd={Environment.GetEnvironmentVariable("MYSQL_PASSWORD")};SslMode=Required;";
             using var con = new MySqlConnection(cs);
             try
             {
