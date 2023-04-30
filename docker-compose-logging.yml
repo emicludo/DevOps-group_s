@@ -1,0 +1,32 @@
+version: '3.3'
+
+networks:
+  elk:
+
+volumes:
+    elk_elasticsearch_data:
+
+services:
+  elasticsearch:
+    image: "docker.elastic.co/elasticsearch/elasticsearch:7.17.1"
+    container_name: elasticsearch
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+        - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+        - "discovery.type=single-node"
+    volumes:
+        - elk_elasticsearch_data:/var/lib/elasticsearch/data
+    networks:
+        - elk
+
+  kibana:
+    image: "docker.elastic.co/kibana/kibana:7.17.1"
+    container_name: kibana
+    environment:
+        elasticsearch.hosts: '["http://elasticsearch:9200"]'
+    ports:
+      - "5601:5601"
+    networks:
+        - elk
