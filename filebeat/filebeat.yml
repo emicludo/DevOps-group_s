@@ -2,7 +2,7 @@ filebeat.inputs:
   
 - type: filestream 
   paths:
-    - /app/logs/*.log
+    - /var/lib/docker/volumes/elk_elasticsearch_data/_data/*.log
   parsers:
     - ndjson:
       overwrite_keys: true 
