@@ -10,7 +10,7 @@ services:
     image: minitwitimage
     container_name: minitwit
     ports:
-        - '5000:5000'
+        - '3000:3000'
     volumes:
       - elk_elasticsearch_data:/app/logs
       #- /app/logs:/app/logs
