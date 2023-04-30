@@ -1,4 +1,4 @@
-/* const request = require('supertest');
+const request = require('supertest');
 const app = require('../../app');
 const database = require('../db/dbService');
 const getAllUsers = require('../model/user');
@@ -140,8 +140,4 @@ describe('POST /msgs/:username', () => {
       expect(response.status).toEqual(204);
   });
 
-}); */
-
-test("test", () => {
-  expect("hello").toBe("hello");
-})
+});
