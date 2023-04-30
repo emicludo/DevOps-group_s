@@ -2,3 +2,4 @@ itu-minitwit
 itu-minitwit-node/minitwit.db
 errors.log
 .env
+package-lock.json
