@@ -150,13 +150,92 @@ describe('POST /fllws/:username', () => {
       });
 
     expect(response.status).to.equal(204);
-
-    sinon.restore();
   });
+
+  it('returns 404 if unfollows user is not in the DB', async () => {  
+    sinon.stub(getAllUsers.prototype, 'getAllUsers').resolves([{username: 'testuser'}, {username: 'followuser'}]);
+    sinon.stub(getFollowersFromUser.prototype, 'getFollowersFromUser').resolves([]);
+    sinon.stub(database, 'run').callsFake((sql, params, callback) => {
+      callback(null, 'Success');
+    });
+
+    const response = await request(app)
+      .post('/fllws/testuser')
+      .set('Authorization', 'Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh')
+      .send({
+        unfollow: "unfollowuser"
+      });
+    expect(response.status).to.be.equal(404);
+    expect(response.body.error_msg).to.be.equal("Unfollows user is not on our database");
+  });
+
+  it('returns 404 if user does not follow the unfollows user', async () => {
+    sinon.stub(getAllUsers.prototype, 'getAllUsers').resolves([{username: 'testuser'}, {username: 'unfollowuser'}]);
+    sinon.stub(getFollowersFromUser.prototype, 'getFollowersFromUser').resolves([]);
+
+    const response = await request(app)
+      .post('/fllws/testuser')
+      .set('Authorization', 'Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh')
+      .send({
+        unfollow: "unfollowuser"
+      });
+
+    expect(response.status).to.equal(404);
+  });
+
+  it('returns 500 if DB fails while unfollowing', async () => {
+    sinon.stub(getAllUsers.prototype, 'getAllUsers').resolves([{username: 'testuser'}, {username: 'unfollowuser'}]);
+    sinon.stub(getFollowersFromUser.prototype, 'getFollowersFromUser').resolves(['unfollowuser']);
+
+    sinon.stub(database, 'run').callsFake((sql, params, callback) => {
+      callback('Error', null);
+    });
+
+    const response = await request(app)
+      .post('/fllws/testuser')
+      .set('Authorization', 'Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh')
+      .send({
+        unfollow: "unfollowuser"
+      });
+
+    expect(response.status).to.equal(500);
+  });
+
+  it('returns 204 if all ok while unfollowing', async () => {
+    sinon.stub(getAllUsers.prototype, 'getAllUsers').resolves([{username: 'testuser'}, {username: 'unfollowuser'}]);
+    sinon.stub(getFollowersFromUser.prototype, 'getFollowersFromUser').resolves(['unfollowuser']);
+
+    sinon.stub(database, 'run').callsFake((sql, params, callback) => {
+      callback(null, 'Success');
+    });
+
+    const response = await request(app)
+      .post('/fllws/testuser')
+      .set('Authorization', 'Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh')
+      .send({
+        unfollow: "unfollowuser"
+      });
+
+    expect(response.status).to.equal(204);
+  });
+
+  it('returns 400 if sth else than follow or unfollow', async () => {
+    sinon.stub(getAllUsers.prototype, 'getAllUsers').resolves([{username: 'testuser'}, {username: 'unfollowuser'}]);
+    sinon.stub(getFollowersFromUser.prototype, 'getFollowersFromUser').resolves(['unfollowuser']);
+
+    sinon.stub(database, 'run').callsFake((sql, params, callback) => {
+      callback(null, 'Success');
+    });
+
+    const response = await request(app)
+      .post('/fllws/testuser')
+      .set('Authorization', 'Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh')
+      .send({
+        test: "unfollowuser"
+      });
+
+    expect(response.status).to.equal(400);
+    expect(response.body.error_msg).to.equal('Invalid request body');
+  });
+
 });
-
-  
-
-  /* 
-  it('returns 204 if all fine while following', async () => {
-    sinon.stub(getAllUsers, 'default').resolves([{username */
