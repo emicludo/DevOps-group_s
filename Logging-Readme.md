@@ -1,4 +1,4 @@
-docker-compose up --build -d
+docker-compose -f docker-compose-logging.yml up -d --build
 
 docker-compose down -v
 

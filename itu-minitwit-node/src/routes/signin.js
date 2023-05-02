@@ -6,8 +6,11 @@ const database = require('../db/dbService')
 var logger = require('../logger/logger');
 
 const hash = require('../utils/hash')
-router.get('/', function(req, res, next) {
 
+//Utils
+var logger = require('../logger/logger');
+
+router.get('/', function(req, res, next) {
   if (req.session.user) {
     res.redirect('/api');
   } else {
@@ -21,13 +24,12 @@ router.get('/', function(req, res, next) {
 
 
 router.post('/', function (req, res, next) {
-
   database.all('SELECT * FROM user WHERE username = ?', req.body.username, (err, rows) => {
-    
     if (err) {
-      console.error(err);
-      res.status(500).send({ error: 'An error occurred while retrieving user', description: err.toString() });
-      logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: 'An error occurred while retrieving user, ' + err.toString()  });
+      logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body, responseStatus: 500, message: err });
+      var error = new Error("An error occurred while retrieving user");
+      error.status = 500;
+      next(error);
       return;
     }
 
@@ -40,6 +42,7 @@ router.post('/', function (req, res, next) {
     }
 
     if (hash(req.body.password) != rows[0].pw_hash) {
+      logger.log('warn', { url: req.url ,method: req.method, requestBody: req.body, responseStatus: 401, message: 'Invalid password from user: ' +  req.body.username});
       req.session.username = req.body.username;
       req.session.errorMessage = 'Invalid password';
       logger.log('warn',  { url: req.url ,method: req.method, requestBody: req.body, message: req.body.username + ' failed to login' });

@@ -4,8 +4,8 @@ const ecsFormat = require('@elastic/ecs-winston-format')
 
 const esTransport = new ElasticsearchTransport({
   level: 'info',
-  index: 'my-app-logs',
-  clientOpts: { node: 'http://elasticsearch:9200' },
+  index: 'minitwit-logs',
+  clientOpts: { node: 'http://104.248.16.95:9200' },
 });
 
 
@@ -13,10 +13,10 @@ const logger = winston.createLogger({
   level: 'info',
   format: ecsFormat(), 
   transports: [
-    new winston.transports.File({ filename: './logs/errors.log', level: 'error' }),
-    new winston.transports.File({ filename: './logs/combined.log', level: 'info'  }),
-    new winston.transports.Console(),
-    esTransport,
+    new winston.transports.File({ filename: '/app/logs/errors.log', level: 'error' }),
+    new winston.transports.File({ filename: '/app/logs/combined.log', level: 'info'  }),
+    //new winston.transports.Console(),
+    //esTransport,
   ],
 });
 

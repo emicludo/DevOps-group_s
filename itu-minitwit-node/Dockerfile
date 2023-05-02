@@ -14,10 +14,10 @@ RUN npm install
 COPY itu-minitwit-node .
 
 # Set the environment variable PORT to 5000
-ENV PORT=5000
+ENV PORT=3000
 
 # Expose port 3000 for the app to listen on
-EXPOSE 5000
+EXPOSE 3000
 
 # Start the app
 CMD ["npm", "start"]
