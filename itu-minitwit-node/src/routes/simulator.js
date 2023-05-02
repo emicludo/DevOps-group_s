@@ -16,10 +16,6 @@ const GetAllUsers = require('../model/user');
 const getAllUsers = new GetAllUsers();
 const GetFollowersFromUser = require('../model/followers.js');
 const getFollowersFromUser = new GetFollowersFromUser();
-<<<<<<< HEAD
-
-=======
->>>>>>> 5bc8b139f33d63b3a3fdc2698b25cd56a9c53ff2
 
 //Routing
 router.get('/latest', function (req, res, next) {
