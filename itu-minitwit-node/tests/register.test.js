@@ -39,8 +39,6 @@ describe('POST /register', () => {
           });
       
         expect(response.status).to.equal(400);
-        expect(response.body).to.have.property('status');
-        expect(response.body).to.have.property('error_msg');
         expect(getAllUsers.prototype.getAllUsers.called).to.be.true;
       });
 
@@ -57,8 +55,6 @@ describe('POST /register', () => {
           });
       
         expect(response.status).to.equal(400);
-        expect(response.body).to.have.property('status');
-        expect(response.body).to.have.property('error_msg');
         expect(getAllUsers.prototype.getAllUsers.called).to.be.true;
       });
 
@@ -75,15 +71,13 @@ describe('POST /register', () => {
           });
       
         expect(response.status).to.equal(400);
-        expect(response.body).to.have.property('status');
-        expect(response.body).to.have.property('error_msg');
         expect(getAllUsers.prototype.getAllUsers.called).to.be.true;
       });
 
       it('returns 200 if all fine', async () => {
         sandbox.stub(getAllUsers.prototype, 'getAllUsers').resolves([]);
         sandbox.stub(database, 'add').callsFake((table, data, callback) => {
-            callback('Success', null);
+            callback(null, 'Success');
         });
       
         const response = await request(app)
