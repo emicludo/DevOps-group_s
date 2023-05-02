@@ -5,10 +5,7 @@ on:
   push:
     # Run workflow every time something is pushed to the main branch
     branches:
-      - w10-unitTests
-  pull_request:
-    branches: 
-      - w10-unitTests
+      - main
   # allow manual triggers for now too
   workflow_dispatch:
     manual: true
@@ -67,6 +64,16 @@ jobs:
           tags: ${{ secrets.DOCKER_USERNAME }}/flag-tool:latest
           cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/flag-tool:webbuildcache
           cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/flag-tool:webbuildcache,mode=max
+      
+      - name: Build and push Filebeat
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./filebeat/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/filebeat:latest
+          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/filebeat:webbuildcache
+          cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/filebeat:webbuildcache,mode=max
 
       - name: Test minitwit
         run: |

@@ -2,29 +2,31 @@ var express = require('express');
 var router = express.Router();
 
 const database = require('../db/dbService')
-module.exports = router;
+
+var logger = require('../logger/logger');
 
 const hash = require('../utils/hash')
 
-router.get('/', function(req, res, next) {
+//Utils
+var logger = require('../logger/logger');
 
+router.get('/', function (req, res, next) {
   if (req.session.user) {
     res.redirect('/api');
   } else {
     const errorMessage = req.session.errorMessage;
     const username = req.session.username;
     const email = req.session.email;
-  
+
     delete req.session.errorMessage;
     delete req.session.username;
     delete req.session.email;
+    logger.log('info',  { url: req.url ,method: req.method, requestBody: req.body, message: req.session.errorMessage });
     res.render('signup', {errorMessage: errorMessage, username: username, email: email});
   }
 });
 
-
-router.post('/', function(req, res, next) {
-
+router.post('/', function (req, res, next) {
   // user name must be entered
   if (!req.body.username) {
     req.session.errorMessage = 'You have to enter a username';
@@ -40,7 +42,6 @@ router.post('/', function(req, res, next) {
     res.redirect('/api/signup');
     return;
   }
-
 
   // password must be entered
   if (!req.body.password) {
@@ -62,11 +63,12 @@ router.post('/', function(req, res, next) {
 
   // the user name cannot be already taken
   database.all('SELECT * FROM user WHERE username = ?', req.body.username, (err, rows) => {
-    
+
     if (err) {
-      console.error(err);
-      res.status(500).send({ error: 'An error occurred while retrieving user', description: err.toString() });
-      
+      logger.log('error', { url: req.url, method: req.method, requestBody: req.body, responseStatus: 500, message: err });
+      var error = new Error('An error occurred while retrieving user');
+      error.status = 500;
+      next(error);
       return;
     }
 
@@ -80,19 +82,21 @@ router.post('/', function(req, res, next) {
     } else if (
       // if everything's fine
       database.all('INSERT INTO user (username, email, pw_hash) values (?, ?, ?)', [req.body.username, req.body.email, hash(req.body.password)], (err, rows) => {
-      
         if (err) {
-          console.error(err);
-          res.status(500).send({ error: 'An error occurred while registering', description: err.toString() });
-          
+          logger.log('error', { url: req.url, method: req.method, requestBody: req.body, responseStatus: 500, message: err });
+          var error = new Error('An error occurred while registering user');
+          error.status = 500;
+          next(error);
           return;
         }
-
+        logger.log('info',  { url: req.url ,method: req.method, requestBody: req.body, message: req.body.username + ' was successfully registered' });
         req.session.flash = 'You were successfully registered and can login now';
         res.redirect('/api/signin');
         return;
       })
     )
-    return;
+      return;
   })
- });
+});
+
+module.exports = router;
