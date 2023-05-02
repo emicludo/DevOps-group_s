@@ -19,11 +19,20 @@ describe('Signing in', () => {
         cy.get('#error-msg').should('be.visible')
     })
 
-    it('wrong information gives error', () => {
+    it('wrong username gives error', () => {
         cy.get('#username-form').type('wrong-username')
         cy.get('#password-form').type('superstrongpassword123')
         cy.get('#submit-btn').click()
         cy.get('#error-msg').should('be.visible')
+        cy.contains('#error-msg', 'Error: Invalid username')  
+    })
+
+    it('wrong password gives error', () => {
+        cy.get('#username-form').type('test-user')
+        cy.get('#password-form').type('akjsdklajdklasjæd')
+        cy.get('#submit-btn').click()
+        cy.get('#error-msg').should('be.visible')
+        cy.contains('#error-msg', 'Error: Invalid password')  
     })
 })
 
