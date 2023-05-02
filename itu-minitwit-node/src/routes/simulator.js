@@ -375,7 +375,7 @@ router.post('/fllws/:username', async function (req, res, next) {
       if (userFollowsList.includes(followsUser.username)) {
         logger.log('warn',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 204, message: "User already follows this user" });
         var error = new Error("User already follows this user");
-        error.status = 204;
+        error.status = 403;
         next(error);
         return
       }

@@ -18,20 +18,22 @@ describe('GET /fllws/:username', () => {
   it('returns 403 if authorization header is not correct', async () => {
     const response = await request(app)
       .get('/fllws/testuser')
-      .set('Authorization', 'incorrect_token');
+      .set('Authorization', 'incorrect_token')
+      .catch(err => err.response);
 
     expect(response.status).to.equal(403);
-    expect(response.body.error_msg).to.equal("You are not authorized to use this resource!");
+    expect(response.body.error).to.equal("You are not authorized to use this resource");
   });
 
   it('returns 404 if the user is not in the database', async () => {
     const getAllUsersStub = sandbox.stub(getAllUsers.prototype, 'getAllUsers').resolves([{ username: 'foo' }]);    
     const response = await request(app)
       .get('/fllws/testuser')
-      .set('Authorization', 'Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh');
+      .set('Authorization', 'Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh')
+      .catch(err => err.response);
 
     expect(response.status).to.equal(404);
-    expect(response.body.error_msg).to.equal("User is not on our database");
+    expect(response.body.error).to.equal("User is not on our database");
   });
 
   it('returns 500 if the database does not work properly', async () => {
@@ -44,9 +46,10 @@ describe('GET /fllws/:username', () => {
     const response = await request(app)
       .get('/fllws/testuser')
       .set('Authorization', 'Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh')
+      .catch(err => err.response);
 
     expect(response.status).to.equal(500);
-    expect(response.body.error_msg).to.equal("Internal Server Error");
+    expect(response.body.error).to.equal("Error retrieving followers from our database");
   });
 
   it('returns followers if everything is fine', async () => {
@@ -73,10 +76,11 @@ describe('POST /fllws/:username', () => {
   it('returns 403 if authorization header is not correct', async () => {
     const response = await request(app)
       .post('/fllws/testuser')
-      .set('Authorization', 'incorrect_token');
+      .set('Authorization', 'incorrect_token')
+      .catch(err => err.response);
 
     expect(response.status).to.equal(403);
-    expect(response.body.error_msg).to.equal("You are not authorized to use this resource!");
+    expect(response.body.error).to.equal("You are not authorized to use this resource");
   });
 
   it('returns 404 if the user is not in the database', async () => {
@@ -84,10 +88,11 @@ describe('POST /fllws/:username', () => {
 
     const response = await request(app)
       .post('/fllws/testuser')
-      .set('Authorization', 'Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh');
+      .set('Authorization', 'Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh')
+      .catch(err => err.response);
 
     expect(response.status).to.equal(404);
-    expect(response.body.error_msg).to.equal("User is not on our database");
+    expect(response.body.error).to.equal("User is not on our database");
   });
 
   it('returns 404 if the follows user is not in the database', async () => {
@@ -98,10 +103,11 @@ describe('POST /fllws/:username', () => {
       .set('Authorization', 'Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh')
       .send({
         follow: "followuser"
-      });
+      })
+      .catch(err => err.response);
 
     expect(response.status).to.equal(404);
-    expect(response.body.error_msg).to.equal("Follows user is not on our database");
+    expect(response.body.error).to.equal("User to be followed is not on our database");
   });
 
   it('returns 403 if the user already follows the follows user', async () => {
@@ -113,10 +119,11 @@ describe('POST /fllws/:username', () => {
       .set('Authorization', 'Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh')
       .send({
         follow: "followuser"
-      });
+      })
+      .catch(err => err.response);
 
     expect(response.status).to.equal(403);
-    expect(response.body.error_msg).to.equal("User already follows this user");
+    expect(response.body.error).to.equal("User already follows this user");
   });
 
   it('returns 500 if the database fails while following', async () => {
@@ -164,9 +171,11 @@ describe('POST /fllws/:username', () => {
       .set('Authorization', 'Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh')
       .send({
         unfollow: "unfollowuser"
-      });
+      })
+      .catch(err => err.response);
+
     expect(response.status).to.be.equal(404);
-    expect(response.body.error_msg).to.be.equal("Unfollows user is not on our database");
+    expect(response.body.error).to.be.equal("Unfollows user is not on our database");
   });
 
   it('returns 404 if user does not follow the unfollows user', async () => {
@@ -232,10 +241,11 @@ describe('POST /fllws/:username', () => {
       .set('Authorization', 'Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh')
       .send({
         test: "unfollowuser"
-      });
+      })
+      .catch(err => err.response);
 
     expect(response.status).to.equal(400);
-    expect(response.body.error_msg).to.equal('Invalid request body');
+    expect(response.body.error).to.equal('Invalid request body');
   });
 
 });
