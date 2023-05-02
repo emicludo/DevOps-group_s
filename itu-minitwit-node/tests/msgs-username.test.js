@@ -18,10 +18,11 @@ describe('GET /msgs/:username', () => {
       it('returns 403 if authorization header is not correct', async () => {
         const response = await request(app)
           .get('/msgs/testuser')
-          .set('Authorization', 'incorrect_token');
+          .set('Authorization', 'incorrect_token')
+          .catch(err => err.response);
     
         expect(response.status).to.equal(403);
-        expect(response.body.error_msg).to.equal("You are not authorized to use this resource!");
+        expect(response.body.error).to.equal("You are not authorized to use this resource");
       });
     
       it('returns 404 if the user is not in the database', async () => {
@@ -29,10 +30,11 @@ describe('GET /msgs/:username', () => {
     
         const response = await request(app)
           .get('/msgs/testuser')
-          .set('Authorization', 'Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh');
+          .set('Authorization', 'Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh')
+          .catch(err => err.response);
     
         expect(response.status).to.equal(404);
-        expect(response.body.error_msg).to.equal("User is not on our database");
+        expect(response.body.error).to.equal("User is not on our database");
       });
     
       it('returns 500 if the database does not work properly', async () => {
@@ -93,10 +95,11 @@ describe('POST /msgs/:username', () => {
         .set('Authorization', 'incorrect_token')
         .send({
             content: 'testcontent'
-          });
+          })
+        .catch(err => err.response);
 
       expect(response.status).to.equal(403);
-      expect(response.body.error_msg).to.equal("You are not authorized to use this resource!");
+      expect(response.body.error).to.equal("You are not authorized to use this resource");
     });
 
     it('returns 404 if the user is not in the database', async () => {
@@ -107,10 +110,11 @@ describe('POST /msgs/:username', () => {
           .set('Authorization', 'Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh')
           .send({
               content: 'testcontent'
-            });
+            })
+            .catch(err => err.response);
   
         expect(response.status).to.equal(404);
-        expect(response.body.error_msg).to.equal("User is not on our database");
+        expect(response.body.error).to.equal("User is not on our database");
       });
 
       it('returns 500 if the database does not work properly', async () => {
