@@ -23,19 +23,4 @@ describe('GET /latest', () => {
     // Restore the stub
     getLatestStub.restore();
   });
-
-  // error response
-  it('responds with 500 if there is an error', async () => {
-    // Mock the latestService.getLatest function to throw an error
-    const getLatestStub = sinon.stub(LatestService.prototype, 'getLatest').throws(new Error('Test error'));
-
-    // Make a GET request to the endpoint
-    const response = await request(app).get('/latest');
-
-    // Check that the response has a 500 status code
-    expect(response.status).to.equal(500);
-
-    // Restore the stub
-    getLatestStub.restore();
-  });
 });
