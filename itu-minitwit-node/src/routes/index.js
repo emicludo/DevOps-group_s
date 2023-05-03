@@ -44,6 +44,7 @@ router.get('/', function(req, res, next) {
     , [req.session.user.user_id, req.session.user.user_id], (err, rows) => {
 
     if (err) {
+      logger.log('error', { url: req.url, method: req.method, requestBody: req.body, responseStatus: 500, message: err });
       var error = new Error('An error ocurrer while retrieving messages');
       error.status = 500;
       next(error);
@@ -51,8 +52,6 @@ router.get('/', function(req, res, next) {
     }
       res.render('index', { messages: rows, flash: flash, path: req.path, user: req.session.user, gravatar: gravatar});
     });
-  
-    
 });
 
 /* Displays the latest messages of all users. */
