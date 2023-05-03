@@ -15,24 +15,62 @@ var signoutRouter = require('./src/routes/signout');
 var simulatorRouter = require('./src/routes/simulator');
 
 //Prometheus metrics import
-const { register, 
-        httpRequestDurationMicroseconds,
-        httpRequestCounter, 
-        httpRequestErrorCounter, 
-        httpErrorCodeCounter,
-        upMetric
-      } = require('./src/metrics/metrics');
+const { register,
+  httpRequestDurationMicroseconds,
+  httpRequestCounter,
+  httpRequestErrorCounter,
+  httpErrorCodeCounter,
+  upMetric
+} = require('./src/metrics/metrics');
 
 const database = require('./src/db/dbService')
 
 var app = express();
 
-//Express session configuration
-app.use(session({
-  secret: 'c2b71086dd6ba3b83431e00118d52c0fd2f178f439910fe7bf7e86a2a163e26f83932fac1f908015d7815bf0a817914e38ee56d904888337bff57c91c76ae8b1',
-  resave: false,
-  saveUninitialized: false
-}));
+const MySQLStore = require('express-mysql-session')(session);
+const sessionStore = new MySQLStore({
+  expiration: 86400000, // session TTL in milliseconds
+  createDatabaseTable: true, // if the sessions table should be created automatically
+  schema: {
+    tableName: 'sessions',
+    columnNames: {
+      session_id: 'session_id',
+      expires: 'expires',
+      data: 'data'
+    }
+  }
+}, db.pool);
+
+const options = {
+  host: process.env.MYSQL_HOST || 'localhost',
+  port: process.env.MYSQL_PORT || 3306,
+  user: process.env.MYSQL_USERNAME || 'root',
+  password: process.env.MYSQL_PASSWORD || 'root',
+  database: process.env.MYSQL_DATABASE || 'defaultdb',
+  // Whether or not to automatically check for and clear expired sessions:
+  clearExpired: true,
+  // How frequently expired sessions will be cleared; milliseconds:
+  checkExpirationInterval: 900000,
+  // The maximum age of a valid session; milliseconds:
+  expiration: 86400000,
+  // Whether or not to create the sessions database table, if one does not already exist:
+  createDatabaseTable: true,
+  // Whether or not to end the database connection when the store is closed.
+  // The default value of this option depends on whether or not a connection was passed to the constructor.
+  // If a connection object is passed to the constructor, the default value for this option is false.
+  endConnectionOnClose: true,
+  // Whether or not to disable touch:
+  disableTouch: false,
+  charset: 'utf8mb4_bin',
+  schema: {
+    tableName: 'sessions',
+    columnNames: {
+      session_id: 'session_id',
+      expires: 'expires',
+      data: 'data'
+    }
+  }
+};
 
 // view engine setup
 app.set('views', path.join(__dirname, '/src/views'));
@@ -49,7 +87,7 @@ const measureDurationMiddleware = (req, res, next) => {
   // Start the timer
   const end = httpRequestDurationMicroseconds.startTimer();
   // Remove parameters from the path
-  const parsedUrl = url.parse( req.path);
+  const parsedUrl = url.parse(req.path);
   const route = "/" + parsedUrl.pathname.split('/')[1] + "/";
   // Attach the `end` function to the `res` object so that it can be called later
   res.on('finish', () => {
@@ -65,7 +103,7 @@ app.use(measureDurationMiddleware);
 app.use(async (req, res, next) => {
   const parsedUrl = url.parse(req.originalUrl);
   const route = "/" + parsedUrl.pathname.split('/')[1] + "/";
-  httpRequestCounter.inc({ method: req.method, status: res.statusCode, endpoint: route});
+  httpRequestCounter.inc({ method: req.method, status: res.statusCode, endpoint: route });
   upMetric.set({ app: 'minitwit-app' }, 1);
   database.healthCheck();
   next();
