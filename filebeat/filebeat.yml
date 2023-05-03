@@ -3,7 +3,6 @@ filebeat.inputs:
 - type: filestream 
   id: filestream-logs
   paths:
-    - /var/lib/docker/volumes/elk_elasticsearch_data/_data/*.log
     - /app/logs/*.log
   parsers:
     - ndjson:
@@ -27,8 +26,6 @@ output.elasticsearch:
           - equals:
               container.image.name: minitwit
     - index: "all"
-#output.logstash:
-  #hosts: [“localhost:5044”]
 filebeat.modules.system.process.cgroups.enabled: false
 filebeat.modules: []
 logging.json: true
