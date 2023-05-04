@@ -19,8 +19,7 @@ services:
       - elk_elasticsearch_data:/app/logs
     deploy:
       replicas: 3
-      endpoint_mode:
-        - "vip"
+      endpoint_mode: "vip"
       placement:
         constraints:
           - "node.role==manager"
@@ -39,8 +38,7 @@ services:
     networks: 
       - elk
     deploy:
-      endpoint_mode: 
-        - "vip"
+      endpoint_mode: "vip"
       placement:
         constraints:
           - "node.role==worker"
@@ -56,8 +54,7 @@ services:
     networks: 
       - elk
     deploy:
-      endpoint_mode:
-        - "vip"
+      endpoint_mode: "vip"
       placement:
         constraints:
           - "node.role==worker"
@@ -83,8 +80,7 @@ services:
     depends_on:
       - elasticsearch
     deploy:
-      endpoint_mode:
-        - "vip"
+      endpoint_mode: "vip"
       placement:
         constraints:
           - "node.role==manager"
@@ -99,8 +95,7 @@ services:
     networks:
       - main
     deploy:
-      endpoint_mode:
-        - "vip"
+      endpoint_mode: "vip"
       placement:
         constraints:
           - "node.role==worker"
