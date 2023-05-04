@@ -28,27 +28,35 @@ services:
     environment:
       - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
       - "discovery.type=single-node"
-    volumes: elk_elasticsearch_data:/var/lib/elasticsearch/data
-    networks: elk
+    volumes: 
+      - elk_elasticsearch_data:/var/lib/elasticsearch/data
+    networks: 
+      - elk
     deploy:
-      endpoint_mode: vip
+      endpoint_mode: 
+        - vip
       placement:
         constraints: "node.role==worker"
 
   kibana:
-    image: "docker.elastic.co/kibana/kibana:7.17.1"
+    image:
+      - "docker.elastic.co/kibana/kibana:7.17.1"
     container_name: kibana
     environment:
       elasticsearch.hosts: '["http://elasticsearch:9200"]'
-    ports: "5601:5601"
-    networks: elk
+    ports:
+      - "5601:5601"
+    networks: 
+      - elk
     deploy:
-      endpoint_mode: vip
+      endpoint_mode:
+        - vip
       placement:
         constraints: "node.role==worker"
 
   filebeat:
-    image: ingridmariac/filebeat
+    image: 
+      - ingridmariac/filebeat
     container_name: filebeat
     command: filebeat -e -strict.perms=false
     networks:
