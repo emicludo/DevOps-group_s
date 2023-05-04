@@ -56,7 +56,7 @@ router.get('/', function(req, res, next) {
 
 /* Displays the latest messages of all users. */
 router.get('/public', function (req, res, next) {
-
+  
   const flash = req.session.flash;
   delete req.session.flash;
   

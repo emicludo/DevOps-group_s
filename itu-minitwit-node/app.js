@@ -3,6 +3,8 @@ var session = require('express-session');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 const url = require('url');
+const sessionStore = require('./src/db/session');
+const database = require('./src/db/dbService')
 
 //Routers
 var indexRouter = require('./src/routes/index');
@@ -23,54 +25,15 @@ const { register,
   upMetric
 } = require('./src/metrics/metrics');
 
-const database = require('./src/db/dbService')
-
 var app = express();
 
-const MySQLStore = require('express-mysql-session')(session);
-const sessionStore = new MySQLStore({
-  expiration: 86400000, // session TTL in milliseconds
-  createDatabaseTable: true, // if the sessions table should be created automatically
-  schema: {
-    tableName: 'sessions',
-    columnNames: {
-      session_id: 'session_id',
-      expires: 'expires',
-      data: 'data'
-    }
-  }
-}, db.pool);
-
-const options = {
-  host: process.env.MYSQL_HOST || 'localhost',
-  port: process.env.MYSQL_PORT || 3306,
-  user: process.env.MYSQL_USERNAME || 'root',
-  password: process.env.MYSQL_PASSWORD || 'root',
-  database: process.env.MYSQL_DATABASE || 'defaultdb',
-  // Whether or not to automatically check for and clear expired sessions:
-  clearExpired: true,
-  // How frequently expired sessions will be cleared; milliseconds:
-  checkExpirationInterval: 900000,
-  // The maximum age of a valid session; milliseconds:
-  expiration: 86400000,
-  // Whether or not to create the sessions database table, if one does not already exist:
-  createDatabaseTable: true,
-  // Whether or not to end the database connection when the store is closed.
-  // The default value of this option depends on whether or not a connection was passed to the constructor.
-  // If a connection object is passed to the constructor, the default value for this option is false.
-  endConnectionOnClose: true,
-  // Whether or not to disable touch:
-  disableTouch: false,
-  charset: 'utf8mb4_bin',
-  schema: {
-    tableName: 'sessions',
-    columnNames: {
-      session_id: 'session_id',
-      expires: 'expires',
-      data: 'data'
-    }
-  }
-};
+app.use(session({
+	key: 'minitwit_session',
+	secret: 'secret',
+	store: sessionStore,
+	resave: false,
+	saveUninitialized: false
+}));
 
 // view engine setup
 app.set('views', path.join(__dirname, '/src/views'));
