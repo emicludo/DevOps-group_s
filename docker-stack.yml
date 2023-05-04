@@ -20,7 +20,7 @@ services:
     deploy:
       replicas: 3
       endpoint_mode:
-        - vip
+        - "vip"
       placement:
         constraints:
           - "node.role==manager"
@@ -40,7 +40,7 @@ services:
       - elk
     deploy:
       endpoint_mode: 
-        - vip
+        - "vip"
       placement:
         constraints:
           - "node.role==worker"
@@ -57,7 +57,7 @@ services:
       - elk
     deploy:
       endpoint_mode:
-        - vip
+        - "vip"
       placement:
         constraints:
           - "node.role==worker"
@@ -84,7 +84,7 @@ services:
       - elasticsearch
     deploy:
       endpoint_mode:
-        - vip
+        - "vip"
       placement:
         constraints:
           - "node.role==manager"
@@ -100,7 +100,7 @@ services:
       - main
     deploy:
       endpoint_mode:
-        - vip
+        - "vip"
       placement:
         constraints:
           - "node.role==worker"
