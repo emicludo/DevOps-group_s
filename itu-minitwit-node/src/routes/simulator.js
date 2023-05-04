@@ -12,9 +12,10 @@ var logger = require('../logger/logger');
 const hash = require('../utils/hash')
 const isSimulator = require('../utils/authorizationValidator');
 
-//Models
-const getAllUsers = require('../model/user');
-const getFollowersFromUser = require('../model/followers.js');
+const GetAllUsers = require('../model/user');
+const getAllUsers = new GetAllUsers();
+const GetFollowersFromUser = require('../model/followers.js');
+const getFollowersFromUser = new GetFollowersFromUser();
 
 
 //Routing
@@ -45,7 +46,7 @@ router.post("/register", async function (req, res, next) {
     }
 
     //Checks if username is taken
-    const users = await getAllUsers()
+    const users = await getAllUsers.getAllUsers()
     const userFound = users.find(user => user.username == username)
 
     var error = null
@@ -169,7 +170,7 @@ router.get('/msgs/:username', async function (req, res, next) {
       no_msgs = 100;
     }
 
-    const users = await getAllUsers()
+    const users = await getAllUsers.getAllUsers()
     const userSelected = users.find(user => user.username == username)
     if (!userSelected) {
       logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 404, message: "User is not on our database" });
@@ -234,7 +235,7 @@ router.post('/msgs/:username', async function (req, res, next) {
       latestService.updateLatest(parseInt(latest));
     }
 
-    const users = await getAllUsers()
+    const users = await getAllUsers.getAllUsers()
     const userSelected = users.find(user => user.username == username)
     if (!userSelected) {
       logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 404, message: "User is not on our database" });
@@ -289,7 +290,7 @@ router.get('/fllws/:username', async function (req, res, next) {
       latestService.updateLatest(parseInt(latest));
     }
 
-    const users = await getAllUsers();
+    const users = await getAllUsers.getAllUsers();
     const userSelected = users.find(user => user.username == username);
     if (!userSelected) {
       logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 404, message: "User is not on our database" });
@@ -348,7 +349,7 @@ router.post('/fllws/:username', async function (req, res, next) {
       latestService.updateLatest(parseInt(latest));
     }
 
-    const users = await getAllUsers();
+    const users = await getAllUsers.getAllUsers();
     const userSelected = users.find(user => user.username == username);
     if (!userSelected) {
       logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 404, message: "User is not on our database" });
@@ -370,7 +371,7 @@ router.post('/fllws/:username', async function (req, res, next) {
         return;
       }
 
-      const userFollowsList = await getFollowersFromUser(userId, null);
+      const userFollowsList = await getFollowersFromUser.getFollowersFromUser(userId, null);
       if (userFollowsList.includes(followsUser.username)) {
         logger.log('warn',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 204, message: "User already follows this user" });
         var error = new Error("User already follows this user");
@@ -405,7 +406,7 @@ router.post('/fllws/:username', async function (req, res, next) {
       const unfollowsUserId = unfollowsUser.user_id;
 
       //Validates if user is following the unfollows user
-      const userFollowsList = await getFollowersFromUser(userId, null);
+      const userFollowsList = await getFollowersFromUser.getFollowersFromUser(userId, null);
       if (!userFollowsList.includes(unfollowsUser.username)) {
         logger.log('warn',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 204, message: "User is not following the user with name " + unfollowsUser.username });
         res.status(204).send("");
