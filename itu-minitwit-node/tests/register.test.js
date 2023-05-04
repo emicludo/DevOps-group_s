@@ -23,7 +23,7 @@ describe('POST /register', () => {
           pwd: 'testpassword'
         });
     
-        expect(response.status).to.equal(403);
+        expect(response.status).to.equal(411);
     });
 
     it('returns 400 if the username is already taken', async () => {
