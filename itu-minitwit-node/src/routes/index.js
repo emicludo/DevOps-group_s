@@ -3,29 +3,10 @@ var router = express.Router();
 
 const database = require('../db/dbService')
 
-//Utils
-var logger = require('../logger/logger');
-
-const crypto = require('crypto');
+const gravatar = require('../utils/gravatar')
 
 //Utils
 var logger = require('../logger/logger');
-
-const gravatar = function gravatarUrl(email, size = 80) {
-  const hash = crypto.createHash('md5').update(email.trim().toLowerCase()).digest('hex');
-  return `http://www.gravatar.com/avatar/${hash}?d=identicon&s=${size}`;
-}
-
-/**
- * GET /
- *
- * Checks whether the user is logged in.
- * If not logged in, retrieves most recent messages from the database and returns them (public timeline).
- * If logged in, retrieves most recent messages (follower and own) from the database and returns them.
- * 
- * Errors:
- *  - 500: An error occurred while retrieving the message
- */
 
 
 // TODO: Switch to "personal" timeline if logged in. Currently only shows public timeline. 
