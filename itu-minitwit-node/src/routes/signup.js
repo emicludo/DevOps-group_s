@@ -3,6 +3,8 @@ var router = express.Router();
 
 const database = require('../db/dbService')
 
+var logger = require('../logger/logger');
+
 const hash = require('../utils/hash')
 
 //Utils
@@ -19,7 +21,8 @@ router.get('/', function (req, res, next) {
     delete req.session.errorMessage;
     delete req.session.username;
     delete req.session.email;
-    res.render('signup', { errorMessage: errorMessage, username: username, email: email });
+    logger.log('info',  { url: req.url ,method: req.method, requestBody: req.body, message: req.session.errorMessage });
+    res.render('signup', {errorMessage: errorMessage, username: username, email: email});
   }
 });
 
@@ -86,7 +89,7 @@ router.post('/', function (req, res, next) {
           next(error);
           return;
         }
-
+        logger.log('info',  { url: req.url ,method: req.method, requestBody: req.body, message: req.body.username + ' was successfully registered' });
         req.session.flash = 'You were successfully registered and can login now';
         res.redirect('/api/signin');
         return;

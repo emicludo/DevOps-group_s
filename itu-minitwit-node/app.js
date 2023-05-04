@@ -96,7 +96,7 @@ app.use((err, req, res, next) => {
     const parsedUrl = url.parse(req.originalUrl);
     const route = "/" + parsedUrl.pathname.split('/')[1] + "/";
     httpErrorCodeCounter.labels(err.status, route).inc();
-    res.status(res.statusCode).json({ error: err.message });
+    res.status(err.status).json({ error: err.message });
     return;
   }
   res.status(err.status || 500).json({ error: err.message });

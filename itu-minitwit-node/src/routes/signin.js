@@ -3,6 +3,8 @@ var router = express.Router();
 
 const database = require('../db/dbService')
 
+var logger = require('../logger/logger');
+
 const hash = require('../utils/hash')
 
 //Utils
@@ -14,7 +16,6 @@ router.get('/', function(req, res, next) {
   } else {
     const errorMessage = req.session.errorMessage;
     const username = req.session.username;
-
     delete req.session.errorMessage;
     delete req.session.username;
     res.render('signin', {errorMessage: errorMessage, username: username});
@@ -35,6 +36,7 @@ router.post('/', function (req, res, next) {
     // if user does not exist
     if (rows.length == 0) {
       req.session.errorMessage = 'Incorrect username';
+      logger.log('warn',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: req.body.username + ' was not found' });
       res.redirect('/api/signin');
       return;
     }
@@ -43,12 +45,14 @@ router.post('/', function (req, res, next) {
       logger.log('warn', { url: req.url ,method: req.method, requestBody: req.body, responseStatus: 401, message: 'Invalid password from user: ' +  req.body.username});
       req.session.username = req.body.username;
       req.session.errorMessage = 'Invalid password';
+      logger.log('warn',  { url: req.url ,method: req.method, requestBody: req.body, message: req.body.username + ' failed to login' });
       res.redirect('/api/signin');
       return;
     }
     
     req.session.flash = 'You were logged in';
     req.session.user = rows[0];
+    logger.log('info',  { url: req.url ,method: req.method, requestBody: req.body, message: req.body.username + ' successful login' });
     res.redirect('/api/');
   })
 })

@@ -3,6 +3,9 @@ var router = express.Router();
 
 const database = require('../db/dbService')
 
+//Utils
+var logger = require('../logger/logger');
+
 const crypto = require('crypto');
 
 //Utils
@@ -27,7 +30,7 @@ const gravatar = function gravatarUrl(email, size = 80) {
 
 // TODO: Switch to "personal" timeline if logged in. Currently only shows public timeline. 
 router.get('/', function(req, res, next) {
-
+  logger.log('info',  { url: req.url ,method: req.method, requestBody: req.body , message: 'Request received in /' });
   if (!req.session.user) {
     res.redirect('/api/public');
     return;
@@ -56,7 +59,7 @@ router.get('/', function(req, res, next) {
 
 /* Displays the latest messages of all users. */
 router.get('/public', function (req, res, next) {
-  
+
   const flash = req.session.flash;
   delete req.session.flash;
   

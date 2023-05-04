@@ -54,6 +54,16 @@ jobs:
           tags: ${{ secrets.DOCKER_USERNAME }}/flag-tool:latest
           cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/flag-tool:webbuildcache
           cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/flag-tool:webbuildcache,mode=max
+      
+      - name: Build and push Filebeat
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./filebeat/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/filebeat:latest
+          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/filebeat:webbuildcache
+          cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/filebeat:webbuildcache,mode=max
 
       - name: Configure SSH
         run: |
