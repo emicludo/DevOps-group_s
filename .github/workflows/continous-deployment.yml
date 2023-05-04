@@ -5,7 +5,7 @@ on:
   push:
     # Run workflow every time something is pushed to the main branch
     branches:
-      - unit-integration-testing
+      - main
   # allow manual triggers for now too
   workflow_dispatch:
     manual: true
@@ -93,3 +93,14 @@ jobs:
           chmod 600 ~/.ssh/minitwit.key
         env: 
           SSH_KEY: ${{ secrets.SSH_KEY }}
+
+      - name: Deploy to server
+        # Configure the ~./bash_profile and deploy.sh file on the Vagrantfile
+        run: >
+          ssh $SSH_USER@$SSH_HOST
+          -i ~/.ssh/minitwit.key -o StrictHostKeyChecking=no
+          './minitwit/deploy.sh "${{ secrets.MYSQL_PASSWORD }}" "${{ secrets.MYSQL_USERNAME }}" "${{ secrets.MYSQL_HOST }}" "${{ secrets.MYSQL_PORT }}" "${{ secrets.MYSQL_DATABASE }}"'
+          
+        env:
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
