@@ -7,14 +7,20 @@ networks:
 
 services:
   minitwitimage:
-    image: ingridmariac/minitwitimage
-    container_name: minitwit
-    networks: main
-    ports: "3000:3000"
-    volumes: elk_elasticsearch_data:/app/logs
+    image:
+      - ingridmariac/minitwitimage
+    container_name:
+      - minitwit
+    networks:
+      - main
+    ports:
+      - "3000:3000"
+    volumes:
+      - elk_elasticsearch_data:/app/logs
     deploy:
       replicas: 3
-      endpoint_mode: vip
+      endpoint_mode:
+        - vip
       placement:
         constraints:
           - "node.role==manager"
@@ -36,7 +42,8 @@ services:
       endpoint_mode: 
         - vip
       placement:
-        constraints: "node.role==worker"
+        constraints:
+          - "node.role==worker"
 
   kibana:
     image:
@@ -52,37 +59,48 @@ services:
       endpoint_mode:
         - vip
       placement:
-        constraints: "node.role==worker"
+        constraints:
+          - "node.role==worker"
 
   filebeat:
-    image: 
+    image:
       - ingridmariac/filebeat
-    container_name: filebeat
-    command: filebeat -e -strict.perms=false
+    container_name:
+      - filebeat
+    command:
+      - filebeat -e -strict.perms=false
     networks:
       - main
     environment:
-      user: root
+      user:
+        - root
     volumes:
       - ./filebeat/filebeat.yml:/etc/filebeat/filebeat.yml:ro
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
       - /var/run/docker.sock:/var/run/docker.sock
       - elk_elasticsearch_data:/app/logs
       #- /app/logs:/app/logs
-    depends_on: elasticsearch
+    depends_on:
+      - elasticsearch
     deploy:
-      endpoint_mode: vip
+      endpoint_mode:
+        - vip
       placement:
-        constraints: "node.role==manager"
+        constraints:
+          - "node.role==manager"
 
   flagtool:
-    image: ingridmariac/flag-tool
-    container_name: flag-tool
-    command: tail -f /dev/null
+    image:
+      - ingridmariac/flag-tool
+    container_name:
+      - flag-tool
+    command:
+      - tail -f /dev/null
     networks:
       - main
     deploy:
-      endpoint_mode: vip
+      endpoint_mode:
+        - vip
       placement:
         constraints:
           - "node.role==worker"
