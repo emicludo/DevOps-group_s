@@ -19,7 +19,7 @@ services:
       - elk_elasticsearch_data:/app/logs
     deploy:
       replicas: 3
-      endpoint_mode: "vip"
+      endpoint_mode: vip
       placement:
         constraints:
           - "node.role==manager"
@@ -33,12 +33,12 @@ services:
     environment:
       - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
       - "discovery.type=single-node"
-    volumes: 
+    volumes:
       - elk_elasticsearch_data:/var/lib/elasticsearch/data
-    networks: 
+    networks:
       - elk
     deploy:
-      endpoint_mode: "vip"
+      endpoint_mode: vip
       placement:
         constraints:
           - "node.role==worker"
@@ -51,10 +51,10 @@ services:
       elasticsearch.hosts: '["http://elasticsearch:9200"]'
     ports:
       - "5601:5601"
-    networks: 
+    networks:
       - elk
     deploy:
-      endpoint_mode: "vip"
+      endpoint_mode: vip
       placement:
         constraints:
           - "node.role==worker"
@@ -80,7 +80,7 @@ services:
     depends_on:
       - elasticsearch
     deploy:
-      endpoint_mode: "vip"
+      endpoint_mode: vip
       placement:
         constraints:
           - "node.role==manager"
@@ -95,7 +95,7 @@ services:
     networks:
       - main
     deploy:
-      endpoint_mode: "vip"
+      endpoint_mode: vip
       placement:
         constraints:
           - "node.role==worker"
