@@ -7,8 +7,7 @@ networks:
 
 services:
   minitwitimage:
-    image:
-      - ingridmariac/minitwitimage
+    image: ingridmariac/minitwitimage
     container_name: minitwit
     networks:
       - main
@@ -43,8 +42,7 @@ services:
           - "node.role==worker"
 
   kibana:
-    image:
-      - "docker.elastic.co/kibana/kibana:7.17.1"
+    image: "docker.elastic.co/kibana/kibana:7.17.1"
     container_name: kibana
     environment:
       elasticsearch.hosts: '["http://elasticsearch:9200"]'
@@ -59,8 +57,7 @@ services:
           - "node.role==worker"
 
   filebeat:
-    image:
-      - ingridmariac/filebeat
+    image: ingridmariac/filebeat
     container_name: filebeat
     command:
       - filebeat -e -strict.perms=false
@@ -83,8 +80,7 @@ services:
           - "node.role==manager"
 
   flagtool:
-    image:
-      - ingridmariac/flag-tool
+    image: ingridmariac/flag-tool
     container_name: flag-tool
     command:
       - tail -f /dev/null
