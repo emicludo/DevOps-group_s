@@ -69,8 +69,7 @@ services:
     networks:
       - main
     environment:
-      user:
-        - root
+      user: root
     volumes:
       - ./filebeat/filebeat.yml:/etc/filebeat/filebeat.yml:ro
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
