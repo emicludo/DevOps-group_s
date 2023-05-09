@@ -8,7 +8,7 @@ networks:
 services:
   minitwitimage:
     image:
-      - ingridmariac/minitwitimage
+      - ingridmariac/minitwitimage 
     container_name:
       - minitwit
     networks:
@@ -19,8 +19,7 @@ services:
       - elk_elasticsearch_data:/app/logs
     deploy:
       replicas: 3
-      endpoint_mode:
-        - "vip"
+      endpoint_mode: "vip"
       placement:
         constraints:
           - "node.role==manager"
@@ -39,8 +38,7 @@ services:
     networks: 
       - elk
     deploy:
-      endpoint_mode: 
-        - "vip"
+      endpoint_mode: "vip"
       placement:
         constraints:
           - "node.role==worker"
@@ -67,8 +65,8 @@ services:
       - ingridmariac/filebeat
     container_name:
       - filebeat
-    command:
-      - filebeat -e -strict.perms=false
+#    command:
+#      - filebeat -e -strict.perms=false
     networks:
       - main
     environment:
