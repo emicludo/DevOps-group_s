@@ -14,11 +14,11 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-      - MYSQL_USERNAME: ${MYSQL_USERNAME}
-      - MYSQL_HOST: ${MYSQL_HOST}
-      - MYSQL_PORT: ${MYSQL_PORT}
-      - MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_USERNAME: ${MYSQL_USERNAME}
+      MYSQL_HOST: ${MYSQL_HOST}
+      MYSQL_PORT: ${MYSQL_PORT}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
 
     volumes:
       - elk_elasticsearch_data:/app/logs
@@ -67,7 +67,7 @@ services:
     image: ingridmariac/filebeat
     container_name: filebeat
     #command:
-     # - filebeat -e -strict.perms=false
+    # - filebeat -e -strict.perms=false
     networks:
       - main
     environment:
@@ -94,11 +94,11 @@ services:
     networks:
       - main
     environment:
-      - MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-      - MYSQL_USERNAME: ${MYSQL_USERNAME}
-      - MYSQL_HOST: ${MYSQL_HOST}
-      - MYSQL_PORT: ${MYSQL_PORT}
-      - MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_USERNAME: ${MYSQL_USERNAME}
+      MYSQL_HOST: ${MYSQL_HOST}
+      MYSQL_PORT: ${MYSQL_PORT}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
 
     deploy:
       endpoint_mode: vip
