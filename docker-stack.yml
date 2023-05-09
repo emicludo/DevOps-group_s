@@ -13,6 +13,13 @@ services:
       - main
     ports:
       - "3000:3000"
+    environment:
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_USERNAME: ${MYSQL_USERNAME}
+      MYSQL_HOST: ${MYSQL_HOST}
+      MYSQL_PORT: ${MYSQL_PORT}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+
     volumes:
       - elk_elasticsearch_data:/app/logs
     deploy:
@@ -86,6 +93,13 @@ services:
       - tail -f /dev/null
     networks:
       - main
+    environment:
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_USERNAME: ${MYSQL_USERNAME}
+      MYSQL_HOST: ${MYSQL_HOST}
+      MYSQL_PORT: ${MYSQL_PORT}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+
     deploy:
       endpoint_mode: vip
       #placement:
