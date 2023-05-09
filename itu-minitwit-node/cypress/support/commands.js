@@ -13,8 +13,8 @@
 Cypress.Commands.add('login', (username, password) => {
     cy.session([username, password], () => {
       cy.visit('/signin')
-      cy.get('#username-form').type(username)
-      cy.get('#password-form').type(password)
+      cy.get('#username').type(username)
+      cy.get('#password').type(password)
       cy.get('#submit-btn').click()
     })
   })
