@@ -12,21 +12,21 @@
 
         if user
             if profile
-                div(class="followstatus")
+                div(class="followstatus" id='followstatus-div')
                     if user.user_id == profile.user_id
                         | This is you!
                     else if followed
                         | You are currently following this user. 
-                        a(class="unfollow", href="/api/unfollow/#{profile.username}") Unfollow user.
+                        a(class="unfollow", id='unfollow-btn', href="/api/unfollow/#{profile.username}") Unfollow user.
                     else
                         | You are not yet following this user. 
-                        a(class="follow", href="/api/follow/#{profile.username}") Follow user.
+                        a(class="follow", id='follow-btn', href="/api/follow/#{profile.username}") Follow user.
             else if path == '/'
                 div(class="twitbox")
                     h3 What's on your mind #{user.username}?
                     form(action='/api/message' method='post')
-                            input(type='text' name='text' size='60')
-                            input(type='submit' value='Share')
+                            input(type='text' name='text' size='60' id='twit-form')
+                            input(type='submit' value='Share' id='twit-submit-btn')
             
 
         
