@@ -8,6 +8,10 @@ const gravatar = require('../utils/gravatar')
 //Utils
 var logger = require('../logger/logger');
 
+const User = require('../model/User');
+const Message = require('../model/Message');
+const Follower = require('../model/Follower');
+
 
 // TODO: Switch to "personal" timeline if logged in. Currently only shows public timeline. 
 router.get('/', function(req, res, next) {
@@ -40,26 +44,31 @@ router.get('/', function(req, res, next) {
 });
 
 /* Displays the latest messages of all users. */
-router.get('/public', function (req, res, next) {
+router.get('/public', async (req, res, next) => {
   const flash = req.session.flash;
   delete req.session.flash;
   
-  database.all("select message.*, user.* from message, user \
-                where message.flagged = 0 \
-                and message.author_id = user.user_id \
-                order by message.pub_date desc limit 30"
-    , [], (err, rows) => {
-
-    if (err) {
-      logger.log('error', { url: req.url, method: req.method, requestBody: req.body, responseStatus: 500, message: err });
-      var error = new Error('An error ocurrer while retrieving messages');
-      error.status = 500;
-      next(error);
-      return;
-    }
-
-    res.render('index', { messages: rows, path: req.path, flash: flash, user: req.session.user, gravatar: gravatar});
+  try {
+    const messages = await Message.findAll({
+      where: {
+        flagged: 0
+      },
+      include: {
+        model: User,
+        attributes: ['username', 'email']
+      },
+      order: [['pub_date', 'DESC']],
+      limit: 30
     });
+
+    res.render('index', { messages, path: req.path, flash, user: req.session.user, gravatar: gravatar });
+  } catch (error) {
+    logger.log('error', { url: req.url, method: req.method, requestBody: req.body, responseStatus: 500, message: error });
+    var error = new Error('An error ocurrer while retrieving messages');
+    error.status = 500;
+    next(error);
+    return;
+  }
 });
 
 /* Display's a users tweets. */
