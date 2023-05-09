@@ -7,10 +7,8 @@ networks:
 
 services:
   minitwitimage:
-    image:
-      - ingridmariac/minitwitimage 
-    container_name:
-      - minitwit
+    image: ingridmariac/minitwitimage
+    container_name: minitwit
     networks:
       - main
     ports:
@@ -19,10 +17,10 @@ services:
       - elk_elasticsearch_data:/app/logs
     deploy:
       replicas: 3
-      endpoint_mode: "vip"
-      placement:
-        constraints:
-          - "node.role==manager"
+      endpoint_mode: vip
+      #placement:
+      #constraints:
+      #  - "node.role==manager"
 
   elasticsearch:
     image: "docker.elastic.co/elasticsearch/elasticsearch:7.17.1"
@@ -33,45 +31,40 @@ services:
     environment:
       - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
       - "discovery.type=single-node"
-    volumes: 
+    volumes:
       - elk_elasticsearch_data:/var/lib/elasticsearch/data
-    networks: 
-      - elk
+    networks:
+      - main
     deploy:
-      endpoint_mode: "vip"
-      placement:
-        constraints:
-          - "node.role==worker"
+      endpoint_mode: vip
+      #placement:
+      #constraints:
+      #  - "node.role==worker"
 
   kibana:
-    image:
-      - "docker.elastic.co/kibana/kibana:7.17.1"
+    image: "docker.elastic.co/kibana/kibana:7.17.1"
     container_name: kibana
     environment:
       elasticsearch.hosts: '["http://elasticsearch:9200"]'
     ports:
       - "5601:5601"
-    networks: 
-      - elk
+    networks:
+      - main
     deploy:
-      endpoint_mode:
-        - "vip"
-      placement:
-        constraints:
-          - "node.role==worker"
+      endpoint_mode: vip
+      #placement:
+      #constraints:
+      #  - "node.role==worker"
 
   filebeat:
-    image:
-      - ingridmariac/filebeat
-    container_name:
-      - filebeat
-#    command:
-#      - filebeat -e -strict.perms=false
+    image: ingridmariac/filebeat
+    container_name: filebeat
+    #command:
+     # - filebeat -e -strict.perms=false
     networks:
       - main
     environment:
-      user:
-        - root
+      user: root
     volumes:
       - ./filebeat/filebeat.yml:/etc/filebeat/filebeat.yml:ro
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
@@ -81,25 +74,21 @@ services:
     depends_on:
       - elasticsearch
     deploy:
-      endpoint_mode:
-        - "vip"
-      placement:
-        constraints:
-          - "node.role==manager"
+      endpoint_mode: vip
+      #placement:
+      #constraints:
+      #  - "node.role==manager"
 
   flagtool:
-    image:
-      - ingridmariac/flag-tool
-    container_name:
-      - flag-tool
+    image: ingridmariac/flag-tool
+    container_name: flag-tool
     command:
       - tail -f /dev/null
     networks:
       - main
     deploy:
-      endpoint_mode:
-        - "vip"
-      placement:
-        constraints:
-          - "node.role==worker"
-          - "node.label==logging"
+      endpoint_mode: vip
+      #placement:
+      #constraints:
+      #  - "node.role==worker"
+      #  - "node.label==logging"
