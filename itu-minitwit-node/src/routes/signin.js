@@ -12,7 +12,7 @@ var logger = require('../logger/logger');
 
 router.get('/', function(req, res, next) {
   if (req.session.user) {
-    res.redirect('/api');
+    res.redirect('/api/public');
   } else {
     const errorMessage = req.session.errorMessage;
     const username = req.session.username;
