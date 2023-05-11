@@ -6,6 +6,7 @@ const Message = sequelize.define('message', {
     message_id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
+        allowNull: false,
         autoIncrement: true
     },
     author_id: {
