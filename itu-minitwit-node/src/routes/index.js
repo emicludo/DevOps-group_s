@@ -20,11 +20,19 @@ router.get('/', function(req, res, next) {
   const flash = req.session.flash;
   delete req.session.flash;
 
-  database.all("select message.*, user.* from message, user \
-                where message.flagged = 0 \
-                and message.author_id = user.user_id \
-                and (user.user_id = ? or user.user_id in (select whom_id from follower where who_id = ?)) \
-                order by message.pub_date desc limit 30"
+  database.all("SELECT message.text, message.pub_date, user.username, user.email \
+                FROM message \
+                JOIN user ON message.author_id = user.user_id \
+                WHERE message.flagged = 0 \
+                AND user.user_id = ? \
+                UNION \
+                SELECT message.text, message.pub_date, user.username, user.email \
+                FROM message \
+                JOIN user ON message.author_id = user.user_id \
+                JOIN follower ON user.user_id = follower.whom_id \
+                WHERE message.flagged = 0 \
+                AND follower.who_id = ? \
+                ORDER BY pub_date DESC LIMIT 30"
     , [req.session.user.user_id, req.session.user.user_id], (err, rows) => {
 
     if (err) {
