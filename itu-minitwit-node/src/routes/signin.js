@@ -53,7 +53,7 @@ router.post('/', function (req, res, next) {
     req.session.flash = 'You were logged in';
     req.session.user = rows[0];
     logger.log('info',  { url: req.url ,method: req.method, requestBody: req.body, message: req.body.username + ' successful login' });
-    res.redirect('/api/public');
+    res.redirect('/api');
   })
 })
 
