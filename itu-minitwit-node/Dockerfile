@@ -2,7 +2,7 @@
 FROM node:latest
 
 # Set the working directory to /app
-WORKDIR /app/aaa/
+WORKDIR /app/
 
 # Copy package.json and package-lock.json to the working directory
 COPY itu-minitwit-node/package*.json ./
