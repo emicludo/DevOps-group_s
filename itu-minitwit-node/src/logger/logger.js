@@ -13,8 +13,8 @@ const logger = winston.createLogger({
   level: 'info',
   format: ecsFormat(), 
   transports: [
-    new winston.transports.File({ filename: 'errors.log', level: 'error' }),
-    new winston.transports.File({ filename: 'combined.log', level: 'info'  }),
+    new winston.transports.File({ filename: '/app/logs/errors.log', level: 'error' }),
+    new winston.transports.File({ filename: '/app/logs/combined.log', level: 'info'  }),
     //new winston.transports.Console(),
     //esTransport,
   ],
