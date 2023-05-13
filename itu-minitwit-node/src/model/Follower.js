@@ -23,7 +23,10 @@ const Follower = sequelize.define('follower', {
             key: 'user_id'
         }
     },
-})
+},{
+    tableName: 'follower',
+    timestamps: false
+  })
 
 Follower.belongsTo(User, { foreignKey: 'who_id', as: 'who' });
 Follower.belongsTo(User, { foreignKey: 'whom_id', as: 'whom' });

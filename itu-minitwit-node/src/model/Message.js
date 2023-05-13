@@ -27,7 +27,10 @@ const Message = sequelize.define('message', {
     flagged: {
         type: DataTypes.INTEGER,
     }
-})
+},{
+    tableName: 'message',
+    timestamps: false
+  })
 
 Message.belongsTo(User, { foreignKey: 'author_id' });
 

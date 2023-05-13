@@ -71,6 +71,7 @@ router.get('/public', async (req, res, next) => {
 
     res.render('index', { messages, path: req.path, flash, user: req.session.user, gravatar: gravatar });
   } catch (error) {
+    console.log(error);
     logger.log('error', { url: req.url, method: req.method, requestBody: req.body, responseStatus: 500, message: error });
     var error = new Error('An error ocurrer while retrieving messages');
     error.status = 500;

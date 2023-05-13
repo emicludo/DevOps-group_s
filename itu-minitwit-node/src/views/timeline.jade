@@ -7,7 +7,7 @@
 
 .timeline-box
     .title
-        h2= path == '/public' ? "Public Timeline" : (path == '/' ? "My Timeline" : (messages[0].username + "'s Timeline"))
+        h2= path == '/public' ? "Public Timeline" : (path == '/' ? "My Timeline" : (messages[0].user.username + "'s Timeline"))
 
 
         if user
@@ -34,8 +34,8 @@
             for msg in messages 
                 li 
                     // img(src='{{ message.email|gravatar(size=48) }}')
-                    img(src='#{gravatar(msg.email, 40)}')
-                    strong #[a(href="/api/#{msg.username}") #{msg.username}] 
+                    img(src='#{gravatar(msg.user.email, 40)}')
+                    strong #[a(href="/api/#{msg.user.username}") #{msg.user.username}] 
                     span #{msg.text} 
                     small — #{convert(msg.pub_date)}
             else 
