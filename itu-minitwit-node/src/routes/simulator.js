@@ -46,7 +46,7 @@ router.post("/register", async function (req, res, next) {
       next(error);
       return;
     }
-
+    
     //Updates Latest
     var latest = req.query.latest;
     if (latest !== undefined && parseInt(latest) !== NaN) {
@@ -58,22 +58,22 @@ router.post("/register", async function (req, res, next) {
     const userFound = users.find(user => user.username == username)
 
     var error = null
-    if (username === null) {
+    if (username === null || username === undefined || username === "") {
       error = "You have to enter a username";
     } else if (email === null || email.indexOf("@") === -1) {
       error = error + ". You have to enter a valid email address"
-    } else if (password === null) {
-      error = error + ". You have to enter a password"
+    } else if (password === null || password === undefined || password === "" || password.length < 2) {
+      error = "You have to enter valid password"
     } else if (userFound !== undefined) {
       error = error + ". The username is already taken"
     }
-
     if (error === null) {
       const body = {
         username: username,
         email: email,
         pw_hash: hash(password)
       };
+
       database.add('user', body, function (err, response) {
         if (err) {
           logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , message: err });
