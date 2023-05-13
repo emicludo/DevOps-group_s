@@ -12,7 +12,7 @@ var logger = require('../logger/logger');
 
 router.get('/', function(req, res, next) {
   if (req.session.user) {
-    res.redirect('/api');
+    res.redirect('/api/public');
   } else {
     const errorMessage = req.session.errorMessage;
     const username = req.session.username;
@@ -53,7 +53,7 @@ router.post('/', function (req, res, next) {
     req.session.flash = 'You were logged in';
     req.session.user = rows[0];
     logger.log('info',  { url: req.url ,method: req.method, requestBody: req.body, message: req.body.username + ' successful login' });
-    res.redirect('/api/');
+    res.redirect('/api');
   })
 })
 
