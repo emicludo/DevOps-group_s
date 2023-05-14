@@ -28,7 +28,7 @@ const Follower = sequelize.define('follower', {
     timestamps: false
   })
 
-Follower.belongsTo(User, { foreignKey: 'who_id', as: 'who' });
-Follower.belongsTo(User, { foreignKey: 'whom_id', as: 'whom' });
+/* Follower.belongsTo(User, { foreignKey: 'who_id', as: 'who' });
+Follower.belongsTo(User, { foreignKey: 'whom_id', as: 'whom' }); */
 
 module.exports = Follower;

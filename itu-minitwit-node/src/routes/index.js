@@ -27,84 +27,28 @@ router.get('/', async function(req, res, next) {
   delete req.session.flash;
 
   try {
-    /* const messages = await Message.findAll({
-      where: {
-        flagged: 0,
-        [Op.or]: [
-          { '$user.user_id$': req.session.user.user_id },
-          { '$user.Following.who$': req.session.user.user_id },
-        ],
-      },
-      include: [
-        {
-          model: User,
-          as: 'user',
-          attributes: ['username', 'email'],
-          include: [
-            {
-              model: User,
-              as: 'Followers',
-              through: { attributes: [] },
-              attributes: [],
-              where: { who_id: req.session.user.user_id },
-            },
-          ],
-        },
-      ],
-      order: [['pub_date', 'DESC']],
-      limit: 30,
-    }); */
-
     const messages = await Message.findAll({
-      attributes: [
-        'text',
-        'pub_date'
-      ],
-      include: [{
+      attributes: ['text', 'pub_date'],
+      include: {
         model: User,
         as: 'user',
-        attributes: ['username', 'email']
-      }],
+        attributes: ['username', 'email'],
+        include: {
+          model: User,
+          as: 'Following',
+          attributes: ['username', 'email'],
+          where: {
+            user_id: req.session.user.user_id
+          }
+        }
+      },
       where: {
         flagged: 0
       },
       order: [['pub_date', 'DESC']],
       limit: 30,
-      subQuery: false,
-      distinct: true,
-      raw: true,
-      nest: true,
-      union: [{
-        attributes: [
-          'text',
-          'pub_date',
-        ],
-        include: [{
-          model: User,
-          attributes: ['username', 'email']
-        }],
-        where: {
-          flagged: 0
-        },
-        order: [['pub_date', 'DESC']],
-        limit: 30,
-        subQuery: false,
-        distinct: true,
-        raw: true,
-        nest: true,
-        through: {
-          attributes: []
-        },
-        model: Follower,
-        as: 'Followers',
-        where: {
-          who_id: req.session.user.user_id
-        }
-      }],
-      where: {
-        '$user.user_id$': req.session.user.user_id
-      }
     });
+    
     console.log(messages);
     res.render('index', { messages, flash: flash, path: req.path, user: req.session.user, gravatar: gravatar });
   } catch (error) {
@@ -115,7 +59,7 @@ router.get('/', async function(req, res, next) {
     next(error);
     return;
   }
-  
+
   /* database.all("SELECT message.text, message.pub_date, user.username, user.email \
                 FROM message \
                 JOIN user ON message.author_id = user.user_id \
