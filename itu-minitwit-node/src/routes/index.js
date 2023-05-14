@@ -8,13 +8,15 @@ const gravatar = require('../utils/gravatar')
 //Utils
 var logger = require('../logger/logger');
 
+const Sequelize = require('sequelize');
+const { Op } = require('sequelize');
 const User = require('../model/User');
 const Message = require('../model/Message');
 const Follower = require('../model/Follower');
 
 
 // TODO: Switch to "personal" timeline if logged in. Currently only shows public timeline. 
-router.get('/', function(req, res, next) {
+router.get('/', async function(req, res, next) {
   logger.log('info',  { url: req.url ,method: req.method, requestBody: req.body , message: 'Request received in /' });
   if (!req.session.user) {
     res.redirect('/api/public');
@@ -24,7 +26,97 @@ router.get('/', function(req, res, next) {
   const flash = req.session.flash;
   delete req.session.flash;
 
-  database.all("SELECT message.text, message.pub_date, user.username, user.email \
+  try {
+    /* const messages = await Message.findAll({
+      where: {
+        flagged: 0,
+        [Op.or]: [
+          { '$user.user_id$': req.session.user.user_id },
+          { '$user.Following.who$': req.session.user.user_id },
+        ],
+      },
+      include: [
+        {
+          model: User,
+          as: 'user',
+          attributes: ['username', 'email'],
+          include: [
+            {
+              model: User,
+              as: 'Followers',
+              through: { attributes: [] },
+              attributes: [],
+              where: { who_id: req.session.user.user_id },
+            },
+          ],
+        },
+      ],
+      order: [['pub_date', 'DESC']],
+      limit: 30,
+    }); */
+
+    const messages = await Message.findAll({
+      attributes: [
+        'text',
+        'pub_date'
+      ],
+      include: [{
+        model: User,
+        as: 'user',
+        attributes: ['username', 'email']
+      }],
+      where: {
+        flagged: 0
+      },
+      order: [['pub_date', 'DESC']],
+      limit: 30,
+      subQuery: false,
+      distinct: true,
+      raw: true,
+      nest: true,
+      union: [{
+        attributes: [
+          'text',
+          'pub_date',
+        ],
+        include: [{
+          model: User,
+          attributes: ['username', 'email']
+        }],
+        where: {
+          flagged: 0
+        },
+        order: [['pub_date', 'DESC']],
+        limit: 30,
+        subQuery: false,
+        distinct: true,
+        raw: true,
+        nest: true,
+        through: {
+          attributes: []
+        },
+        model: Follower,
+        as: 'Followers',
+        where: {
+          who_id: req.session.user.user_id
+        }
+      }],
+      where: {
+        '$user.user_id$': req.session.user.user_id
+      }
+    });
+    console.log(messages);
+    res.render('index', { messages, flash: flash, path: req.path, user: req.session.user, gravatar: gravatar });
+  } catch (error) {
+    console.log(error);
+    logger.log('error', { url: req.url, method: req.method, requestBody: req.body, responseStatus: 500, message: error });
+    var error = new Error('An error ocurrer while retrieving messages');
+    error.status = 500;
+    next(error);
+    return;
+  }
+  
+  /* database.all("SELECT message.text, message.pub_date, user.username, user.email \
                 FROM message \
                 JOIN user ON message.author_id = user.user_id \
                 WHERE message.flagged = 0 \
@@ -46,7 +138,7 @@ router.get('/', function(req, res, next) {
       return;
     }
       res.render('index', { messages: rows, flash: flash, path: req.path, user: req.session.user, gravatar: gravatar});
-    });
+    }); */
   
     
 });
@@ -63,6 +155,7 @@ router.get('/public', async (req, res, next) => {
       },
       include: {
         model: User,
+        as: 'user',
         attributes: ['username', 'email']
       },
       order: [['pub_date', 'DESC']],

@@ -32,6 +32,6 @@ const Message = sequelize.define('message', {
     timestamps: false
   })
 
-Message.belongsTo(User, { foreignKey: 'author_id' });
+Message.belongsTo(User, { foreignKey: 'author_id', as: 'user' });
 
 module.exports = Message;
