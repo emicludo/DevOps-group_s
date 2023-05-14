@@ -27,29 +27,60 @@ router.get('/', async function(req, res, next) {
   delete req.session.flash;
 
   try {
-    const messages = await Message.findAll({
+    const userMessages = await Message.findAll({
       attributes: ['text', 'pub_date'],
-      include: {
+      include: [{
         model: User,
         as: 'user',
         attributes: ['username', 'email'],
-        include: {
-          model: User,
-          as: 'Following',
-          attributes: ['username', 'email'],
-          where: {
-            user_id: req.session.user.user_id
-          }
+        where: {
+          user_id: req.session.user.user_id
         }
-      },
+      }],
       where: {
         flagged: 0
       },
       order: [['pub_date', 'DESC']],
       limit: 30,
+      subQuery: false
+    });
+
+    const followersMessages = await Message.findAll({
+      attributes: ['text', 'pub_date'],
+      include: {
+        model: User,
+        as: 'user',
+        attributes: ['username', 'email']
+      },
+      where: {
+        flagged: 0,
+        author_id: {
+          [Op.in]: Sequelize.literal(
+            `(SELECT whom_id FROM follower WHERE who_id = ${req.session.user.user_id})`
+          )
+        }
+      },
+      order: [['pub_date', 'DESC']],
+      limit: 30
     });
     
-    console.log(messages);
+    const allMessages = userMessages.concat(followersMessages);
+    const uniqueMessages = allMessages.filter((message, index, self) =>
+      index === self.findIndex((m) => (
+        m.dataValues.text === message.dataValues.text &&
+        m.dataValues.pub_date === message.dataValues.pub_date &&
+        m.dataValues.user.username === message.dataValues.user.username &&
+        m.dataValues.user.email === message.dataValues.user.email
+      ))
+    );
+    
+    const sortedMessages = uniqueMessages.sort((a, b) =>
+      b.dataValues.pub_date - a.dataValues.pub_date
+    );
+    
+    const messages = sortedMessages.slice(0, 30);
+    
+    console.log(followersMessages );
     res.render('index', { messages, flash: flash, path: req.path, user: req.session.user, gravatar: gravatar });
   } catch (error) {
     console.log(error);
