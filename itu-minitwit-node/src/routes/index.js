@@ -45,6 +45,18 @@ router.get('/', async function(req, res, next) {
       subQuery: false
     });
 
+    const whom = await Follower.findAll({
+      attributes: ['whom_id'],
+      where: {
+        who_id: req.session.user.user_id,
+      }
+    })
+
+    const IDs = [];
+    whom.forEach((whom) => {
+      IDs.push(whom.whom_id)
+    })
+
     const followersMessages = await Message.findAll({
       attributes: ['text', 'pub_date'],
       include: {
@@ -55,9 +67,7 @@ router.get('/', async function(req, res, next) {
       where: {
         flagged: 0,
         author_id: {
-          [Op.in]: Sequelize.literal(
-            `(SELECT whom_id FROM follower WHERE who_id = ${req.session.user.user_id})`
-          )
+          [Op.in]: IDs,
         }
       },
       order: [['pub_date', 'DESC']],
@@ -80,41 +90,14 @@ router.get('/', async function(req, res, next) {
     
     const messages = sortedMessages.slice(0, 30);
     
-    console.log(followersMessages );
     res.render('index', { messages, flash: flash, path: req.path, user: req.session.user, gravatar: gravatar });
   } catch (error) {
-    console.log(error);
     logger.log('error', { url: req.url, method: req.method, requestBody: req.body, responseStatus: 500, message: error });
     var error = new Error('An error ocurrer while retrieving messages');
     error.status = 500;
     next(error);
     return;
-  }
-
-  /* database.all("SELECT message.text, message.pub_date, user.username, user.email \
-                FROM message \
-                JOIN user ON message.author_id = user.user_id \
-                WHERE message.flagged = 0 \
-                AND user.user_id = ? \
-                UNION \
-                SELECT message.text, message.pub_date, user.username, user.email \
-                FROM message \
-                JOIN user ON message.author_id = user.user_id \
-                JOIN follower ON user.user_id = follower.whom_id \
-                WHERE message.flagged = 0 \
-                AND follower.who_id = ? \
-                ORDER BY pub_date DESC LIMIT 30"
-    , [req.session.user.user_id, req.session.user.user_id], (err, rows) => {
-
-    if (err) {
-      var error = new Error('An error ocurrer while retrieving messages');
-      error.status = 500;
-      next(error);
-      return;
-    }
-      res.render('index', { messages: rows, flash: flash, path: req.path, user: req.session.user, gravatar: gravatar});
-    }); */
-  
+  } 
     
 });
 
