@@ -1,7 +1,14 @@
+---
 name: Terraform build and deploy with Docker Swarm
 
 on:
+  push:
+    # Run workflow every time something is pushed to the main branch
+    #branches:
+    #  - main
+  # allow manual triggers
   workflow_dispatch:
+    manual: true
 
 jobs:
   create-cluster:
