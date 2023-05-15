@@ -1,9 +1,7 @@
 name: Terraform build and deploy with Docker Swarm
 
 on:
-  push:
-    branches:
-      - terraform-workflow
+  workflow_dispatch:
 
 jobs:
   create-cluster:
