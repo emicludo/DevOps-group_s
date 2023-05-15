@@ -1,8 +1,9 @@
 name: Terraform build and deploy with Docker Swarm
 
-# Only Manual trigger is allowed for now
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - terraform-workflow
 
 jobs:
   create-cluster:
