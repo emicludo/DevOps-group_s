@@ -1,5 +1,8 @@
 version: '3.3'
 
+volumes:
+  elk_elasticsearch_data:
+
 services:
   visualizer:
     image: dockersamples/visualizer:stable
@@ -60,3 +63,8 @@ services:
       replicas: 2
       placement:
         constraints: [node.role == worker]
+    volumes:
+      - ./filebeat/filebeat.yml:/etc/filebeat/filebeat.yml:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+      - elk_elasticsearch_data:/app/logs
