@@ -2,6 +2,8 @@ var express = require('express');
 var router = express.Router();
 
 const database = require('../db/dbService')
+const Message = require('../model/Message');
+const User = require('../model/User');
 
 //Services
 const LatestService = require('../services/LatestService');
@@ -93,7 +95,7 @@ router.post("/register", async function (req, res, next) {
   }
 });
 
-router.get('/msgs', function (req, res, next) {
+router.get('/msgs', async function (req, res, next) {
   try {
     //Checks if header comes from simulator
     const header = req.headers.authorization;
@@ -116,29 +118,39 @@ router.get('/msgs', function (req, res, next) {
     if (!no_msgs) {
       no_msgs = 100;
     }
-    
-    const query = `SELECT message.*, user.* FROM message, user
-    WHERE message.flagged = 0 AND message.author_id = user.user_id
-    ORDER BY message.pub_date DESC LIMIT ?`
 
-    database.all(query, [no_msgs], (err, rows) => {
-      if (err) {
-        logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err });
-        var error = new Error("Error retrieving messages from our database");
-        error.status = 500;
-        next(error);
-        return;
-      }
+    try {
+      const messages = await Message.findAll({
+        where: {
+          flagged: 0,
+        },
+        include: {
+          model: User,
+          as: 'user',
+          attributes: ['username', 'email']
+        },
+        order: [['pub_date', 'DESC']],
+        limit: no_msgs
+      });
+
       const filteredMsgs = [];
-      for (const msg of rows) {
+
+      for (const msg of messages) {
         const filteredMsg = {};
         filteredMsg.content = msg.text; req.method
-        filteredMsg.pubDate = msg.pubDate;
-        filteredMsg.user = msg.username;
+        filteredMsg.pubDate = msg.pub_date;
+        filteredMsg.user = msg.user.username;
         filteredMsgs.push(filteredMsg);
       }
       res.send(filteredMsgs);
-    });
+
+    } catch (err) {
+      logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err });
+      var error = new Error("Error retrieving messages from our database");
+      error.status = 500;
+      next(error);
+      return;
+    }
   } catch (error) {
     logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: error });
     var newError = new Error(error);
