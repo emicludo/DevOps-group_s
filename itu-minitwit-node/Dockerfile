@@ -13,6 +13,9 @@ RUN npm install
 # Copy the current directory contents into the container at /app
 COPY itu-minitwit-node .
 
+# Create the log directory if it doesn't exist and set permissions
+RUN mkdir -p /var/log/appname && chmod -R 755 /var/log/appname
+
 # Set the environment variable PORT to 5000
 ENV PORT=3000
 

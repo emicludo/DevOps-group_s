@@ -3,7 +3,7 @@ filebeat.inputs:
 - type: filestream 
   id: filestream-logs
   paths:
-    - /app/logs/*.log
+    - /var/log/minitwit/*.log
   parsers:
     - ndjson:
       overwrite_keys: true 

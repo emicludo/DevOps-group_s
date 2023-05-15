@@ -5,8 +5,8 @@ const logger = winston.createLogger({
   level: 'info',
   format: ecsFormat(), 
   transports: [
-    new winston.transports.File({ filename: '/app/logs/errors.log', level: 'error' }),
-    new winston.transports.File({ filename: '/app/logs/combined.log', level: 'info'  }),
+    new winston.transports.File({ filename: '/var/log/minitwit/errors.log', level: 'error' }),
+    new winston.transports.File({ filename: '/var/log/minitwit/combined.log', level: 'info'  }),
   ],
 });
 
