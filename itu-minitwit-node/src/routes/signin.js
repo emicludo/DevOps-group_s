@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 const database = require('../db/dbService')
+const User = require('../model/User')
 
 var logger = require('../logger/logger');
 
@@ -23,25 +24,25 @@ router.get('/', function(req, res, next) {
 });
 
 
-router.post('/', function (req, res, next) {
-  database.all('SELECT * FROM user WHERE username = ?', req.body.username, (err, rows) => {
-    if (err) {
-      logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body, responseStatus: 500, message: err });
-      var error = new Error("An error occurred while retrieving user");
-      error.status = 500;
-      next(error);
-      return;
-    }
+router.post('/', async function (req, res, next) {
+  
+  try {
+    const users = await User.findAll({
+      attributes: ['user_id', 'username', 'email', 'pw_hash'],
+      where: {
+        username: req.body.username
+      }
+    });
 
     // if user does not exist
-    if (rows.length == 0) {
+    if (users.length == 0) {
       req.session.errorMessage = 'Incorrect username';
       logger.log('warn',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: req.body.username + ' was not found' });
       res.redirect('/api/signin');
       return;
     }
 
-    if (hash(req.body.password) != rows[0].pw_hash) {
+    if (hash(req.body.password) != users[0].pw_hash) {
       logger.log('warn', { url: req.url ,method: req.method, requestBody: req.body, responseStatus: 401, message: 'Invalid password from user: ' +  req.body.username});
       req.session.username = req.body.username;
       req.session.errorMessage = 'Invalid password';
@@ -49,12 +50,20 @@ router.post('/', function (req, res, next) {
       res.redirect('/api/signin');
       return;
     }
-    
+
     req.session.flash = 'You were logged in';
-    req.session.user = rows[0];
+    req.session.user = users[0];
     logger.log('info',  { url: req.url ,method: req.method, requestBody: req.body, message: req.body.username + ' successful login' });
     res.redirect('/api');
-  })
+
+  } catch (err) {
+      console.log(err);
+      logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body, responseStatus: 500, message: err });
+      var error = new Error("An error occurred while retrieving user");
+      error.status = 500;
+      next(error);
+      return;
+  }
 })
 
 module.exports = router;
