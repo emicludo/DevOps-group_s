@@ -3,7 +3,7 @@ name: Terraform build and deploy with Docker Swarm
 on:
   push:
     branches:
-      - terraform
+      - terraform-workflow
 
 jobs:
   create-cluster:
@@ -89,6 +89,6 @@ jobs:
               root@$(terraform output -raw minitwit-swarm-leader-ip-address) \
               -i ssh_key/terraform \
               'docker service logs minitwit_filebeat'
-              
+
           echo -e "\n--> Done bootstrapping Minitwit"
           echo -e "--> You can check the status of swarm cluster @ http://$(terraform output -raw minitwit-swarm-leader-ip-address):8888"
