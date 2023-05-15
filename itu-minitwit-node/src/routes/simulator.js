@@ -12,14 +12,14 @@ var logger = require('../logger/logger');
 const hash = require('../utils/hash')
 const isSimulator = require('../utils/authorizationValidator');
 
-const GetAllUsers = require('../model/user');
+const GetAllUsers = require('../model/users.js');
 const getAllUsers = new GetAllUsers();
 const GetFollowersFromUser = require('../model/followers.js');
 const getFollowersFromUser = new GetFollowersFromUser();
 
 
 //Routing
-router.get('/latest', function (req, res, next) {
+router.get('/latest', async function (req, res, next) {
   res.send({ latest: latestService.getLatest() });
 })
 

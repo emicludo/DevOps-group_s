@@ -1,7 +1,7 @@
 const request = require('supertest');
 const app = require('../app');
 const database = require('../src/db/dbService');
-const getAllUsers = require('../src/model/user');
+const getAllUsers = require('../src/model/users');
 const getFollowersFromUser = require('../src/model/followers.js');
 
 const sinon = require('sinon');
