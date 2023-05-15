@@ -193,33 +193,45 @@ router.get('/msgs/:username', async function (req, res, next) {
     }
     const userId = userSelected.user_id
 
-    const query = `SELECT message.*, user.* FROM message, user 
-    WHERE message.flagged = 0 AND
-    user.user_id = message.author_id AND user.user_id = ?
-    ORDER BY message.pub_date DESC LIMIT ?`
+    try {
+      const messages = await Message.findAll({
+        where: {
+          flagged: 0,
+        },
+        include: {
+          model: User,
+          as: 'user',
+          attributes: ['username', 'email'],
+          where: {
+            user_id: userId
+          }
+        },
+        order: [['pub_date', 'DESC']],
+        limit: no_msgs
+      })
 
-    database.all(query, [userId, no_msgs], (err, rows) => {
-      if (err) {
-        logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err });
-        var error = new Error("Error retrieving messages from our database");
-        error.status = 500;
-        next(error);
-        return;
-      }
       const filteredMsgs = [];
-      for (const msg of rows) {
+      for (const msg of messages) {
         const filteredMsg = {};
         filteredMsg.content = msg.text;
-        filteredMsg.pubDate = msg.pubDate;
-        filteredMsg.user = msg.username;
+        filteredMsg.pubDate = msg.pub_date;
+        filteredMsg.user = msg.user.username;
         filteredMsgs.push(filteredMsg);
       }
+
       if (filteredMsgs.length == 0) {
         res.status(204).send("");
       } else {
         res.status(200).send(filteredMsgs);
       }
-    });
+
+    } catch (err) {
+      logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err });
+        var error = new Error("Error retrieving messages from our database");
+        error.status = 500;
+        next(error);
+        return;
+    }
   } catch (error) {
     logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: error });
     var newError = new Error(error);
