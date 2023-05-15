@@ -32,6 +32,8 @@ services:
       MYSQL_HOST: ${MYSQL_HOST}
       MYSQL_PORT: ${MYSQL_PORT}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
+    volumes:
+      - minitwit_logs:/var/log/minitwit
     deploy:
       replicas: 3
       placement:
@@ -56,7 +58,12 @@ services:
     command: filebeat -e -strict.perms=false
     environment:
       user: root
+    volumes:
+      - minitwit_logs:/var/log/minitwit
     deploy:
       replicas: 2
       placement:
         constraints: [node.role == worker]
+
+volumes:
+  minitwit_logs:
