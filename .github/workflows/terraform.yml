@@ -79,16 +79,6 @@ jobs:
               root@$(terraform output -raw minitwit-swarm-leader-ip-address) \
               -i ssh_key/terraform \
               'docker stack deploy -c minitwit_stack.yml minitwit'
-          
-          echo -e "\n--> Waiting for 1 minutes before checking services\n"
-          sleep 1m
-
-          echo -e "\n--> Filebeat logs \n"
-          ssh \
-              -o 'StrictHostKeyChecking no' \
-              root@$(terraform output -raw minitwit-swarm-leader-ip-address) \
-              -i ssh_key/terraform \
-              'docker service logs minitwit_filebeat'
 
           echo -e "\n--> Done bootstrapping Minitwit"
           echo -e "--> You can check the status of swarm cluster @ http://$(terraform output -raw minitwit-swarm-leader-ip-address):8888"
