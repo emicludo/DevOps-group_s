@@ -4,6 +4,7 @@ var router = express.Router();
 const database = require('../db/dbService')
 const Message = require('../model/Message');
 const User = require('../model/User');
+const Follower = require('../model/Follower');
 
 //Services
 const LatestService = require('../services/LatestService');
@@ -394,18 +395,21 @@ router.post('/fllws/:username', async function (req, res, next) {
       }
       
       const followsUserId = followsUser.user_id;
-      const query = "INSERT INTO follower (who_id, whom_id) values (?, ?)";
 
-      database.run(query, [userId, followsUserId], function (err, result) {
-        if (err) {
-          logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err });
+      try {
+        const followers = await Follower.create({
+          who_id: userId,
+          whom_id: followsUserId
+        })
+        res.status(204).send("");
+      } catch(err) {
+        logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err });
           var error = new Error(err);
           error.status = 500;
           next(error);
           return;
-        }
-        res.status(204).send("");
-      });
+      }
+
     } else if (req.body.unfollow) {
       const unfollowUsername = req.body.unfollow;
       const unfollowsUser = users.find(user => user.username == unfollowUsername);
@@ -426,17 +430,23 @@ router.post('/fllws/:username', async function (req, res, next) {
         return
       }
 
-      const query = "DELETE FROM follower WHERE who_id=? and whom_id=?";
-      database.run(query, [userId, unfollowsUserId], function (err, result) {
-        if (err) {
-          logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err });
+      try {
+        
+        const result = await Follower.destroy({
+          where: {
+            who_id: userId,
+            whom_id: unfollowsUserId
+          }
+        });
+
+        res.status(204).send("");
+      } catch(err) {
+        logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err });
           var error = new Error(err);
           error.status = 500;
           next(error);
           return;
-        }
-        res.status(204).send("");
-      });
+      }
     } else {
       logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 400, message: "Invalid request body" });
       var error = new Error("Invalid request body");
