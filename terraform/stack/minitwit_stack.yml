@@ -61,10 +61,9 @@ services:
       user: root
     deploy:
       replicas: 2
+      restart_policy:
+        condition: on-failure
       placement:
         constraints: [node.role == worker]
     volumes:
-      - ./filebeat/filebeat.yml:/etc/filebeat/filebeat.yml:ro
-      - /var/lib/docker/containers:/var/lib/docker/containers:ro
-      - /var/run/docker.sock:/var/run/docker.sock
       - elk_elasticsearch_data:/app/logs
