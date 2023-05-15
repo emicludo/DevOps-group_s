@@ -325,27 +325,16 @@ router.get('/fllws/:username', async function (req, res, next) {
     }
     const userId = userSelected.user_id;
 
-    const query = `SELECT user.username FROM user
-                   INNER JOIN follower ON follower.whom_id=user.user_id
-                   WHERE follower.who_id=?
-                   LIMIT ?`;
-
     const no_followers = parseInt(req.query.no) || 100;
-    database.all(query, [userId, no_followers], (err, rows) => {
-      if (err) {
-        logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err });
-        var error = new Error("Error retrieving followers from our database");
-        error.status = 500;
-        next(error);
-        return;
-      }
-      const filteredFllws = [];
-      for (const fllw of rows) {
-        filteredFllws.push(fllw.username);
-      }
-      const response = { follows: filteredFllws };
-      res.send(response);
-    });
+
+    const userFollowsList = await getFollowersFromUser.getFollowersFromUser(userId, no_followers);
+    const filteredFllws = [];
+    for (const fllw of userFollowsList) {
+      filteredFllws.push(fllw);
+    }
+    const response = { follows: filteredFllws };
+    res.send(response);
+
   } catch (error) {
     logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: error });
     var newError = new Error(error);
