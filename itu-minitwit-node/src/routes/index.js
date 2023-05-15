@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+const os = require('os');
 
 const database = require('../db/dbService')
 
@@ -41,7 +42,8 @@ router.get('/', function(req, res, next) {
       next(error);
       return;
     }
-      res.render('index', { messages: rows, flash: flash, path: req.path, user: req.session.user, gravatar: gravatar});
+      const hostname = os.hostname();
+      res.render('index', { messages: rows, flash: flash, path: req.path, user: req.session.user, gravatar: gravatar, hostname: hostname});
     });
   
     
@@ -65,8 +67,8 @@ router.get('/public', function (req, res, next) {
       next(error);
       return;
     }
-
-    res.render('index', { messages: rows, path: req.path, flash: flash, user: req.session.user, gravatar: gravatar});
+    const hostname = os.hostname();
+    res.render('index', { messages: rows, path: req.path, flash: flash, user: req.session.user, gravatar: gravatar, hostname: hostname });
     });
 });
 
