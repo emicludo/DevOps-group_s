@@ -1,16 +1,17 @@
-const database = require('../db/dbService')
+const database = require('../db/dbService');
+const User = require('./User');
 
 // Get all users
 module.exports = class GetAllUsers {
+  
   async getAllUsers() {
-    return new Promise((resolve, reject) => {
-      database.all('SELECT * FROM user', [], (err, rows) => {
-        if (err) {
-          reject(err, null);
-        } else {
-          resolve(rows, null);
-        }
-      });
-    })
+    try {
+      const users = await User.findAll({
+        attributes: ['user_id', 'username', 'email', 'pw_hash'],
+      })
+      return users;
+    } catch (err) {
+      return err;
+    }
   }
 }
