@@ -82,3 +82,4 @@ jobs:
 
           echo -e "\n--> Done bootstrapping Minitwit"
           echo -e "--> You can check the status of swarm cluster @ http://$(terraform output -raw minitwit-swarm-leader-ip-address):8888"
+          echo -e "--> Minitwit runs on: @ http://$(terraform output -raw minitwit-swarm-leader-ip-address):3000/api/public"
