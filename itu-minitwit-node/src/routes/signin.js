@@ -17,9 +17,11 @@ router.get('/', function(req, res, next) {
   } else {
     const errorMessage = req.session.errorMessage;
     const username = req.session.username;
+    const successMessage = req.session.flash;
     delete req.session.errorMessage;
     delete req.session.username;
-    res.render('signin', {errorMessage: errorMessage, username: username});
+    delete req.session.flash;
+    res.render('signin', {errorMessage: errorMessage, flash: successMessage, username: username});
   }
 });
 
