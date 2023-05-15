@@ -8,7 +8,6 @@ const gravatar = require('../utils/gravatar')
 //Utils
 var logger = require('../logger/logger');
 
-const Sequelize = require('sequelize');
 const { Op } = require('sequelize');
 const User = require('../model/User');
 const Message = require('../model/Message');
