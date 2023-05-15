@@ -1,8 +1,5 @@
 version: '3.3'
 
-volumes:
-  elk_elasticsearch_data:
-
 services:
   visualizer:
     image: dockersamples/visualizer:stable
@@ -61,9 +58,5 @@ services:
       user: root
     deploy:
       replicas: 2
-      restart_policy:
-        condition: on-failure
       placement:
         constraints: [node.role == worker]
-    volumes:
-      - elk_elasticsearch_data:/app/logs
