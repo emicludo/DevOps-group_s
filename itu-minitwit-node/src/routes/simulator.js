@@ -12,23 +12,15 @@ var logger = require('../logger/logger');
 const hash = require('../utils/hash')
 const isSimulator = require('../utils/authorizationValidator');
 
-//Models
-const getAllUsers = require('../model/user');
-const getFollowersFromUser = require('../model/followers.js');
+const GetAllUsers = require('../model/user');
+const getAllUsers = new GetAllUsers();
+const GetFollowersFromUser = require('../model/followers.js');
+const getFollowersFromUser = new GetFollowersFromUser();
 
 
 //Routing
-router.get('/latest', async function (req, res, next) {
-  try {
-    const latest = await latestService.getLatest();
-    res.status(200).send({latest: latest});
-  } catch (err) {
-    logger.log('error', { url: req.url, method: req.method, requestBody: req.body, responseStatus: 500, message: err });
-    var error = new Error("There was a problem retrieving latest value");
-    error.status = 500;
-    next(error);
-    return;
-  }
+router.get('/latest', function (req, res, next) {
+  res.send({ latest: latestService.getLatest() });
 })
 
 router.post("/register", async function (req, res, next) {
@@ -46,34 +38,34 @@ router.post("/register", async function (req, res, next) {
       next(error);
       return;
     }
-    
+
     //Updates Latest
     var latest = req.query.latest;
-    if (latest !== undefined && parseInt(latest)) {
+    if (latest !== undefined && parseInt(latest) !== NaN) {
       latestService.updateLatest(parseInt(latest));
     }
 
     //Checks if username is taken
-    const users = await getAllUsers()
+    const users = await getAllUsers.getAllUsers()
     const userFound = users.find(user => user.username == username)
 
     var error = null
-    if (username === null || username === undefined || username === "") {
+    if (username === null) {
       error = "You have to enter a username";
     } else if (email === null || email.indexOf("@") === -1) {
       error = error + ". You have to enter a valid email address"
-    } else if (password === null || password === undefined || password === "" || password.length < 2) {
-      error = "You have to enter valid password"
+    } else if (password === null) {
+      error = error + ". You have to enter a password"
     } else if (userFound !== undefined) {
       error = error + ". The username is already taken"
     }
+
     if (error === null) {
       const body = {
         username: username,
         email: email,
         pw_hash: hash(password)
       };
-
       database.add('user', body, function (err, response) {
         if (err) {
           logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , message: err });
@@ -115,7 +107,7 @@ router.get('/msgs', function (req, res, next) {
 
     //Updates Latest
     var latest = req.query.latest;
-    if (latest !== undefined && parseInt(latest) !== NaN && parseInt(latest) > 0) {
+    if (latest !== undefined && parseInt(latest) !== NaN) {
       latestService.updateLatest(parseInt(latest));
     }
 
@@ -169,7 +161,7 @@ router.get('/msgs/:username', async function (req, res, next) {
     }
     //Updates Latest
     var latest = req.query.latest;
-    if (latest !== undefined && parseInt(latest) !== NaN && parseInt(latest) > 0) {
+    if (latest !== undefined && parseInt(latest) !== NaN) {
       latestService.updateLatest(parseInt(latest));
     }
     //Gets Limit
@@ -178,7 +170,7 @@ router.get('/msgs/:username', async function (req, res, next) {
       no_msgs = 100;
     }
 
-    const users = await getAllUsers()
+    const users = await getAllUsers.getAllUsers()
     const userSelected = users.find(user => user.username == username)
     if (!userSelected) {
       logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 404, message: "User is not on our database" });
@@ -239,11 +231,11 @@ router.post('/msgs/:username', async function (req, res, next) {
     }
     //Updates Latest
     var latest = req.query.latest;
-    if (latest !== undefined && parseInt(latest) !== NaN && parseInt(latest) > 0) {
+    if (latest !== undefined && parseInt(latest) !== NaN) {
       latestService.updateLatest(parseInt(latest));
     }
 
-    const users = await getAllUsers()
+    const users = await getAllUsers.getAllUsers()
     const userSelected = users.find(user => user.username == username)
     if (!userSelected) {
       logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 404, message: "User is not on our database" });
@@ -294,11 +286,11 @@ router.get('/fllws/:username', async function (req, res, next) {
     }
     //Updates Latest
     var latest = req.query.latest;
-    if (latest !== undefined && parseInt(latest) !== NaN && parseInt(latest) > 0) {
+    if (latest !== undefined && parseInt(latest) !== NaN) {
       latestService.updateLatest(parseInt(latest));
     }
 
-    const users = await getAllUsers();
+    const users = await getAllUsers.getAllUsers();
     const userSelected = users.find(user => user.username == username);
     if (!userSelected) {
       logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 404, message: "User is not on our database" });
@@ -353,11 +345,11 @@ router.post('/fllws/:username', async function (req, res, next) {
 
     // Updates Latest
     const latest = req.query.latest;
-    if (latest !== undefined && parseInt(latest) !== NaN && parseInt(latest) > 0) {
+    if (latest !== undefined && parseInt(latest) !== NaN) {
       latestService.updateLatest(parseInt(latest));
     }
 
-    const users = await getAllUsers();
+    const users = await getAllUsers.getAllUsers();
     const userSelected = users.find(user => user.username == username);
     if (!userSelected) {
       logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 404, message: "User is not on our database" });
@@ -379,7 +371,7 @@ router.post('/fllws/:username', async function (req, res, next) {
         return;
       }
 
-      const userFollowsList = await getFollowersFromUser(userId, null);
+      const userFollowsList = await getFollowersFromUser.getFollowersFromUser(userId, null);
       if (userFollowsList.includes(followsUser.username)) {
         logger.log('warn',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 204, message: "User already follows this user" });
         var error = new Error("User already follows this user");
@@ -414,7 +406,7 @@ router.post('/fllws/:username', async function (req, res, next) {
       const unfollowsUserId = unfollowsUser.user_id;
 
       //Validates if user is following the unfollows user
-      const userFollowsList = await getFollowersFromUser(userId, null);
+      const userFollowsList = await getFollowersFromUser.getFollowersFromUser(userId, null);
       if (!userFollowsList.includes(unfollowsUser.username)) {
         logger.log('warn',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 204, message: "User is not following the user with name " + unfollowsUser.username });
         res.status(204).send("");

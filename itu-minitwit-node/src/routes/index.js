@@ -1,31 +1,13 @@
 var express = require('express');
 var router = express.Router();
+const os = require('os');
 
 const database = require('../db/dbService')
 
-//Utils
-var logger = require('../logger/logger');
-
-const crypto = require('crypto');
+const gravatar = require('../utils/gravatar')
 
 //Utils
 var logger = require('../logger/logger');
-
-const gravatar = function gravatarUrl(email, size = 80) {
-  const hash = crypto.createHash('md5').update(email.trim().toLowerCase()).digest('hex');
-  return `http://www.gravatar.com/avatar/${hash}?d=identicon&s=${size}`;
-}
-
-/**
- * GET /
- *
- * Checks whether the user is logged in.
- * If not logged in, retrieves most recent messages from the database and returns them (public timeline).
- * If logged in, retrieves most recent messages (follower and own) from the database and returns them.
- * 
- * Errors:
- *  - 500: An error occurred while retrieving the message
- */
 
 
 // TODO: Switch to "personal" timeline if logged in. Currently only shows public timeline. 
@@ -39,27 +21,36 @@ router.get('/', function(req, res, next) {
   const flash = req.session.flash;
   delete req.session.flash;
 
-  database.all("select message.*, user.* from message, user \
-                where message.flagged = 0 \
-                and message.author_id = user.user_id \
-                and (user.user_id = ? or user.user_id in (select whom_id from follower where who_id = ?)) \
-                order by message.pub_date desc limit 30"
+  database.all("SELECT message.text, message.pub_date, user.username, user.email \
+                FROM message \
+                JOIN user ON message.author_id = user.user_id \
+                WHERE message.flagged = 0 \
+                AND user.user_id = ? \
+                UNION \
+                SELECT message.text, message.pub_date, user.username, user.email \
+                FROM message \
+                JOIN user ON message.author_id = user.user_id \
+                JOIN follower ON user.user_id = follower.whom_id \
+                WHERE message.flagged = 0 \
+                AND follower.who_id = ? \
+                ORDER BY pub_date DESC LIMIT 30"
     , [req.session.user.user_id, req.session.user.user_id], (err, rows) => {
 
     if (err) {
-      logger.log('error', { url: req.url, method: req.method, requestBody: req.body, responseStatus: 500, message: err });
       var error = new Error('An error ocurrer while retrieving messages');
       error.status = 500;
       next(error);
       return;
     }
-      res.render('index', { messages: rows, flash: flash, path: req.path, user: req.session.user, gravatar: gravatar});
+      const hostname = os.hostname();
+      res.render('index', { messages: rows, flash: flash, path: req.path, user: req.session.user, gravatar: gravatar, hostname: hostname});
     });
+  
+    
 });
 
 /* Displays the latest messages of all users. */
 router.get('/public', function (req, res, next) {
-
   const flash = req.session.flash;
   delete req.session.flash;
   
@@ -76,8 +67,8 @@ router.get('/public', function (req, res, next) {
       next(error);
       return;
     }
-
-    res.render('index', { messages: rows, path: req.path, flash: flash, user: req.session.user, gravatar: gravatar});
+    const hostname = os.hostname();
+    res.render('index', { messages: rows, path: req.path, flash: flash, user: req.session.user, gravatar: gravatar, hostname: hostname });
     });
 });
 
