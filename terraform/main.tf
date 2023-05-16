@@ -6,10 +6,10 @@ variable aws_access_key_id {}
 variable state_file {}
 
 variable "manager_count" {
-  default = 1
+  default = 3
 }
 variable "worker_count" {
-  default = 2
+  default = 1
 }
 
 #  _                _
