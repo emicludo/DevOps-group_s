@@ -12,7 +12,6 @@ var logger = require('../logger/logger');
 
 // TODO: Switch to "personal" timeline if logged in. Currently only shows public timeline. 
 router.get('/', function(req, res, next) {
-  logger.log('info',  { url: req.url ,method: req.method, requestBody: req.body , message: 'Request received in /' });
   if (!req.session.user) {
     res.redirect('/api/public');
     return;

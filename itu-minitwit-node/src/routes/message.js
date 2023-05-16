@@ -5,6 +5,7 @@ const database = require('../db/dbService')
 
 //Utils
 var logger = require('../logger/logger');
+const os = require('os');
 
 /**
  * GET /message
@@ -40,7 +41,7 @@ router.get('/', async function (req, res, next) {
 /* Registers a new message for the user. */
 router.post('/', function (req, res, next) {
   if (!req.session.user) {
-    logger.log('error', { url: req.url, method: req.method, requestBody: req.body, responseStatus: 400, message: "You must be logged in to create a message." });
+    
     var error = new Error("You must be logged in to create a message.");
     error.status = 400;
     next(error);
@@ -55,9 +56,11 @@ router.post('/', function (req, res, next) {
         next(error);
         return;
       }
-
+      
+      const hostname = os.hostname();
+      logger.log('info', { url: req.url, method: req.method, requestBody: req.body, responseStatus: 200, message: req.body.text, hostname: hostname });
       req.session.flash = 'Your message was recorded';
-      res.redirect('/api');
+      res.send('message ' + req.body.text + ' created');
       return;
     })
 
