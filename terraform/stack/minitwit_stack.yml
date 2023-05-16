@@ -35,7 +35,7 @@ services:
     volumes:
       - minitwit_logs:/var/log/minitwit
     deploy:
-      replicas: 3
+      replicas: 1
       placement:
         constraints: [node.role == worker]
 
@@ -61,7 +61,7 @@ services:
     volumes:
       - minitwit_logs:/var/log/minitwit
     deploy:
-      replicas: 2
+      replicas: 5
       placement:
         constraints: [node.role == worker]
 

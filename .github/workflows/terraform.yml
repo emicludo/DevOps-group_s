@@ -2,10 +2,11 @@
 name: Terraform build and deploy with Docker Swarm
 
 on:
-  # push:
+  push:
+  #name of this branch
     # Run workflow every time something is pushed to the main branch
-    #branches:
-    #  - main
+    branches:
+      - testing-terraform-workflow
   # allow manual triggers
   workflow_dispatch:
     manual: true
