@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 const database = require('../db/dbService')
+const os = require('os');
 
 //Utils
 var logger = require('../logger/logger');
@@ -55,12 +56,12 @@ router.post('/', function (req, res, next) {
         next(error);
         return;
       }
-
+      const hostname = os.hostname();
+      logger.log('info', { url: req.url, method: req.method, requestBody: req.body, responseStatus: 200, message: req.body.text, containerId: hostname });
       req.session.flash = 'Your message was recorded';
-      res.redirect('/api');
+      res.send('Message ' + req.body.text + ' created');
       return;
     })
-
   } else {
     res.redirect('/api');
   }

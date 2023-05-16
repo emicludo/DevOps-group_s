@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+const os = require('os');
 
 const database = require('../db/dbService')
 
@@ -16,8 +17,7 @@ const Follower = require('../model/Follower');
 
 
 // TODO: Switch to "personal" timeline if logged in. Currently only shows public timeline. 
-router.get('/', async function(req, res, next) {
-  logger.log('info',  { url: req.url ,method: req.method, requestBody: req.body , message: 'Request received in /' });
+router.get('/', function(req, res, next) {
   if (!req.session.user) {
     res.redirect('/api/public');
     return;
@@ -90,7 +90,8 @@ router.get('/', async function(req, res, next) {
     
     const messages = sortedMessages.slice(0, 30);
     
-    res.render('index', { messages, flash: flash, path: req.path, user: req.session.user, gravatar: gravatar });
+    const hostname = os.hostname();
+     res.render('index', { messages: rows, flash: flash, path: req.path, user: req.session.user, gravatar: gravatar, hostname: hostname});
   } catch (error) {
     logger.log('error', { url: req.url, method: req.method, requestBody: req.body, responseStatus: 500, message: error });
     var error = new Error('An error ocurrer while retrieving messages');
@@ -120,7 +121,8 @@ router.get('/public', async (req, res, next) => {
       limit: 30
     });
 
-    res.render('index', { messages, path: req.path, flash, user: req.session.user, gravatar: gravatar });
+    const hostname = os.hostname();
+    res.render('index', { messages: rows, path: req.path, flash: flash, user: req.session.user, gravatar: gravatar, hostname: hostname });
   } catch (error) {
     console.log(error);
     logger.log('error', { url: req.url, method: req.method, requestBody: req.body, responseStatus: 500, message: error });
