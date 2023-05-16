@@ -3,8 +3,6 @@ var session = require('express-session');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 const url = require('url');
-const sessionStore = require('./src/db/session');
-const database = require('./src/db/dbService')
 
 //Routers
 var indexRouter = require('./src/routes/index');
@@ -17,22 +15,23 @@ var signoutRouter = require('./src/routes/signout');
 var simulatorRouter = require('./src/routes/simulator');
 
 //Prometheus metrics import
-const { register,
-  httpRequestDurationMicroseconds,
-  httpRequestCounter,
-  httpRequestErrorCounter,
-  httpErrorCodeCounter,
-  upMetric
-} = require('./src/metrics/metrics');
+const { register, 
+        httpRequestDurationMicroseconds,
+        httpRequestCounter, 
+        httpRequestErrorCounter, 
+        httpErrorCodeCounter,
+        upMetric
+      } = require('./src/metrics/metrics');
+
+const database = require('./src/db/dbService')
 
 var app = express();
 
+//Express session configuration
 app.use(session({
-	key: 'minitwit_session',
-	secret: 'secret',
-	store: sessionStore,
-	resave: false,
-	saveUninitialized: false
+  secret: 'c2b71086dd6ba3b83431e00118d52c0fd2f178f439910fe7bf7e86a2a163e26f83932fac1f908015d7815bf0a817914e38ee56d904888337bff57c91c76ae8b1',
+  resave: false,
+  saveUninitialized: false
 }));
 
 // view engine setup
@@ -50,7 +49,7 @@ const measureDurationMiddleware = (req, res, next) => {
   // Start the timer
   const end = httpRequestDurationMicroseconds.startTimer();
   // Remove parameters from the path
-  const parsedUrl = url.parse(req.path);
+  const parsedUrl = url.parse( req.path);
   const route = "/" + parsedUrl.pathname.split('/')[1] + "/";
   // Attach the `end` function to the `res` object so that it can be called later
   res.on('finish', () => {
@@ -66,7 +65,7 @@ app.use(measureDurationMiddleware);
 app.use(async (req, res, next) => {
   const parsedUrl = url.parse(req.originalUrl);
   const route = "/" + parsedUrl.pathname.split('/')[1] + "/";
-  httpRequestCounter.inc({ method: req.method, status: res.statusCode, endpoint: route });
+  httpRequestCounter.inc({ method: req.method, status: res.statusCode, endpoint: route});
   upMetric.set({ app: 'minitwit-app' }, 1);
   database.healthCheck();
   next();

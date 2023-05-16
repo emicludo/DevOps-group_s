@@ -18,10 +18,6 @@ class Database {
     });
   }
 
-  getConnection(callback) {
-    return this.pool.getConnection(callback);
-  }
-
   // New function for checking the health of the database
   healthCheck() {
     this.pool.getConnection((error, connection) => {
