@@ -4,6 +4,7 @@ const database = require('../src/db/dbService');
 const sinon = require('sinon');
 const chai = require('chai');
 const expect = chai.expect;
+const Message = require('../src/model/Message.js');
 
 describe('GET /msgs', () => {
 
@@ -20,25 +21,23 @@ describe('GET /msgs', () => {
     });
 
     it('returns 500 if the database does not work properly', async () => {
-        const allStub = sinon.stub(database, 'all').callsArgWith(2, 'Error', null);
+        sinon.stub(Message, 'findAll').rejects(new Error('Error text'));
 
         const response = await request(app)
             .get('/msgs')
             .set('Authorization', 'Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh')
 
         expect(response.status).to.equal(500);
-        sinon.assert.calledOnce(allStub);
     });
 
     it('returns messages if everything is fine', async () => {
-        const allStub = sinon.stub(database, 'all').callsArgWith(2, null, [{text: 'hello world', pubDate: '20-4-2020', username: 'testuser'}]);
+        sinon.stub(Message, 'findAll').resolves([{text: 'hello world', pub_date: '20-4-2020', user: {username: 'testuser'}}]);
 
         const response = await request(app)
             .get('/msgs')
             .set('Authorization', 'Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh')
 
         expect(response.body).to.eql([{content: 'hello world', pubDate: '20-4-2020', user: 'testuser'}]);
-        sinon.assert.calledOnce(allStub);
     });
 
 });
