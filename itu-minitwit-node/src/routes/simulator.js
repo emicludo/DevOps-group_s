@@ -227,6 +227,7 @@ router.get('/msgs/:username', async function (req, res, next) {
       }
 
     } catch (err) {
+      console.log(err)
       logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err });
         var error = new Error("Error retrieving messages from our database");
         error.status = 500;

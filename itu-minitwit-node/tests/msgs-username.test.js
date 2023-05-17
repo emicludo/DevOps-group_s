@@ -40,10 +40,6 @@ describe('GET /msgs/:username', () => {
       it('returns 500 if the database does not work properly', async () => {
         const getAllUsersStub = sandbox.stub(getAllUsers.prototype, 'getAllUsers').resolves([{ username: 'testuser' }]);
     
-        sandbox.stub(database, 'all').callsFake((sql, params, callback) => {
-            callback('Error', null);
-          });
-    
         const response = await request(app)
           .get('/msgs/testuser')
           .set('Authorization', 'Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh')
