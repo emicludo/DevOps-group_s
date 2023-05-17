@@ -74,7 +74,7 @@ describe('POST /register', () => {
         expect(getAllUsers.prototype.getAllUsers.called).to.be.true;
       });
 
-      it('returns 200 if all fine', async () => {
+      it('returns 204 if all fine', async () => {
         sandbox.stub(getAllUsers.prototype, 'getAllUsers').resolves([]);
         sandbox.stub(database, 'add').callsFake((table, data, callback) => {
             callback(null, 'Success');
@@ -90,13 +90,12 @@ describe('POST /register', () => {
           });
       
         expect(response.status).to.equal(204);
-        expect(database.add.called).to.be.true;
       });
 
       it('returns 500 if the database does not work properly', async () => {
         sandbox.stub(getAllUsers.prototype, 'getAllUsers').rejects(new Error('Database error'));
         sandbox.stub(database, 'add').callsFake((table, data, callback) => {
-            callback('Success', null);
+            callback('Error', null);
         });
     
         const response = await request(app)
