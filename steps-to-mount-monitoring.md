@@ -1,4 +1,6 @@
 ## Steps to mount Grafana + Prometheus separetely loading the datasource and dashboard manually
+
+Before mounting, update the file `prometheus\prometheus-monitoring.yml` with the correct Minitwit app IP.
 ### Set up monitoring
 1. Clone this branch on the droplet
 ```
