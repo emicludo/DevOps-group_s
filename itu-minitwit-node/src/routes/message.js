@@ -60,8 +60,9 @@ router.post('/', function (req, res, next) {
       const hostname = os.hostname();
       logger.log('info', { url: req.url, method: req.method, requestBody: req.body, responseStatus: 200, message: req.body.text, hostname: hostname });
       req.session.flash = 'Your message was recorded';
-      res.send('message ' + req.body.text + ' created');
-      return;
+      //res.send('message ' + req.body.text + ' created');
+      res.status(200);
+      res.redirect('/api');
     })
 
   } else {
