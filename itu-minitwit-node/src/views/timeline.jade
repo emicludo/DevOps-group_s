@@ -7,8 +7,7 @@
 
 .timeline-box
     .title
-        h2= path == '/public' ? "Public Timeline" : (path == '/' ? "My Timeline" : (messages[0].user.username + "'s Timeline"))
-
+        h2= path == '/public' ? "Public Timeline - Node: " + hostname : (path == '/' ? "My Timeline" : (messages[0].username + "'s Timeline - Node: " + hostname))
 
         if user
             if profile
