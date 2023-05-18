@@ -69,18 +69,22 @@ router.post("/register", async function (req, res, next) {
         email: email,
         pw_hash: hash(password)
       };
-      database.add('user', body, function (err, response) {
-        if (err) {
+
+      try {
+        const user = await User.create({
+          username: username,
+          email: email,
+          pw_hash: hash(password)
+        })
+  
+        res.status(204).send("");
+      } catch (err) {
           logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , message: err });
           var newError = new Error("Error adding user to our database");
           newError.status = 500;
           next(newError);
           return;
-        } else {
-          res.status(204).send("");
-        }
-      });
-
+      }
     } else {
       //Send error
       logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 400, message: error });
@@ -277,18 +281,24 @@ router.post('/msgs/:username', async function (req, res, next) {
       pub_date: Date.now(),
       flagged: 0
     };
-    database.add('message', body, function (err, response) {
-      if (err) {
+
+    try {
+      const message = await Message.create({
+        author_id: userId,
+        text: content.replace(/'/g, "''"),
+        pub_date: Date.now(),
+        flagged: 0
+      })
+
+      logger.log('info',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 204, message: "Message added successfully" });
+      res.status(204).send("");
+    } catch (err) {
         logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err });
         var error = new Error(err);
         error.status = 500;
         next(error);
         return;
-      } else {
-        logger.log('info',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 204, message: "Message added successfully with id: " + response.insertId });
-        res.status(204).send("");
-      }
-    });
+    }
   } catch (error) {
     logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: error });
     var newError = new Error(error);

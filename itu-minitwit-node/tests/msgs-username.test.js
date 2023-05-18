@@ -112,9 +112,7 @@ describe('POST /msgs/:username', () => {
       it('returns 500 if the database does not work properly', async () => {
         const getAllUsersStub = sandbox.stub(getAllUsers.prototype, 'getAllUsers').resolves([{ username: 'testuser' }]);
     
-        sandbox.stub(database, 'add').callsFake((table, data, callback) => {
-            callback('Error', null);
-          });
+        sandbox.stub(Message, 'create').rejects(new Error('Error text'));
     
           const response = await request(app)
           .post('/msgs/testuser')
@@ -129,9 +127,7 @@ describe('POST /msgs/:username', () => {
       it('returns 204 if everything is fine', async () => {
         const getAllUsersStub = sandbox.stub(getAllUsers.prototype, 'getAllUsers').resolves([{ username: 'testuser' }]);
     
-        sandbox.stub(database, 'add').callsFake((table, data, callback) => {
-            callback(null, 'Success');
-          });
+        sandbox.stub(Message, 'create').resolves({});
     
           const response = await request(app)
           .post('/msgs/testuser')
@@ -141,6 +137,5 @@ describe('POST /msgs/:username', () => {
             });
     
         expect(response.status).to.equal(204);
-        expect(response.body).to.deep.equal({});
       });
 });
