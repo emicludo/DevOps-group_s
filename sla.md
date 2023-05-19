@@ -1,5 +1,6 @@
 # <b>Group S Service Level Agreement (SLA) for Minitwit API</b>
 
+
 The following Service Level Agreement (SLA) is an agreement between two parties:
 the provider of the Minitwit and third-party developers or development teams implementing the Minitwit API.
 the SLA describes in detail the offered service guarantees for Minitwit.
