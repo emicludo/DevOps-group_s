@@ -54,7 +54,7 @@ jobs:
           tags: ${{ secrets.DOCKER_USERNAME }}/minitwit-tests:latest
           cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/minitwit-tests:webbuildcache
           cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/minitwit-tests:webbuildcache,mode=max
-      
+
       - name: Build and push Flag tool image
         uses: docker/build-push-action@v2
         with:
@@ -64,7 +64,7 @@ jobs:
           tags: ${{ secrets.DOCKER_USERNAME }}/flag-tool:latest
           cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/flag-tool:webbuildcache
           cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/flag-tool:webbuildcache,mode=max
-      
+
       - name: Build and push Filebeat
         uses: docker/build-push-action@v2
         with:
@@ -89,10 +89,9 @@ jobs:
       - name: Configure SSH
         run: |
           mkdir -p ~/.ssh/
-          echo "$
-          _KEY" > ~/.ssh/minitwit.key
+          echo "$SSH_KEY" > ~/.ssh/minitwit.key
           chmod 600 ~/.ssh/minitwit.key
-        env: 
+        env:
           SSH_KEY: ${{ secrets.SSH_KEY }}
 
       - name: Deploy to server
@@ -101,7 +100,7 @@ jobs:
           ssh $SSH_USER@$SSH_HOST
           -i ~/.ssh/minitwit.key -o StrictHostKeyChecking=no
           './minitwit/deploy.sh "${{ secrets.MYSQL_PASSWORD }}" "${{ secrets.MYSQL_USERNAME }}" "${{ secrets.MYSQL_HOST }}" "${{ secrets.MYSQL_PORT }}" "${{ secrets.MYSQL_DATABASE }}"'
-          
+
         env:
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
