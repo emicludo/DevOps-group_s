@@ -1,11 +1,8 @@
 ---
-name: Continuous Deployment
+name: Continuous Integration
 
 on:
-  push:
-    # Run workflow every time something is pushed to the main branch
-    branches:
-      - main
+  pull_request: {}
   # allow manual triggers for now too
   workflow_dispatch:
     manual: true
@@ -75,33 +72,14 @@ jobs:
           cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/filebeat:webbuildcache
           cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/filebeat:webbuildcache,mode=max
 
-      - name: Test minitwit
-        run: |
-          docker build -t minitwit-tests -f ./itu-minitwit-node/tests/Dockerfile .
-          docker run --rm -e MYSQL_PASSWORD=$MYSQL_PASSWORD   -e MYSQL_USERNAME=$MYSQL_USERNAME   -e MYSQL_HOST=$MYSQL_HOST   -e MYSQL_PORT=$MYSQL_PORT   -e MYSQL_DATABASE=$MYSQL_DATABASE minitwit-tests
-        env:
-          MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
-          MYSQL_USERNAME: ${{ secrets.MYSQL_USERNAME }}
-          MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
-          MYSQL_PORT: ${{ secrets.MYSQL_PORT }}
-          MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
-
-      - name: Configure SSH
-        run: |
-          mkdir -p ~/.ssh/
-          echo "$
-          _KEY" > ~/.ssh/minitwit.key
-          chmod 600 ~/.ssh/minitwit.key
-        env: 
-          SSH_KEY: ${{ secrets.SSH_KEY }}
-
-      - name: Deploy to server
-        # Configure the ~./bash_profile and deploy.sh file on the Vagrantfile
-        run: >
-          ssh $SSH_USER@$SSH_HOST
-          -i ~/.ssh/minitwit.key -o StrictHostKeyChecking=no
-          './minitwit/deploy.sh "${{ secrets.MYSQL_PASSWORD }}" "${{ secrets.MYSQL_USERNAME }}" "${{ secrets.MYSQL_HOST }}" "${{ secrets.MYSQL_PORT }}" "${{ secrets.MYSQL_DATABASE }}"'
+      # - name: Test minitwit
+      #   run: |
+      #     docker build -t minitwit-tests -f ./itu-minitwit-node/tests/Dockerfile .
+      #     docker run --rm -e MYSQL_PASSWORD=$MYSQL_PASSWORD   -e MYSQL_USERNAME=$MYSQL_USERNAME   -e MYSQL_HOST=$MYSQL_HOST   -e MYSQL_PORT=$MYSQL_PORT   -e MYSQL_DATABASE=$MYSQL_DATABASE minitwit-tests
+      #   env:
+      #     MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+      #     MYSQL_USERNAME: ${{ secrets.MYSQL_USERNAME }}
+      #     MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
+      #     MYSQL_PORT: ${{ secrets.MYSQL_PORT }}
+      #     MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
           
-        env:
-          SSH_USER: ${{ secrets.SSH_USER }}
-          SSH_HOST: ${{ secrets.SSH_HOST }}

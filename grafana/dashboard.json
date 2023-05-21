@@ -345,7 +345,7 @@
       "options": {
         "reduceOptions": {
           "calcs": [
-            "lastNotNull"
+            "last"
           ],
           "fields": "",
           "values": false
@@ -1185,5 +1185,5 @@
   "timezone": "",
   "title": "Minitwit Monitoring",
   "uid": "XCYBvHEVk",
-  "version": 21
+  "version": 22
 }
