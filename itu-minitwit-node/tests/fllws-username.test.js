@@ -26,7 +26,7 @@ describe('GET /fllws/:username', () => {
   });
 
   it('returns 404 if the user is not in the database', async () => {
-    const getAllUsersStub = sandbox.stub(getAllUsers.prototype, 'getAllUsers').resolves([{ username: 'foo' }]);    
+    sandbox.stub(getAllUsers.prototype, 'getAllUsers').resolves([{ username: 'foo' }]);    
     const response = await request(app)
       .get('/fllws/testuser')
       .set('Authorization', 'Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh')

@@ -6,7 +6,11 @@ module.exports = {
     mocha: true,
   },
   extends: "eslint:recommended",
-  overrides: [],
+  overrides: [
+    {
+      "files": ["**/*.js"],
+    }
+  ],
   parserOptions: {
     ecmaVersion: "latest",
   },
