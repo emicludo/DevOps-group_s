@@ -414,7 +414,7 @@ router.post('/fllws/:username', async function (req, res, next) {
       }
 
       const query = "DELETE FROM follower WHERE who_id=? and whom_id=?";
-      database.run(query, [userId, unfollowsUserId], function (err, result) {
+      database.run(query, [userId, unfollowsUserId], function (err) {
         if (err) {
           logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err });
           var error = new Error(err);

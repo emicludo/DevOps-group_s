@@ -5,12 +5,9 @@ const database = require('../db/dbService')
 
 var logger = require('../logger/logger');
 
-const hash = require('../utils/hash')
+const hash = require('../utils/hash');
 
-//Utils
-var logger = require('../logger/logger');
-
-router.get('/', function (req, res, next) {
+router.get('/', function (req, res) {
   if (req.session.user) {
     res.redirect('/api');
   } else {
@@ -81,7 +78,7 @@ router.post('/', function (req, res, next) {
       return;
     } else if (
       // if everything's fine
-      database.all('INSERT INTO user (username, email, pw_hash) values (?, ?, ?)', [req.body.username, req.body.email, hash(req.body.password)], (err, rows) => {
+      database.all('INSERT INTO user (username, email, pw_hash) values (?, ?, ?)', [req.body.username, req.body.email, hash(req.body.password)], (err) => {
         if (err) {
           logger.log('error', { url: req.url, method: req.method, requestBody: req.body, responseStatus: 500, message: err });
           var error = new Error('An error occurred while registering user');

@@ -92,7 +92,7 @@ app.get('/metrics', async (req, res) => {
 app.use('/', simulatorRouter);
 
 // Add middleware to catch errors and increment the counter
-app.use((err, req, res, next) => {
+app.use((err, req, res) => {
   if (err) {
     httpRequestErrorCounter.inc();
     const parsedUrl = url.parse(req.originalUrl);

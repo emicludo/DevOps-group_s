@@ -4,6 +4,11 @@ module.exports = {
     commonjs: true,
     es2021: true,
     mocha: true,
+    node: true,
+  },
+  globals: {
+    Cypress: "readonly",
+    cy: "readonly",
   },
   extends: "eslint:recommended",
   overrides: [
@@ -13,6 +18,7 @@ module.exports = {
   ],
   parserOptions: {
     ecmaVersion: "latest",
+    sourceType: "module",
   },
   rules: {},
 };
