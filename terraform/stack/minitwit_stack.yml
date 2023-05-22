@@ -1,0 +1,69 @@
+version: '3.3'
+
+services:
+  visualizer:
+    image: dockersamples/visualizer:stable
+    ports:
+      - "8888:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+
+  loadbalancer:
+    image: nginx
+    ports:
+      - '80:80'
+    volumes:
+      - /loadbalancer:/etc/nginx/conf.d
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == leader]
+
+  minitwit:
+    image: ingridmariac/minitwitimage
+    ports:
+      - '3000:3000'
+    environment:
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_USERNAME: ${MYSQL_USERNAME}
+      MYSQL_HOST: ${MYSQL_HOST}
+      MYSQL_PORT: ${MYSQL_PORT}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    volumes:
+      - minitwit_logs:/var/log/minitwit
+    deploy:
+      replicas: 3
+      placement:
+        constraints: [node.role == worker]
+
+  flagtool:
+    image: ingridmariac/flag-tool
+    command: tail -f /dev/null
+    environment:
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_USERNAME: ${MYSQL_USERNAME}
+      MYSQL_HOST: ${MYSQL_HOST}
+      MYSQL_PORT: ${MYSQL_PORT}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == worker]
+
+  filebeat:
+    image: ingridmariac/filebeat
+    command: filebeat -e -strict.perms=false
+    environment:
+      user: root
+    volumes:
+      - minitwit_logs:/var/log/minitwit
+    deploy:
+      replicas: 2
+      placement:
+        constraints: [node.role == worker]
+
+volumes:
+  minitwit_logs:

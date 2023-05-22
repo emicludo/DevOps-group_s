@@ -1,0 +1,90 @@
+---
+name: Terraform build and deploy with Docker Swarm
+
+on:
+  # push:
+    # Run workflow every time something is pushed to the main branch
+    #branches:
+    #  - main
+  # allow manual triggers
+  workflow_dispatch:
+    manual: true
+
+jobs:
+  create-cluster:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y curl
+      - name: Install Terraform
+        run: |
+          curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+          sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+          sudo apt-get update && sudo apt-get install terraform
+      - name: Create Digital Ocean Cluster
+        env:
+          TF_VAR_DO_TOKEN: ${{ secrets.TF_VAR_DO_TOKEN }}
+          SSH_KEY: ${{ secrets.SSH_KEY }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          STATE_FILE: ${{ secrets.STATE_FILE }}
+          SPACE_NAME: ${{ secrets.SPACE_NAME }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          TERRAFORM_PRIVATEKEY: ${{ secrets.TERRAFORM_PRIVATEKEY }}
+          TERRAFORM_PUBLICKEY: ${{ secrets.TERRAFORM_PUBLICKEY }}
+          MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+          MYSQL_USERNAME: ${{ secrets.MYSQL_USERNAME }}
+          MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
+          MYSQL_PORT: ${{ secrets.MYSQL_PORT }}
+          MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        run: |
+          cd terraform/
+          
+          echo -e "\n--> Configuring SSH Keys \n"
+          mkdir -p ssh_key
+          echo "$TERRAFORM_PRIVATEKEY" > ssh_key/terraform
+          chmod 600 ssh_key/terraform
+          echo "$TERRAFORM_PUBLICKEY" > ssh_key/terraform.pub
+
+          echo -e "\n--> APT update and jq install \n"
+          sudo apt update && sudo apt install -y jq
+          
+          echo -e "\n--> Terraform Init \n"
+          terraform init -backend-config "bucket=$SPACE_NAME" -backend-config "key=$STATE_FILE" -backend-config "access_key=$AWS_ACCESS_KEY_ID" -backend-config "secret_key=$AWS_SECRET_ACCESS_KEY"
+          
+          echo -e "\n--> Terraform Validate \n"
+          terraform validate
+
+          echo -e "\n--> Terraform Apply \n"
+          terraform apply -auto-approve -var "do_token=${TF_VAR_DO_TOKEN}" -var "ssh_key=${SSH_KEY}" -var "ssh_user=${SSH_USER}" -var "state_file=${STATE_FILE}" -var "space_name=${SPACE_NAME}" -var "aws_access_key_id=${AWS_ACCESS_KEY_ID}" -var "aws_secret_access_key=${AWS_SECRET_ACCESS_KEY}"
+        
+          echo -e "\n--> Generating loadbalancer configuration\n"
+          bash scripts/gen_load_balancer_config.sh
+          
+          echo -e "\n--> Copying loadbalancer configuration to nodes\n"
+          bash scripts/scp_load_balancer_config.sh
+          envsubst < stack/minitwit_stack.yml > stack/minitwit_stack_env.yml
+          
+          echo -e "\n--> Updating Minitwit stack file on the leader node\n"
+          ssh \
+              -o 'StrictHostKeyChecking no' \
+              root@$(terraform output -raw minitwit-swarm-leader-ip-address) \
+              -i ssh_key/terraform \
+              'rm minitwit_stack.yml && cat > minitwit_stack.yml' < stack/minitwit_stack_env.yml
+          
+          echo -e "\n--> Deploying the Minitwit stack to the cluster\n"
+          ssh -t -o 'StrictHostKeyChecking no' \
+              root@$(terraform output -raw minitwit-swarm-leader-ip-address) \
+              -i ssh_key/terraform \
+              'docker stack deploy -c minitwit_stack.yml minitwit'
+
+          echo -e "\n--> Done bootstrapping Minitwit"
+          echo -e "--> You can check the status of swarm cluster @ http://$(terraform output -raw minitwit-swarm-leader-ip-address):8888"
+          echo -e "--> Minitwit runs on: @ http://$(terraform output -raw minitwit-swarm-leader-ip-address):3000/api/public"

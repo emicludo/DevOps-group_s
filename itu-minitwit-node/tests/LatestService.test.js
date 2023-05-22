@@ -4,7 +4,7 @@ const LatestService = require('../src/services/LatestService');
 describe('LatestService', () => {
   const latestService = new LatestService();
 
-/*   it('initializedCorrectly', () => {
+  it('initializedCorrectly', () => {
     assert.strictEqual(latestService.getLatest(), 0);
   });
 
@@ -16,5 +16,5 @@ describe('LatestService', () => {
   it('updatesStateWithNoValue', () => {
     latestService.updateLatest();
     assert.strictEqual(latestService.getLatest(), undefined);
-  }); */
+  });
 });
