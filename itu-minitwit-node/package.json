@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "run-tests": "npx mocha ./tests/ --exit", 
+    "run-tests": "npx mocha ./tests/ --exit",
     "cy:open": "cypress open",
     "cy:closed": "cypress run --headless --browser chrome",
     "cy:test": "start-server-and-test start http://localhost:3000/api/ cy:closed"
@@ -33,7 +33,9 @@
     "winston": "^3.8.2"
   },
   "devDependencies": {
+    "@babel/eslint-parser": "^7.21.8",
     "cypress": "^12.10.0",
+    "eslint": "^8.41.0",
     "start-server-and-test": "^2.0.0"
   }
 }
