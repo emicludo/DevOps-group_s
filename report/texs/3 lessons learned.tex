@@ -1,0 +1,51 @@
+\section{Lessons Learned Perspective}
+%Describe the biggest issues, how you solved them, and which are major lessons learned with regards to: evolution and refactoring, operation, and maintenance
+%Also reflect and describe what was the "DevOps" style of your work. For example, what did you do differently in previous development projects and how did it work?
+
+% ~~~ STRUCTURE ~~~~ 
+% Heading: A short key phrase capturing the topic. This is a title, not a sentence. Try to make it concise and relevant.
+
+%Brief statement on the learning: What is the learning? 
+
+%Recollection of the event(s): What triggered the learning? 
+
+%Impact and implications of the observed event(s): This part could be a reflection or an analysis of the situation. It is not uncommon to have this part mixed with the previous point. It is better if you can separate it.
+
+%How will this learning influence future participation in the project: This part is optional and is usually present in outstanding diaries.
+
+\subsection{Lack of holistic view of the system}
+Only very late in the project did we learn the advantage of the first way of DevOps: flow \cite{kim2021devops}. When the simulator was started, our system was lacking behind in various ways. However, instead of doing little by little and bettering the system as a whole, we did everything we could to adhere to the simulator's API. As a result, we ended up migrating the database and implementing the ORM framework a lot later in the project than intended. Had we simply accepted that the simulator endpoints would not be perfect from the start, the system could have gradually gotten better.
+
+\subsection{Better refinement of tasks}
+We maintained an updated Kanban board by transferring tasks from the weekly project work assignments. However, we frequently encountered situations where seemingly straightforward tasks ended up taking more time than anticipated. We believe that this could have been alleviated by collaboratively refining the tasks. By utilizing the collective knowledge of the team, we could have cooperatively written solution keywords that potentially could have optimized our work. Additionally, this approach would have facilitated continuous learning, which is the third way of DevOps\cite{kim2021devops}, as everyone would have gained a better overview and a basic understanding of all tasks, rather than just the ones they were individually responsible for. 
+
+\subsection{Earlier implementation of proper CI/CD pipelines}
+We have learned how properly implemented CI/CD pipelines significantly improve the flow of development in projects. As mentioned, 
+we did not manage to integrate tests and separate our pipelines until late in the project. This resulted in multiple incidents of pushing faulty code to our \texttt{main} branch and it made it difficult to test additions to the pipelines since it would not be triggered until pushing to \texttt{main}. Since succeeding in separate pipelines, we have experienced the value of increased branch protection and a shorter feedback loop.  
+
+\subsection{Single owner of our GitHub repository}
+During the course of the project, our repository was set up with a single owner, which means only a single team member could change code secrets, repository settings, and permissions. Not only did this lead to bottlenecks a few times in the project, but it also made the project feel slightly less agile. Alternatively, we could have created a company GitHub repository with equal permissions between members. 
+
+\subsection{Good practices even with tight deadlines}
+Towards the end of the project, we ended up slacking on a few of the practices we had originally committed to, for example, our pull request practice. At certain points when we needed to do a lot of changes in a short amount of time, we ended up committing small fixes directly to \texttt{main} instead of going through a pull request of a feature branch. Although it did not end up breaking anything, it is bad practice and something we brought back into internal feedback, following the second way of DevOps \cite{kim2021devops}. Here at the end, we are back to our original branching strategy and pull request practices. 
+
+\subsection{Individual learning on DevOps in general}
+Evaluating the lessons learned from a higher perspective than simply the project, the DevOps course positively affected our individual learning of what DevOps means to a project or an organization. Working with both theory and practice on IT infrastructure and development has challenged all of us. It truly led to new perspectives and enhanced our problem-solving abilities. Most importantly, it truly helped us “bridge the gap between Development and Operations, emphasizing communication and collaboration" \cite{jabbari2016devops}. 
+
+
+%\subsection{Conclusion on learning}
+%Evaluating the lesson learned from a higher perspective than this project, the DevOps course positively affected our learning behavior. Especially in relation to IT infrastructures and development, each one of us was challenged with new learnings. Each of these learnings contributed to enhancing our problem-solving ability, and most importantly  “to bridge the gap between Development and Operations, emphasizing communication and collaboration.." \cite{jabbari2016devops}. 
+
+
+%We consider the Three ways of DevOps, explained in the "The DevOps Handbook" \cite{kim2021devops}. The three ways can be summarised by 1) optimizing the value stream by understanding the whole system, 2) learning from failures and having feedback loops to fix issues quickly, and 3) continuous experimentation and learning, empowering the team’s individuals. 
+
+%We decided to evaluate our efforts based on the different sets of operations in the project: evolution, refactoring, and maintenance, and apply them to two macro areas. The first area of reflection tackles the unbalanced way of focusing on the tasks which affected the quality of our product. The second area considers the excess of confidence when confronting ourselves with new learnings, resulting in “almost” catastrophic slowdowns.\\
+
+%\subsection{Overfocus on one part of our project}
+%One of the main lessons that we learned was to always focus on the whole system. As we put too much focus on the simulator, at the beginning, which led to a few undesirable situations. One example was our approach to query optimization. We were so concerned about having the simulator running seamlessly, that we optimized our database and queries to only the simulator’s purposes. We completely neglected the UI part of our system, reaching a point, where displaying “my timeline” would take a minute. By this, we were not adhering to the first way of DevOps, which says that it is crucial to ensure a smooth and efficient transition of code and changes from development to operations. This includes optimizing all aspects of the system. This aspect was something, that we learned only in the later stages of the development process. Neglecting other parts was reflected also in our initial CI/CD implementation, as we included tests, whose main focus was on testing the simulator endpoint logic and operations. This resulted in a few situations when we pushed a code, that introduced bugs into our production code. This was breaking the second way of DevOps, as we did not have comprehensive feedback loops allowing us to fix all issues quickly. All these problems led to a realization, that we need to shift focus to the whole system again because neglecting other parts of the system was hindering the overall flow and performance. By overlooking other parts, we may inadvertently impede the speed and effectiveness of the development-to-operations pipeline. Most importantly, we used these problems as a learning experience to improve, which adheres to the third way of DevOps.\\
+
+%\subsection{Wrong time estimation and confidence}
+%Fostering a culture of continuous experimentation and enabling each one of us to take risks and embrace failure is what the third way of DevOps expresses \cite{kim2021devops}. When trying to implement the CI/CD chain through GitHub Actions, one of our biggest issues was an overconfident approach. The time spent completing the task resulted to be much longer than what was initially assessed. The CI/CD example was not the only one where we experienced such “slowdowns”. Other examples are also database migration and the implementation of the swarm. As no one in the group was an expert in the tools and processes used in the project, we took the experience as valuable learning. Through these endeavors, our ways of working are linked with Devops’ second way, where feedback helps to understand the root causes of the issues, learn from incidents, and solve problems preventing the successful delivery of our product. Contrary to the first Way of DevOps, which consists of including a flow that quickly connects developments to operations in order to optimize value, the CI/CD implementation was treated as a standalone task that could have been cut into smaller components and tackled individually.\\
+
+%\subsection{Conclusion on learning}
+%Evaluating the lesson learned from a higher perspective than this project, the DevOps course positively affected our learning behavior. Especially in relation to IT infrastructures and development, each one of us was challenged with new learnings. Each of these learnings contributed to enhancing our problem-solving ability, and most importantly  “to bridge the gap between Development and Operations, emphasizing communication and collaboration.." \cite{jabbari2016devops}. 
