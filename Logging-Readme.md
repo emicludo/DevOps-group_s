@@ -33,4 +33,4 @@ On kibana go to Discover again
   Check the log records on Kibana
 
 To put it down:
-docker-compose down -v
+docker-compose -f docker-compose-logging.yml down -v
