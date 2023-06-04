@@ -3,6 +3,9 @@ Ssh into the droplet
 Follow the guide on:
 https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-16-04
 
+Run:
+apt install docker-compose
+
 clone the repository
 
 docker-compose -f docker-compose-logging.yml up -d --build
