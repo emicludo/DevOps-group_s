@@ -2,7 +2,7 @@
 name: Continuous Deployment
 
 on:
-  push:
+  #push:
     # Run workflow every time something is pushed to the main branch
     #branches:
     #  - main
