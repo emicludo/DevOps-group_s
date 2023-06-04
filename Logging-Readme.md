@@ -1,6 +1,11 @@
-docker-compose -f docker-compose-logging.yml up -d --build
+Ssh into the droplet
 
-docker-compose down -v
+Follow the guide on:
+https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-16-04
+
+clone the repository
+
+docker-compose -f docker-compose-logging.yml up -d --build
 
 Elastic search will be available on:
 http://localhost:9200/
@@ -24,3 +29,5 @@ On kibana go to Discover again
   Choose the index created
   Check the log records on Kibana
 
+To put it down:
+docker-compose down -v
