@@ -24,7 +24,7 @@ describe('gravatar function', () => {
 
   it('should return an identicon by default', () => {
     const email = 'test@example.com';
-    const expectedUrl = `http://www.gravatar.com/avatar/${crypto.createHash('md5').update(email.trim().toLowerCase()).digest('hex')}?d=identicon&s=80`;
+    `http://www.gravatar.com/avatar/${crypto.createHash('md5').update(email.trim().toLowerCase()).digest('hex')}?d=identicon&s=80`;
 
     const actualUrl = gravatar(email);
 

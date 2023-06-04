@@ -88,9 +88,9 @@ router.get('/:username', function(req, res, next) {
     // if user does not exist
     if (rows.length == 0) {
       logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 400, message: "User is not on our database" });
-      var error = new Error("User is not on our database");
-      error.status = 400;
-      next(error);
+      var error2 = new Error("User is not on our database");
+      error2.status = 400;
+      next(error2);
       return;
     }
 
