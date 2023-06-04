@@ -20,13 +20,12 @@ describe('GET /fllws/:username', () => {
       .get('/fllws/testuser')
       .set('Authorization', 'incorrect_token')
       .catch(err => {
-        console.log("errorEmi - response", err.response)
         return err.response
       });
       console.log("responseEmi - status", response.status)
-      console.log("responseEmi - body", response.body.error)
+      console.log("responseEmi - body", response.error)
     expect(response.status).to.equal(403);
-    expect(response.body.error).to.equal("You are not authorized to use this resource");
+    expect(response.error).to.equal("You are not authorized to use this resource");
   });
 
   it('returns 404 if the user is not in the database', async () => {
