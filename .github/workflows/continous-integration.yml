@@ -41,17 +41,17 @@ jobs:
           tags: ${{ secrets.DOCKER_USERNAME }}/minitwit-tests:latest
           cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/minitwit-tests:webbuildcache
           cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/minitwit-tests:webbuildcache,mode=max
-      
-      # - name: Test minitwit
-      #   run: |
-      #     docker build -t minitwit-tests -f ./itu-minitwit-node/tests/Dockerfile .
-      #     docker run --rm -e MYSQL_PASSWORD=$MYSQL_PASSWORD   -e MYSQL_USERNAME=$MYSQL_USERNAME   -e MYSQL_HOST=$MYSQL_HOST   -e MYSQL_PORT=$MYSQL_PORT   -e MYSQL_DATABASE=$MYSQL_DATABASE minitwit-tests
-      #   env:
-      #     MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
-      #     MYSQL_USERNAME: ${{ secrets.MYSQL_USERNAME }}
-      #     MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
-      #     MYSQL_PORT: ${{ secrets.MYSQL_PORT }}
-      #     MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
+
+      - name: Test minitwit
+        run: |
+          docker build -t minitwit-tests -f ./itu-minitwit-node/tests/Dockerfile .
+          docker run --rm -e MYSQL_PASSWORD=$MYSQL_PASSWORD   -e MYSQL_USERNAME=$MYSQL_USERNAME   -e MYSQL_HOST=$MYSQL_HOST   -e MYSQL_PORT=$MYSQL_PORT   -e MYSQL_DATABASE=$MYSQL_DATABASE minitwit-tests
+        env:
+          MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+          MYSQL_USERNAME: ${{ secrets.MYSQL_USERNAME }}
+          MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
+          MYSQL_PORT: ${{ secrets.MYSQL_PORT }}
+          MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
 
       - name: Build and push minitwitimage image
         uses: docker/build-push-action@v2
