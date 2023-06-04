@@ -11,7 +11,7 @@ filebeat.inputs:
       expand_keys: true
 
 output.elasticsearch:
-  hosts: ['http://104.248.16.95:9200']
+  hosts: ['http://159.223.18.85:9200']
   indices:
     - index: "filebeat-elastic-%{[agent.version]}-%{+yyyy.MM.dd}"
       when.or:
