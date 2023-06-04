@@ -20,10 +20,11 @@ describe('GET /fllws/:username', () => {
       .get('/fllws/testuser')
       .set('Authorization', 'incorrect_token')
       .catch(err => {
-        console.log("errorEmi", err)
+        console.log("errorEmi - response", err.response)
         return err.response
       });
-      console.log("responseEmi", response)
+      console.log("responseEmi - status", response.status)
+      console.log("responseEmi - body", response.body.error)
     expect(response.status).to.equal(403);
     expect(response.body.error).to.equal("You are not authorized to use this resource");
   });
