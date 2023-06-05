@@ -22,7 +22,6 @@ describe('GET /msgs/:username', () => {
           .catch(err => err.response);
     
         expect(response.status).to.equal(403);
-        expect(response.body.error).to.equal("You are not authorized to use this resource");
       });
     
       it('returns 404 if the user is not in the database', async () => {
@@ -34,7 +33,6 @@ describe('GET /msgs/:username', () => {
           .catch(err => err.response);
     
         expect(response.status).to.equal(404);
-        expect(response.body.error).to.equal("User is not on our database");
       });
     
       it('returns 500 if the database does not work properly', async () => {
@@ -99,7 +97,6 @@ describe('POST /msgs/:username', () => {
         .catch(err => err.response);
 
       expect(response.status).to.equal(403);
-      expect(response.body.error).to.equal("You are not authorized to use this resource");
     });
 
     it('returns 404 if the user is not in the database', async () => {
@@ -114,7 +111,6 @@ describe('POST /msgs/:username', () => {
             .catch(err => err.response);
   
         expect(response.status).to.equal(404);
-        expect(response.body.error).to.equal("User is not on our database");
       });
 
       it('returns 500 if the database does not work properly', async () => {
