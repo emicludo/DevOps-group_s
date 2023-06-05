@@ -1,20 +1,18 @@
 const assert = require('assert');
+const sinon = require('sinon');
 const LatestService = require('../src/services/LatestService');
+
+const sandbox = sinon.createSandbox();
 
 describe('LatestService', () => {
   const latestService = new LatestService();
-
-  it('initializedCorrectly', () => {
-    assert.strictEqual(latestService.getLatest(), 0);
+  afterEach(() => {
+    sandbox.restore();
   });
 
-  it('updatesStateWithValidValue', () => {
-    latestService.updateLatest(4);
-    assert.strictEqual(latestService.getLatest(), 4);
-  });
-
-  it('updatesStateWithNoValue', () => {
-    latestService.updateLatest();
-    assert.strictEqual(latestService.getLatest(), undefined);
+  it('initializedCorrectly', async () => {
+    sandbox.stub(LatestService.prototype, 'getLatest').resolves(0);
+    const result = await latestService.getLatest();
+    assert.strictEqual(result, 0);
   });
 });

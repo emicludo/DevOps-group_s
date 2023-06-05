@@ -1,0 +1,6 @@
+Dockerfile
+*.jade
+*.css
+*.json
+Vagrantfile
+*.md

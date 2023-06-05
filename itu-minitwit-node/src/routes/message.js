@@ -1,14 +1,13 @@
 var express = require('express');
 var router = express.Router();
 
-
 const database = require('../db/dbService');
 const Message = require('../model/Message');
-const os = require('os');
 
 
 //Utils
 var logger = require('../logger/logger');
+const os = require('os');
 
 /**
  * GET /message
@@ -46,15 +45,15 @@ router.get('/', async function (req, res, next) {
 
 /* Registers a new message for the user. */
 router.post('/', function (req, res, next) {
+  const hostname = os.hostname();
   if (!req.session.user) {
-    logger.log('error', { url: req.url, method: req.method, requestBody: req.body, responseStatus: 400, message: "You must be logged in to create a message." });
+    
     var error = new Error("You must be logged in to create a message.");
     error.status = 400;
     next(error);
   }
 
   if (req.body.text) {
-    
     try {
       const message = Message.create({
         author_id: req.session.user.user_id,
@@ -62,14 +61,13 @@ router.post('/', function (req, res, next) {
         pub_date: Date.now(),
         flagged: 0
       })
-      const hostname = os.hostname();
-      logger.log('info', { url: req.url, method: req.method, requestBody: req.body, responseStatus: 200, message: req.body.text, containerId: hostname });
+      logger.log('info', { url: req.url, method: req.method, requestBody: req.body, responseStatus: 200, message: req.body.text, hostname: hostname });
       req.session.flash = 'Your message was recorded';
+      res.send('message ' + req.body.text + ' created'); //Check this line if it doesn't redirect
       res.redirect('/api');
       return;
-
     } catch (err) {
-        logger.log('error', { url: req.url, method: req.method, requestBody: req.body, responseStatus: 500, message: err });
+        logger.log('error', { url: req.url, method: req.method, requestBody: req.body, responseStatus: 500, message: err, hostname: hostname });
         var error = new Error('An error occurred while creating message');
         error.status = 500;
         next(error);

@@ -6,12 +6,9 @@ const User = require('../model/User')
 
 var logger = require('../logger/logger');
 
-const hash = require('../utils/hash')
+const hash = require('../utils/hash');
 
-//Utils
-var logger = require('../logger/logger');
-
-router.get('/', function (req, res, next) {
+router.get('/', function (req, res) {
   if (req.session.user) {
     res.redirect('/api');
   } else {

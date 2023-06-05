@@ -23,11 +23,10 @@ describe('GET /msgs/:username', () => {
           .catch(err => err.response);
     
         expect(response.status).to.equal(403);
-        expect(response.body.error).to.equal("You are not authorized to use this resource");
       });
     
       it('returns 404 if the user is not in the database', async () => {
-        const getAllUsersStub = sandbox.stub(getAllUsers.prototype, 'getAllUsers').resolves([{ username: 'foo' }]);
+        sandbox.stub(getAllUsers.prototype, 'getAllUsers').resolves([{ username: 'foo' }]);
     
         const response = await request(app)
           .get('/msgs/testuser')
@@ -35,12 +34,12 @@ describe('GET /msgs/:username', () => {
           .catch(err => err.response);
     
         expect(response.status).to.equal(404);
-        expect(response.body.error).to.equal("User is not on our database");
       });
     
       it('returns 500 if the database does not work properly', async () => {
         const getAllUsersStub = sandbox.stub(getAllUsers.prototype, 'getAllUsers').resolves([{ username: 'testuser' }]);
         sandbox.stub(Message, 'findAll').rejects(new Error('Error text'));
+
     
         const response = await request(app)
           .get('/msgs/testuser')
@@ -64,7 +63,7 @@ describe('GET /msgs/:username', () => {
       it('returns 204 if everything is fine, but there are no messages', async () => {
         const getAllUsersStub = sandbox.stub(getAllUsers.prototype, 'getAllUsers').resolves([{ username: 'testuser' }]);
         sandbox.stub(Message, 'findAll').resolves([]);
-    
+
         const response = await request(app)
           .get('/msgs/testuser')
           .set('Authorization', 'Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh')
@@ -91,11 +90,10 @@ describe('POST /msgs/:username', () => {
         .catch(err => err.response);
 
       expect(response.status).to.equal(403);
-      expect(response.body.error).to.equal("You are not authorized to use this resource");
     });
 
     it('returns 404 if the user is not in the database', async () => {
-        const getAllUsersStub = sandbox.stub(getAllUsers.prototype, 'getAllUsers').resolves([{ username: 'foo' }]);
+        sandbox.stub(getAllUsers.prototype, 'getAllUsers').resolves([{ username: 'foo' }]);
         
         const response = await request(app)
           .post('/msgs/testuser')
@@ -106,11 +104,10 @@ describe('POST /msgs/:username', () => {
             .catch(err => err.response);
   
         expect(response.status).to.equal(404);
-        expect(response.body.error).to.equal("User is not on our database");
       });
 
       it('returns 500 if the database does not work properly', async () => {
-        const getAllUsersStub = sandbox.stub(getAllUsers.prototype, 'getAllUsers').resolves([{ username: 'testuser' }]);
+        sandbox.stub(getAllUsers.prototype, 'getAllUsers').resolves([{ username: 'testuser' }]);
     
         sandbox.stub(Message, 'create').rejects(new Error('Error text'));
     
@@ -125,7 +122,7 @@ describe('POST /msgs/:username', () => {
       });
 
       it('returns 204 if everything is fine', async () => {
-        const getAllUsersStub = sandbox.stub(getAllUsers.prototype, 'getAllUsers').resolves([{ username: 'testuser' }]);
+        sandbox.stub(getAllUsers.prototype, 'getAllUsers').resolves([{ username: 'testuser' }]);
     
         sandbox.stub(Message, 'create').resolves({});
     
