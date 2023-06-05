@@ -23,8 +23,6 @@ describe('GET /fllws/:username', () => {
       .catch(err => {
         return err.response
       });
-      console.log("responseEmi - status", response.status)
-      console.log("responseEmi - body", response.error)
     expect(response.status).to.equal(403);
   });
 
