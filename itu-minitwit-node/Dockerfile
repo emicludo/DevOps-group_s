@@ -14,7 +14,7 @@ RUN npm install
 COPY itu-minitwit-node .
 
 # Create the log directory if it doesn't exist and set permissions
-RUN mkdir -p /var/log/appname && chmod -R 755 /var/log/appname
+RUN mkdir -p /var/log/minitwit && chmod -R 755 /var/log/minitwit
 
 # Set the environment variable PORT to 5000
 ENV PORT=3000
