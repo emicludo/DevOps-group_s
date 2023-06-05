@@ -1,7 +1,8 @@
 const request = require('supertest');
 const app = require('../app');
 const database = require('../src/db/dbService');
-const getAllUsers = require('../src/model/user');
+const getAllUsers = require('../src/model/users');
+const User = require('../src/model/User');
 const sinon = require('sinon');
 const chai = require('chai');
 const expect = chai.expect;
@@ -74,11 +75,9 @@ describe('POST /register', () => {
         expect(getAllUsers.prototype.getAllUsers.called).to.be.true;
       });
 
-      it('returns 200 if all fine', async () => {
+      it('returns 204 if all fine', async () => {
         sandbox.stub(getAllUsers.prototype, 'getAllUsers').resolves([]);
-        sandbox.stub(database, 'add').callsFake((table, data, callback) => {
-            callback(null, 'Success');
-        });
+        sandbox.stub(User, 'create').resolves({});
       
         const response = await request(app)
           .post('/register')
@@ -90,14 +89,11 @@ describe('POST /register', () => {
           });
       
         expect(response.status).to.equal(204);
-        expect(database.add.called).to.be.true;
       });
 
       it('returns 500 if the database does not work properly', async () => {
         sandbox.stub(getAllUsers.prototype, 'getAllUsers').rejects(new Error('Database error'));
-        sandbox.stub(database, 'add').callsFake((table, data, callback) => {
-            callback('Success', null);
-        });
+        sandbox.stub(User, 'create').rejects(new Error('Error: new Error'));
     
         const response = await request(app)
             .post('/register')

@@ -66,8 +66,9 @@ class Database {
         return value;
       }
     }).join(', ');
-    const sql = `INSERT INTO ${table} (${keys}) VALUES (${values})`;
-    this.pool.query(sql, callback);
+    const placehoders = Object.values(data).map(() => '?').join(', ');
+    const sql = `INSERT INTO ${table} (${keys}) VALUES (${placehoders})`;
+    this.pool.query(sql, values, callback);
   }
 }
 

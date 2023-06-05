@@ -2,6 +2,9 @@ var express = require('express');
 var router = express.Router();
 
 const database = require('../db/dbService')
+const Message = require('../model/Message');
+const User = require('../model/User');
+const Follower = require('../model/Follower');
 
 //Services
 const LatestService = require('../services/LatestService');
@@ -12,14 +15,14 @@ var logger = require('../logger/logger');
 const hash = require('../utils/hash')
 const isSimulator = require('../utils/authorizationValidator');
 
-const GetAllUsers = require('../model/user');
+const GetAllUsers = require('../model/users.js');
 const getAllUsers = new GetAllUsers();
 const GetFollowersFromUser = require('../model/followers.js');
 const getFollowersFromUser = new GetFollowersFromUser();
 
 
 //Routing
-router.get('/latest', function (req, res) {
+router.get('/latest', async function (req, res, next) {
   res.send({ latest: latestService.getLatest() });
 })
 
@@ -66,18 +69,22 @@ router.post("/register", async function (req, res, next) {
         email: email,
         pw_hash: hash(password)
       };
-      database.add('user', body, function (err) {
-        if (err) {
+
+      try {
+        const user = await User.create({
+          username: username,
+          email: email,
+          pw_hash: hash(password)
+        })
+  
+        res.status(204).send("");
+      } catch (err) {
           logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , message: err });
           var newError = new Error("Error adding user to our database");
           newError.status = 500;
           next(newError);
           return;
-        } else {
-          res.status(204).send("");
-        }
-      });
-
+      }
     } else {
       //Send error
       logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 400, message: error2 });
@@ -116,29 +123,39 @@ router.get('/msgs', async function (req, res, next) {
     if (!no_msgs) {
       no_msgs = 100;
     }
-    
-    const query = `SELECT message.*, user.* FROM message, user
-    WHERE message.flagged = 0 AND message.author_id = user.user_id
-    ORDER BY message.pub_date DESC LIMIT ?`
 
-    database.all(query, [no_msgs], (err, rows) => {
-      if (err) {
-        logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err });
-        var error = new Error("Error retrieving messages from our database");
-        error.status = 500;
-        next(error);
-        return;
-      }
+    try {
+      const messages = await Message.findAll({
+        where: {
+          flagged: 0,
+        },
+        include: {
+          model: User,
+          as: 'user',
+          attributes: ['username', 'email']
+        },
+        order: [['pub_date', 'DESC']],
+        limit: no_msgs
+      });
+
       const filteredMsgs = [];
-      for (const msg of rows) {
+
+      for (const msg of messages) {
         const filteredMsg = {};
-        filteredMsg.content = msg.text;
-        filteredMsg.pubDate = msg.pubDate;
-        filteredMsg.user = msg.username;
+        filteredMsg.content = msg.text; //Check
+        filteredMsg.pubDate = msg.pub_date;
+        filteredMsg.user = msg.user.username;
         filteredMsgs.push(filteredMsg);
       }
       res.send(filteredMsgs);
-    });
+
+    } catch (err) {
+      logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err });
+      var error = new Error("Error retrieving messages from our database");
+      error.status = 500;
+      next(error);
+      return;
+    }
   } catch (error) {
     logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: error });
     var newError = new Error(error);
@@ -181,33 +198,45 @@ router.get('/msgs/:username', async function (req, res, next) {
     }
     const userId = userSelected.user_id
 
-    const query = `SELECT message.*, user.* FROM message, user 
-    WHERE message.flagged = 0 AND
-    user.user_id = message.author_id AND user.user_id = ?
-    ORDER BY message.pub_date DESC LIMIT ?`
+    try {
+      const messages = await Message.findAll({
+        where: {
+          flagged: 0,
+        },
+        include: {
+          model: User,
+          as: 'user',
+          attributes: ['username', 'email'],
+          where: {
+            user_id: userId
+          }
+        },
+        order: [['pub_date', 'DESC']],
+        limit: no_msgs
+      })
 
-    database.all(query, [userId, no_msgs], (err, rows) => {
-      if (err) {
-        logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err });
-        var error = new Error("Error retrieving messages from our database");
-        error.status = 500;
-        next(error);
-        return;
-      }
       const filteredMsgs = [];
-      for (const msg of rows) {
+      for (const msg of messages) {
         const filteredMsg = {};
         filteredMsg.content = msg.text;
-        filteredMsg.pubDate = msg.pubDate;
-        filteredMsg.user = msg.username;
+        filteredMsg.pubDate = msg.pub_date;
+        filteredMsg.user = msg.user.username;
         filteredMsgs.push(filteredMsg);
       }
+
       if (filteredMsgs.length == 0) {
         res.status(204).send("");
       } else {
         res.status(200).send(filteredMsgs);
       }
-    });
+
+    } catch (err) {
+      logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err });
+        var error = new Error("Error retrieving messages from our database");
+        error.status = 500;
+        next(error);
+        return;
+    }
   } catch (error) {
     logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: error });
     var newError = new Error(error);
@@ -252,18 +281,24 @@ router.post('/msgs/:username', async function (req, res, next) {
       pub_date: Date.now(),
       flagged: 0
     };
-    database.add('message', body, function (err, response) {
-      if (err) {
+
+    try {
+      const message = await Message.create({
+        author_id: userId,
+        text: content.replace(/'/g, "''"),
+        pub_date: Date.now(),
+        flagged: 0
+      })
+
+      logger.log('info',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 204, message: "Message added successfully" });
+      res.status(204).send("");
+    } catch (err) {
         logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err });
         var error = new Error(err);
         error.status = 500;
         next(error);
         return;
-      } else {
-        logger.log('info',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 204, message: "Message added successfully with id: " + response.insertId });
-        res.status(204).send("");
-      }
-    });
+    }
   } catch (error) {
     logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: error });
     var newError = new Error(error);
@@ -301,27 +336,16 @@ router.get('/fllws/:username', async function (req, res, next) {
     }
     const userId = userSelected.user_id;
 
-    const query = `SELECT user.username FROM user
-                   INNER JOIN follower ON follower.whom_id=user.user_id
-                   WHERE follower.who_id=?
-                   LIMIT ?`;
-
     const no_followers = parseInt(req.query.no) || 100;
-    database.all(query, [userId, no_followers], (err, rows) => {
-      if (err) {
-        logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err });
-        var error = new Error("Error retrieving followers from our database");
-        error.status = 500;
-        next(error);
-        return;
-      }
-      const filteredFllws = [];
-      for (const fllw of rows) {
-        filteredFllws.push(fllw.username);
-      }
-      const response = { follows: filteredFllws };
-      res.send(response);
-    });
+
+    const userFollowsList = await getFollowersFromUser.getFollowersFromUser(userId, no_followers);
+    const filteredFllws = [];
+    for (const fllw of userFollowsList) {
+      filteredFllws.push(fllw);
+    }
+    const response = { follows: filteredFllws };
+    res.send(response);
+
   } catch (error) {
     logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: error });
     var newError = new Error(error);
@@ -381,18 +405,21 @@ router.post('/fllws/:username', async function (req, res, next) {
       }
       
       const followsUserId = followsUser.user_id;
-      const query = "INSERT INTO follower (who_id, whom_id) values (?, ?)";
 
-      database.run(query, [userId, followsUserId], function (err) {
-        if (err) {
-          logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err });
+      try {
+        const followers = await Follower.create({
+          who_id: userId,
+          whom_id: followsUserId
+        })
+        res.status(204).send("");
+      } catch(err) {
+        logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err });
           var error = new Error(err);
           error.status = 500;
           next(error);
           return;
-        }
-        res.status(204).send("");
-      });
+      }
+
     } else if (req.body.unfollow) {
       const unfollowUsername = req.body.unfollow;
       const unfollowsUser = users.find(user => user.username == unfollowUsername);
@@ -412,18 +439,23 @@ router.post('/fllws/:username', async function (req, res, next) {
         res.status(204).send("");
         return
       }
-
-      const query = "DELETE FROM follower WHERE who_id=? and whom_id=?";
-      database.run(query, [userId, unfollowsUserId], function (err) {
-        if (err) {
-          logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err });
+  
+      try {
+        
+        const result = await Follower.destroy({
+          where: {
+            who_id: userId,
+            whom_id: unfollowsUserId
+          }
+        });
+        res.status(204).send("");
+      } catch(err) {
+        logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err });
           var error = new Error(err);
           error.status = 500;
           next(error);
           return;
-        }
-        res.status(204).send("");
-      });
+      }
     } else {
       logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 400, message: "Invalid request body" });
       var error10 = new Error("Invalid request body");

@@ -1,7 +1,8 @@
 const request = require('supertest');
 const app = require('../app');
 const database = require('../src/db/dbService');
-const getAllUsers = require('../src/model/user');
+const getAllUsers = require('../src/model/users');
+const Message = require('../src/model/Message.js');
 
 const sinon = require('sinon');
 const chai = require('chai');
@@ -36,11 +37,9 @@ describe('GET /msgs/:username', () => {
       });
     
       it('returns 500 if the database does not work properly', async () => {
-        sandbox.stub(getAllUsers.prototype, 'getAllUsers').resolves([{ username: 'testuser' }]);
-    
-        sandbox.stub(database, 'all').callsFake((sql, params, callback) => {
-            callback('Error', null);
-          });
+        const getAllUsersStub = sandbox.stub(getAllUsers.prototype, 'getAllUsers').resolves([{ username: 'testuser' }]);
+        sandbox.stub(Message, 'findAll').rejects(new Error('Error text'));
+
     
         const response = await request(app)
           .get('/msgs/testuser')
@@ -50,11 +49,8 @@ describe('GET /msgs/:username', () => {
       });
     
       it('returns 200 and messages if everything is fine', async () => {
-        sandbox.stub(getAllUsers.prototype, 'getAllUsers').resolves([{ username: 'testuser' }]);
-    
-        sandbox.stub(database, 'all').callsFake((sql, params, callback) => {
-            callback(null,  [{text: 'hello world', pubDate: '20-4-2020', username: 'testuser'}]);
-          });
+        const getAllUsersStub = sandbox.stub(getAllUsers.prototype, 'getAllUsers').resolves([{ username: 'testuser' }]);
+        sandbox.stub(Message, 'findAll').resolves([{text: 'hello world', pub_date: '20-4-2020', user: {username: 'testuser'}}]);
     
         const response = await request(app)
           .get('/msgs/testuser')
@@ -65,12 +61,9 @@ describe('GET /msgs/:username', () => {
       });
     
       it('returns 204 if everything is fine, but there are no messages', async () => {
-        sandbox.stub(getAllUsers.prototype, 'getAllUsers').resolves([{ username: 'testuser' }]);
-    
-        sandbox.stub(database, 'all').callsFake((sql, params, callback) => {
-            callback(null,  []);
-          });
-    
+        const getAllUsersStub = sandbox.stub(getAllUsers.prototype, 'getAllUsers').resolves([{ username: 'testuser' }]);
+        sandbox.stub(Message, 'findAll').resolves([]);
+
         const response = await request(app)
           .get('/msgs/testuser')
           .set('Authorization', 'Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh')
@@ -116,9 +109,7 @@ describe('POST /msgs/:username', () => {
       it('returns 500 if the database does not work properly', async () => {
         sandbox.stub(getAllUsers.prototype, 'getAllUsers').resolves([{ username: 'testuser' }]);
     
-        sandbox.stub(database, 'add').callsFake((table, data, callback) => {
-            callback('Error', null);
-          });
+        sandbox.stub(Message, 'create').rejects(new Error('Error text'));
     
           const response = await request(app)
           .post('/msgs/testuser')
@@ -133,9 +124,7 @@ describe('POST /msgs/:username', () => {
       it('returns 204 if everything is fine', async () => {
         sandbox.stub(getAllUsers.prototype, 'getAllUsers').resolves([{ username: 'testuser' }]);
     
-        sandbox.stub(database, 'add').callsFake((table, data, callback) => {
-            callback(null, 'Success');
-          });
+        sandbox.stub(Message, 'create').resolves({});
     
           const response = await request(app)
           .post('/msgs/testuser')
@@ -145,6 +134,5 @@ describe('POST /msgs/:username', () => {
             });
     
         expect(response.status).to.equal(204);
-        expect(response.body).to.deep.equal({});
       });
 });

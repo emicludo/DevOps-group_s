@@ -1,8 +1,9 @@
 const request = require('supertest');
 const app = require('../app');
 const database = require('../src/db/dbService');
-const getAllUsers = require('../src/model/user');
+const getAllUsers = require('../src/model/users');
 const getFollowersFromUser = require('../src/model/followers.js');
+const Follower = require('../src/model/Follower.js');
 
 const sinon = require('sinon');
 const chai = require('chai');
@@ -40,9 +41,7 @@ describe('GET /fllws/:username', () => {
   it('returns 500 if the database does not work properly', async () => {
     sandbox.stub(getAllUsers.prototype, 'getAllUsers').resolves([{ username: 'testuser' }]);
 
-    sandbox.stub(database, 'all').callsFake((sql, params, callback) => {
-      callback('Error', null);
-    });
+    sandbox.stub(getFollowersFromUser.prototype, 'getFollowersFromUser').rejects(new Error('Error text'));
 
     const response = await request(app)
       .get('/fllws/testuser')
@@ -55,9 +54,7 @@ describe('GET /fllws/:username', () => {
   it('returns followers if everything is fine', async () => {
     sandbox.stub(getAllUsers.prototype, 'getAllUsers').resolves([{ username: 'testuser' }]);
 
-    sandbox.stub(database, 'all').callsFake((sql, params, callback) => {
-      callback(null, [{ username: "one" }, { username: "two" }]);
-    });
+    sandbox.stub(getFollowersFromUser.prototype, 'getFollowersFromUser').resolves(['one', 'two']);
 
     const response = await request(app)
       .get('/fllws/testuser')
@@ -124,8 +121,8 @@ describe('POST /fllws/:username', () => {
 
   it('returns 500 if the database fails while following', async () => {
     sinon.stub(getAllUsers.prototype, 'getAllUsers').resolves([{username: 'testuser'}, {username: 'followuser'}]);
-    sinon.stub(getFollowersFromUser.prototype, 'getFollowersFromUser').resolves([]);
-    sinon.stub(database, 'run').callsArgWith(2, 'Error', null);
+    sinon.stub(getFollowersFromUser.prototype, 'getFollowersFromUser').rejects(new Error('Error text'));
+    sinon.stub(Follower, 'create').rejects(new Error('Error text'));
 
     const response = await request(app)
       .post('/fllws/testuser')
@@ -140,10 +137,7 @@ describe('POST /fllws/:username', () => {
   it('returns 204 if all fine while following', async () => {
     sinon.stub(getAllUsers.prototype, 'getAllUsers').resolves([{username: 'testuser'}, {username: 'followuser'}]);
     sinon.stub(getFollowersFromUser.prototype, 'getFollowersFromUser').resolves([]);
-
-    sinon.stub(database, 'run').callsFake((sql, params, callback) => {
-      callback(null, 'Success');
-    });
+    sinon.stub(Follower, 'create').resolves();
 
     const response = await request(app)
       .post('/fllws/testuser')
@@ -158,9 +152,6 @@ describe('POST /fllws/:username', () => {
   it('returns 404 if unfollows user is not in the DB', async () => {  
     sinon.stub(getAllUsers.prototype, 'getAllUsers').resolves([{username: 'testuser'}, {username: 'followuser'}]);
     sinon.stub(getFollowersFromUser.prototype, 'getFollowersFromUser').resolves([]);
-    sinon.stub(database, 'run').callsFake((sql, params, callback) => {
-      callback(null, 'Success');
-    });
 
     const response = await request(app)
       .post('/fllws/testuser')
@@ -190,10 +181,7 @@ describe('POST /fllws/:username', () => {
   it('returns 500 if DB fails while unfollowing', async () => {
     sinon.stub(getAllUsers.prototype, 'getAllUsers').resolves([{username: 'testuser'}, {username: 'unfollowuser'}]);
     sinon.stub(getFollowersFromUser.prototype, 'getFollowersFromUser').resolves(['unfollowuser']);
-
-    sinon.stub(database, 'run').callsFake((sql, params, callback) => {
-      callback('Error', null);
-    });
+    sinon.stub(Follower, 'destroy').rejects(new Error('Error text'));
 
     const response = await request(app)
       .post('/fllws/testuser')
@@ -208,10 +196,7 @@ describe('POST /fllws/:username', () => {
   it('returns 204 if all ok while unfollowing', async () => {
     sinon.stub(getAllUsers.prototype, 'getAllUsers').resolves([{username: 'testuser'}, {username: 'unfollowuser'}]);
     sinon.stub(getFollowersFromUser.prototype, 'getFollowersFromUser').resolves(['unfollowuser']);
-
-    sinon.stub(database, 'run').callsFake((sql, params, callback) => {
-      callback(null, 'Success');
-    });
+    sinon.stub(Follower, 'destroy').resolves();
 
     const response = await request(app)
       .post('/fllws/testuser')
@@ -226,10 +211,6 @@ describe('POST /fllws/:username', () => {
   it('returns 400 if sth else than follow or unfollow', async () => {
     sinon.stub(getAllUsers.prototype, 'getAllUsers').resolves([{username: 'testuser'}, {username: 'unfollowuser'}]);
     sinon.stub(getFollowersFromUser.prototype, 'getFollowersFromUser').resolves(['unfollowuser']);
-
-    sinon.stub(database, 'run').callsFake((sql, params, callback) => {
-      callback(null, 'Success');
-    });
 
     const response = await request(app)
       .post('/fllws/testuser')
