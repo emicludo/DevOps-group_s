@@ -101,7 +101,7 @@ describe('POST /fllws/:username', () => {
     expect(response.status).to.equal(404);
   });
 
-  it('returns 500 if the user already follows the follows user', async () => {
+  it('returns 204 if the user already follows the follows user', async () => {
     sinon.stub(getAllUsers.prototype, 'getAllUsers').resolves([{username: 'testuser'}, {username: 'followuser'}]);
     sinon.stub(getFollowersFromUser.prototype, 'getFollowersFromUser').resolves(['followuser']);
 
@@ -113,7 +113,7 @@ describe('POST /fllws/:username', () => {
       })
       .catch(err => err.response);
 
-    expect(response.status).to.equal(500);
+    expect(response.status).to.equal(204);
   });
 
   it('returns 500 if the database fails while following', async () => {
