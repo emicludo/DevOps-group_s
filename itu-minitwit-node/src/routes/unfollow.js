@@ -33,7 +33,7 @@ router.get('/:username', async function(req, res, next) {
       next(error2);
       return;
     } else {
-      const result = await Follower.destroy({
+      await Follower.destroy({
         where: {
           who_id: req.session.user.user_id,
           whom_id: users[0].user_id
