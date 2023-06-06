@@ -2,8 +2,6 @@ var express = require('express');
 var router = express.Router();
 const os = require('os');
 
-const database = require('../db/dbService')
-
 const gravatar = require('../utils/gravatar')
 
 //Utils
@@ -21,7 +19,7 @@ router.get('/', async function(req, res, next) {
     res.redirect('/api/public');
     return;
   }
-  
+
   const flash = req.session.flash;
   delete req.session.flash;
 
@@ -88,24 +86,21 @@ router.get('/', async function(req, res, next) {
     );
     
     const messages = sortedMessages.slice(0, 30);
-    
     const hostname = os.hostname();
-     res.render('index', { messages: rows, flash: flash, path: req.path, user: req.session.user, gravatar: gravatar, hostname: hostname});
-  } catch (error) {
-    logger.log('error', { url: req.url, method: req.method, requestBody: req.body, responseStatus: 500, message: error });
+    res.render('index', { messages: messages, flash: flash, path: req.path, user: req.session.user, gravatar: gravatar, hostname: hostname});
+  } catch (err) {
+    logger.log('error', { url: req.url, method: req.method, requestBody: req.body, responseStatus: 500, message: err });
     var error = new Error('An error ocurrer while retrieving messages');
     error.status = 500;
     next(error);
     return;
   } 
-    
 });
 
 /* Displays the latest messages of all users. */
 router.get('/public', async (req, res, next) => {
   const flash = req.session.flash;
   delete req.session.flash;
-  
   try {
     const messages = await Message.findAll({
       where: {
@@ -121,10 +116,9 @@ router.get('/public', async (req, res, next) => {
     });
 
     const hostname = os.hostname();
-    res.render('index', { messages: rows, path: req.path, flash: flash, user: req.session.user, gravatar: gravatar, hostname: hostname });
-  } catch (error) {
-    console.log(error);
-    logger.log('error', { url: req.url, method: req.method, requestBody: req.body, responseStatus: 500, message: error });
+    res.render('index', { messages: messages, path: req.path, flash: flash, user: req.session.user, gravatar: gravatar, hostname: hostname });
+  } catch (err) {
+    logger.log('error', { url: req.url, method: req.method, requestBody: req.body, responseStatus: 500, message: err });
     var error = new Error('An error ocurred while retrieving messages');
     error.status = 500;
     next(error);
@@ -188,9 +182,8 @@ router.get('/:username', async function(req, res, next) {
       return;
     }
 
-  } catch (error) {
-    console.log(error);
-    logger.log('error', { url: req.url, method: req.method, requestBody: req.body, responseStatus: 500, message: error });
+  } catch (err) {
+    logger.log('error', { url: req.url, method: req.method, requestBody: req.body, responseStatus: 500, message: err });
     var error = new Error('An error occurred while retrieving data');
     error.status = 500;
     next(error);

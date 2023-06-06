@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
 
-const database = require('../db/dbService');
 const User = require('../model/User');
 const Follower = require('../model/Follower');
 
@@ -46,9 +45,9 @@ router.get('/:username', async function(req, res, next) {
     }
   } catch(err) {
     logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body, responseStatus: 500, message: err });
-      var error = new Error('An error occurred while unfollowing user');
-      error.status = 500;
-      next(error);
+      var error3 = new Error('An error occurred while unfollowing user');
+      error3.status = 500;
+      next(error3);
       return;
   }
 });

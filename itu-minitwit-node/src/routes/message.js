@@ -1,9 +1,6 @@
 var express = require('express');
 var router = express.Router();
-
-const database = require('../db/dbService');
 const Message = require('../model/Message');
-
 
 //Utils
 var logger = require('../logger/logger');
@@ -55,7 +52,7 @@ router.post('/', function (req, res, next) {
 
   if (req.body.text) {
     try {
-      const message = Message.create({
+      Message.create({
         author_id: req.session.user.user_id,
         text: req.body.text,
         pub_date: Date.now(),
@@ -63,14 +60,13 @@ router.post('/', function (req, res, next) {
       })
       logger.log('info', { url: req.url, method: req.method, requestBody: req.body, responseStatus: 200, message: req.body.text, hostname: hostname });
       req.session.flash = 'Your message was recorded';
-      res.send('message ' + req.body.text + ' created'); //Check this line if it doesn't redirect
       res.redirect('/api');
       return;
     } catch (err) {
         logger.log('error', { url: req.url, method: req.method, requestBody: req.body, responseStatus: 500, message: err, hostname: hostname });
-        var error = new Error('An error occurred while creating message');
-        error.status = 500;
-        next(error);
+        var error2 = new Error('An error occurred while creating message');
+        error2.status = 500;
+        next(error2);
         return;
     }
   } else {

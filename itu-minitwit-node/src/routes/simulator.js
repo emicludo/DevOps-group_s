@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
 
-const database = require('../db/dbService')
 const Message = require('../model/Message');
 const User = require('../model/User');
 const Follower = require('../model/Follower');
@@ -22,7 +21,7 @@ const getFollowersFromUser = new GetFollowersFromUser();
 
 
 //Routing
-router.get('/latest', async function (req, res, next) {
+router.get('/latest', async function (req, res) {
   res.send({ latest: latestService.getLatest() });
 })
 
@@ -151,9 +150,9 @@ router.get('/msgs', async function (req, res, next) {
 
     } catch (err) {
       logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err });
-      var error = new Error("Error retrieving messages from our database");
-      error.status = 500;
-      next(error);
+      var error2 = new Error("Error retrieving messages from our database");
+      error2.status = 500;
+      next(error2);
       return;
     }
   } catch (error) {
@@ -232,9 +231,9 @@ router.get('/msgs/:username', async function (req, res, next) {
 
     } catch (err) {
       logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err });
-        var error = new Error("Error retrieving messages from our database");
-        error.status = 500;
-        next(error);
+        var error2 = new Error("Error retrieving messages from our database");
+        error2.status = 500;
+        next(error2);
         return;
     }
   } catch (error) {
@@ -294,9 +293,9 @@ router.post('/msgs/:username', async function (req, res, next) {
       res.status(204).send("");
     } catch (err) {
         logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err });
-        var error = new Error(err);
-        error.status = 500;
-        next(error);
+        var error2 = new Error(err);
+        error2.status = 500;
+        next(error2);
         return;
     }
   } catch (error) {
@@ -414,9 +413,9 @@ router.post('/fllws/:username', async function (req, res, next) {
         res.status(204).send("");
       } catch(err) {
         logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err });
-          var error = new Error(err);
-          error.status = 500;
-          next(error);
+          var error2 = new Error(err);
+          error2.status = 500;
+          next(error2);
           return;
       }
 
@@ -451,10 +450,10 @@ router.post('/fllws/:username', async function (req, res, next) {
         res.status(204).send("");
       } catch(err) {
         logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: err });
-          var error = new Error(err);
-          error.status = 500;
-          next(error);
-          return;
+        var error4 = new Error(err);
+        error4.status = 500;
+        next(error4);
+        return;
       }
     } else {
       logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 400, message: "Invalid request body" });
