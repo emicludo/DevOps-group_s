@@ -11,6 +11,6 @@ const sequelize = new Sequelize({
   logging: false,
 });
 
-sequelize.authenticate().then(() => console.log("works")).catch((err) => console.log(err))
+sequelize.authenticate().then(() => console.log("Sequelize ready")).catch((err) => console.log(err))
 
 module.exports = sequelize;
