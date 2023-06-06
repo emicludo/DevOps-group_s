@@ -98,6 +98,7 @@ app.use(function (req, res) {
 });
 
 // Error handling middleware for other errors
+// eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
   // Handle specific error types
   if (err instanceof Error) {
