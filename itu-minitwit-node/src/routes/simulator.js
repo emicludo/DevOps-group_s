@@ -63,14 +63,8 @@ router.post("/register", async function (req, res, next) {
     }
 
     if (error2 === null) {
-      const body = {
-        username: username,
-        email: email,
-        pw_hash: hash(password)
-      };
-
       try {
-        const user = await User.create({
+        await User.create({
           username: username,
           email: email,
           pw_hash: hash(password)
@@ -274,15 +268,8 @@ router.post('/msgs/:username', async function (req, res, next) {
     }
     const userId = userSelected.user_id
 
-    const body = {
-      author_id: userId,
-      text: content.replace(/'/g, "''"),
-      pub_date: Date.now(),
-      flagged: 0
-    };
-
     try {
-      const message = await Message.create({
+      await Message.create({
         author_id: userId,
         text: content.replace(/'/g, "''"),
         pub_date: Date.now(),
@@ -406,7 +393,7 @@ router.post('/fllws/:username', async function (req, res, next) {
       const followsUserId = followsUser.user_id;
 
       try {
-        const followers = await Follower.create({
+        await Follower.create({
           who_id: userId,
           whom_id: followsUserId
         })
@@ -440,8 +427,7 @@ router.post('/fllws/:username', async function (req, res, next) {
       }
   
       try {
-        
-        const result = await Follower.destroy({
+        await Follower.destroy({
           where: {
             who_id: userId,
             whom_id: unfollowsUserId
