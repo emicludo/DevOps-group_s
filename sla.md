@@ -17,7 +17,7 @@ This includes data handling, API, encryption, firewalls, and access controls.
 On a yearly basis, Minitwit API will perform a security audit to identify and address any vulnerabilities.
 
 <b>4. Data Backup</b> <br/>
-Minitwit performs backups of all data every 48hrs. The data is stored for maximum 30 days.
+Minitwit performs backups of all data every day 7 days a week.
 In case of data loss, Minitwit will restore the data from the latest backup.
 
 <b>5. Support Guarantee </b><br/>
