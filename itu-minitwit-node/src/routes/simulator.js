@@ -87,9 +87,9 @@ router.post("/register", async function (req, res, next) {
     } else {
       //Send error
       logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 400, message: error2 });
-      var newError = new Error(error);
-      newError.status = 400;
-      next(newError);
+      var err = new Error(error2);
+      err.status = 400;
+      next(err);
     }
   } catch (error) {
     logger.log('error',  { url: req.url ,method: req.method, requestBody: req.body , responseStatus: 500, message: error });

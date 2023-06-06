@@ -88,20 +88,30 @@ app.get('/metrics', async (req, res) => {
   res.set('Content-Type', register.contentType);
   res.send(await register.metrics());
 });
+
 //Simulator routing
 app.use('/', simulatorRouter);
 
-// Add middleware to catch errors and increment the counter
-app.use((err, req, res) => {
-  if (err) {
+// catch 404 and forward to error handler
+app.use(function (req, res) {
+  res.status(404).json({ error: 'Not found' });
+});
+
+// Error handling middleware for other errors
+app.use((err, req, res, next) => {
+  // Handle specific error types
+  if (err instanceof Error) {
+    // Custom error handling logic
+    res.status(err.status || 500).json({ error: err.message });
     httpRequestErrorCounter.inc();
     const parsedUrl = url.parse(req.originalUrl);
     const route = "/" + parsedUrl.pathname.split('/')[1] + "/";
-    httpErrorCodeCounter.labels(err.status, route).inc();
-    res.status(err.status).json({ error: err.message });
+    httpErrorCodeCounter.labels(req.status, route).inc();
     return;
+  } else {
+    // Default error handling
+    res.status(500).json({ error: 'Internal Server Error' });
   }
-  res.status(err.status || 500).json({ error: err.message });
 });
 
 module.exports = app;
