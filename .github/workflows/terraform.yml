@@ -63,7 +63,7 @@ jobs:
           terraform validate
 
           echo -e "\n--> Terraform Apply \n"
-          terraform apply -auto-approve -var "do_token=${TF_VAR_DO_TOKEN}" -var "ssh_key=${TERRAFORM_PRIVATEKEY}" -var "ssh_user=${SSH_USER}" -var "state_file=${STATE_FILE}" -var "space_name=${SPACE_NAME}" -var "aws_access_key_id=${AWS_ACCESS_KEY_ID}" -var "aws_secret_access_key=${AWS_SECRET_ACCESS_KEY}"
+          terraform apply -auto-approve -var "do_token=${TF_VAR_DO_TOKEN}" -var "ssh_key=${TERRAFORM_PUBLICKEY}" -var "ssh_user=${SSH_USER}" -var "state_file=${STATE_FILE}" -var "space_name=${SPACE_NAME}" -var "aws_access_key_id=${AWS_ACCESS_KEY_ID}" -var "aws_secret_access_key=${AWS_SECRET_ACCESS_KEY}"
         
           echo -e "\n--> Generating loadbalancer configuration\n"
           bash scripts/gen_load_balancer_config.sh

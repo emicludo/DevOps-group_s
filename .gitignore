@@ -5,3 +5,4 @@ errors.log
 package-lock.json
 *.dll
 .DS_Store
+ssh_keys
