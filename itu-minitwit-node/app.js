@@ -45,7 +45,15 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(helmet());
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+      'img-src': ["'self'", "www.gravatar.com"]
+    }
+  })
+);
+
 
 // Middleware to measure the duration of the request
 const measureDurationMiddleware = (req, res, next) => {
