@@ -35,6 +35,8 @@ app.use(session({
 	saveUninitialized: false
 }));
 
+app.disable('x-powered-by');
+
 // view engine setup
 app.set('views', path.join(__dirname, '/src/views'));
 app.set('view engine', 'jade');

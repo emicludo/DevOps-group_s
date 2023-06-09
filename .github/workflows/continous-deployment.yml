@@ -2,10 +2,10 @@
 name: Terraform build and deploy with Docker Swarm
 
 on:
-  # push:
-    # Run workflow every time something is pushed to the main branch
-    #branches:
-    #  - main
+  # Run workflow every time something is pushed to the main branch
+  push:
+    branches:
+      - main
   # allow manual triggers
   workflow_dispatch:
     manual: true
@@ -57,7 +57,7 @@ jobs:
           tags: ${{ secrets.DOCKER_USERNAME }}/minitwitimage:latest
           cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/minitwitimage:webbuildcache
           cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/minitwitimage:webbuildcache,mode=max
-      
+
       - name: Build and push Flag tool image
         uses: docker/build-push-action@v2
         with:
@@ -113,7 +113,7 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         run: |
           cd terraform/
-          
+
           echo -e "\n--> Configuring SSH Keys \n"
           mkdir -p ssh_key
           echo "$TERRAFORM_PRIVATEKEY" > ssh_key/terraform
@@ -122,30 +122,30 @@ jobs:
 
           echo -e "\n--> APT update and jq install \n"
           sudo apt update && sudo apt install -y jq
-          
+
           echo -e "\n--> Terraform Init \n"
           terraform init -backend-config "bucket=$SPACE_NAME" -backend-config "key=$STATE_FILE" -backend-config "access_key=$AWS_ACCESS_KEY_ID" -backend-config "secret_key=$AWS_SECRET_ACCESS_KEY"
-          
+
           echo -e "\n--> Terraform Validate \n"
           terraform validate
 
           echo -e "\n--> Terraform Apply \n"
           terraform apply -auto-approve -var "do_token=${TF_VAR_DO_TOKEN}" -var "ssh_key=${TERRAFORM_PUBLICKEY}" -var "ssh_user=${SSH_USER}" -var "state_file=${STATE_FILE}" -var "space_name=${SPACE_NAME}" -var "aws_access_key_id=${AWS_ACCESS_KEY_ID}" -var "aws_secret_access_key=${AWS_SECRET_ACCESS_KEY}"
-        
+
           echo -e "\n--> Generating loadbalancer configuration\n"
           bash scripts/gen_load_balancer_config.sh
-          
+
           echo -e "\n--> Copying loadbalancer configuration to nodes\n"
           bash scripts/scp_load_balancer_config.sh
           envsubst < stack/minitwit_stack.yml > stack/minitwit_stack_env.yml
-          
+
           echo -e "\n--> Updating Minitwit stack file on the leader node\n"
           ssh \
               -o 'StrictHostKeyChecking no' \
               root@$(terraform output -raw minitwit-swarm-leader-ip-address) \
               -i ssh_key/terraform \
               'rm minitwit_stack.yml && cat > minitwit_stack.yml' < stack/minitwit_stack_env.yml
-          
+
           echo -e "\n--> Deploying the Minitwit stack to the cluster\n"
           ssh -t -o 'StrictHostKeyChecking no' \
               root@$(terraform output -raw minitwit-swarm-leader-ip-address) \
