@@ -5,6 +5,9 @@ variable aws_secret_access_key {}
 variable aws_access_key_id {}
 variable state_file {}
 
+variable manager_token {}
+variable worker_token {}
+
 variable "manager_count" {
   default = 1
 }
