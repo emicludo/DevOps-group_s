@@ -23,13 +23,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Create PDF
-        uses: mkrakowitzer/actions-makepdfs@v1.3
-        with:
-          markdown_dir: ../report/niko.md
-          output_dir: ../report
 
-
+       - name: Generate PDF
+        run: |
+          pandoc ../report/niko.md -o ../report/niko.pdf
 
       - name: Test minitwit
         run: |
