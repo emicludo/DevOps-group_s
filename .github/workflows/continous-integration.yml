@@ -27,7 +27,7 @@ jobs:
         uses: mkrakowitzer/actions-makepdfs@v1.3
         with:
           markdown_dir: ../report/niko.md
-          output_dir: ../report/
+          output_dir: ../report
 
 
 
