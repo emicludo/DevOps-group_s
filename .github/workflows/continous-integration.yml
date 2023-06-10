@@ -36,6 +36,8 @@ jobs:
 
       - name: Cypress.io
         uses: cypress-io/github-action@v5.7.2
+        run: | 
+          cd itu-minitwit-node
         with:
           start: npm start  
           auto-cancel-after-failures: true
