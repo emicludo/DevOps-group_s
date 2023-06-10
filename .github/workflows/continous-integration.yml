@@ -28,7 +28,7 @@ jobs:
           sudo apt-get install -y pandoc
       - name: Generate PDF
         run: |
-          pandoc ../report/niko.md -o ../report/niko.pdf
+          pandoc report/niko.md  -o report/niko.pdf
 
       - name: Test minitwit
         run: |
