@@ -26,8 +26,8 @@ jobs:
       - name: Create PDF
         uses: mkrakowitzer/actions-makepdfs@v1.3
         with:
-          markdown_dir: ../sla.md
-          output_dir: 
+          markdown_dir: ../report/niko.md
+          output_dir: ./report/niko.pdf
 
 
 
