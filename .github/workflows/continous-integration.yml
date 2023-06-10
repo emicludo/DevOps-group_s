@@ -23,6 +23,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Cypress.io
+          uses: cypress-io/github-action@v5.7.2
+          with:
+            project: ./itu-minitwit-node
+            start: npm start  
+            auto-cancel-after-failures: true
+
       - name: Test minitwit
         run: |
           docker build -t minitwit-tests -f ./itu-minitwit-node/tests/Dockerfile .
@@ -34,12 +41,7 @@ jobs:
           MYSQL_PORT: ${{ secrets.MYSQL_PORT }}
           MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
 
-      - name: Cypress.io
-        uses: cypress-io/github-action@v5.7.2
-        with:
-          project: ./itu-minitwit-node
-          start: npm start  
-          auto-cancel-after-failures: true
+      
 
 
           
