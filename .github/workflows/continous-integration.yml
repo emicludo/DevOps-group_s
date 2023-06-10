@@ -26,8 +26,8 @@ jobs:
       - name: Create PDF
         uses: mkrakowitzer/actions-makepdfs@v1.3
         with:
-          markdown_dir: ../report/
-          output_dir: ../report
+          markdown_dir: ./report/
+          output_dir: ./report
 
 
 
