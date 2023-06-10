@@ -22,10 +22,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      
-      - name: Create PD
-        uses: mkrakowitzer/actions-makepdfs@v1.3
-      
+        markdown_dir: ../report
+        output_dir: ../report
+
 
 
       - name: Test minitwit
