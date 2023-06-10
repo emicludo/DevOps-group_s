@@ -25,7 +25,8 @@ jobs:
       - uses: actions/checkout@v3
       - uses: cypress-io/github-action@v5
         with:
-          project: ./itu-minitwit-node
+          working-directory: ./itu-minitwit-node
+          start: npm start
           browser: chrome
 
   build:
