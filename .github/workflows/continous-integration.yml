@@ -16,19 +16,30 @@ on:
 # SSH_HOST
 
 jobs:
+  cypress-run:
+    runs-on: ubuntu-22.04
+    # Cypress Docker image with Chrome v106
+    # and Firefox v106 pre-installed
+    container: cypress/browsers:node18.12.0-chrome106-ff106
+    steps:
+      - uses: actions/checkout@v3
+      - uses: cypress-io/github-action@v5
+        with:
+          browser: chrome
+
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+      # - name: Checkout
+      #   uses: actions/checkout@v2
 
-      - name: Cypress tests
-        uses: cypress-io/github-action@v5.7.2
-        with:
-          project: ./itu-minitwit-node
-          start: npm start  
-          auto-cancel-after-failures: true
+      # - name: Cypress tests
+      #   uses: cypress-io/github-action@v5.7.2
+      #   with:
+      #     project: ./itu-minitwit-node
+      #     start: npm start  
+      #     auto-cancel-after-failures: true
 
       - name: Test minitwit
         run: |
