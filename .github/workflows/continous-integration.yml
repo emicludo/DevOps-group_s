@@ -26,6 +26,7 @@ jobs:
       - name: Cypress testing 
         uses: cypress-io/github-action@v2
         with: 
+          project: ./itu-minitwit-node
           build: npm run build
           start: npm start
         env:
