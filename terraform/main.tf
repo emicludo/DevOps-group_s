@@ -67,12 +67,6 @@ resource "digitalocean_droplet" "minitwit-swarm-leader" {
   provisioner "local-exec" {
     command = "ssh -o 'StrictHostKeyChecking no' root@${self.ipv4_address} -i ssh_key/terraform 'docker swarm join-token worker -q'"
     interpreter = ["/bin/sh", "-c"]
-    on_success = [
-      {
-        destination = "worker_token"
-        move        = true
-      }
-    ]
     environment = {
       WORKER_TOKEN = local.worker_token
     }
@@ -81,24 +75,33 @@ resource "digitalocean_droplet" "minitwit-swarm-leader" {
   provisioner "local-exec" {
     command = "ssh -o 'StrictHostKeyChecking no' root@${self.ipv4_address} -i ssh_key/terraform 'docker swarm join-token manager -q'"
     interpreter = ["/bin/sh", "-c"]
-    on_success = [
-      {
-        destination = "manager_token"
-        move        = true
-      }
-    ]
     environment = {
       MANAGER_TOKEN = local.manager_token
     }
   }
 }
 
+resource "null_resource" "capture_tokens" {
+  triggers = {
+    worker_token = local.worker_token
+    manager_token = local.manager_token
+  }
+
+  provisioner "local-exec" {
+    command = "echo '${local.worker_token}' > worker_token"
+  }
+
+  provisioner "local-exec" {
+    command = "echo '${local.manager_token}' > manager_token"
+  }
+}
+
 output "manager_token" {
-  value = local.manager_token
+  value = null_resource.capture_tokens.triggers.manager_token
 }
 
 output "worker_token" {
-  value = local.worker_token
+  value = null_resource.capture_tokens.triggers.worker_token
 }
 
 #  _ __ ___   __ _ _ __   __ _  __ _  ___ _ __
