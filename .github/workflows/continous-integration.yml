@@ -15,6 +15,9 @@ on:
 # SSH_KEY
 # SSH_HOST
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
