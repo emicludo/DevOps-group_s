@@ -39,7 +39,7 @@ jobs:
 
       - name: Cypress test 
         run: |
-          docker build -t cypress-minitwit-tests -f ./itu-minitwit-node/cypress/Dockerfile
+          docker build -t cypress-minitwit-tests -f ./itu-minitwit-node/cypress/Dockerfile .
           docker run --rm -e MYSQL_PASSWORD=$MYSQL_PASSWORD   -e MYSQL_USERNAME=$MYSQL_USERNAME   -e MYSQL_HOST=$MYSQL_HOST   -e MYSQL_PORT=$MYSQL_PORT   -e MYSQL_DATABASE=$MYSQL_DATABASE cypress-minitwit-tests
         env:
           MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
