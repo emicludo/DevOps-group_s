@@ -5,18 +5,11 @@ variable aws_secret_access_key {}
 variable aws_access_key_id {}
 variable state_file {}
 
-variable "manager_token" {
-  default = ""
-}
-variable "worker_token" {
-  default = ""
-}
-
 variable "manager_count" {
   default = 1
 }
 variable "worker_count" {
-  default = 4
+  default = 1
 }
 
 #  _                _
@@ -66,11 +59,25 @@ resource "digitalocean_droplet" "minitwit-swarm-leader" {
 
   # save the worker join token
   provisioner "local-exec" {
-    command = "ssh -o 'StrictHostKeyChecking no' root@${self.ipv4_address} -i ssh_key/terraform 'docker swarm join-token worker -q' > ../temp/worker_token && echo 'worker_token = \"$(cat ../temp/worker_token)\"' >> minitwit.auto.tfvars"
+    command = "ssh -o 'StrictHostKeyChecking no' root@${self.ipv4_address} -i ssh_key/terraform 'docker swarm join-token worker -q'"
+    interpreter = ["/bin/sh", "-c"]
+    on_success = [
+      {
+        destination = "worker_token"
+        move        = true
+      }
+    ]
   }
 
   provisioner "local-exec" {
-    command = "ssh -o 'StrictHostKeyChecking no' root@${self.ipv4_address} -i ssh_key/terraform 'docker swarm join-token manager -q' > ../temp/manager_token && echo 'manager_token = \"$(cat ../temp/manager_token)\"' >> minitwit.auto.tfvars"
+    command = "ssh -o 'StrictHostKeyChecking no' root@${self.ipv4_address} -i ssh_key/terraform 'docker swarm join-token manager -q'"
+    interpreter = ["/bin/sh", "-c"]
+    on_success = [
+      {
+        destination = "manager_token"
+        move        = true
+      }
+    ]
   }
 }
 
@@ -171,6 +178,23 @@ resource "digitalocean_droplet" "minitwit-swarm-worker" {
       "docker swarm join --token ${var.worker_token} ${digitalocean_droplet.minitwit-swarm-leader.ipv4_address}"
     ]
   }
+}
+variable "manager_token" {
+  type    = string
+  default = file("${path.module}/manager_token")
+}
+
+variable "worker_token" {
+  type    = string
+  default = file("${path.module}/worker_token")
+}
+
+output "manager_token" {
+  value = var.manager_token
+}
+
+output "worker_token" {
+  value = var.worker_token
 }
 
 output "minitwit-swarm-leader-ip-address" {
