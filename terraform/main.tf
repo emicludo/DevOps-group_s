@@ -105,11 +105,6 @@ resource "digitalocean_droplet" "minitwit-swarm-manager" {
     timeout = "2m"
   }
 
-  provisioner "file" {
-    source = var.manager_token
-    destination = "/root/manager_token"
-  }
-
   provisioner "remote-exec" {
     inline = [
       # allow ports for docker swarm
@@ -122,7 +117,7 @@ resource "digitalocean_droplet" "minitwit-swarm-manager" {
       "ufw allow 8888",
 
       # join swarm cluster as managers
-      "docker swarm join --token $(cat manager_token) ${digitalocean_droplet.minitwit-swarm-leader.ipv4_address}"
+      "docker swarm join --token ${var.manager_token} ${digitalocean_droplet.minitwit-swarm-leader.ipv4_address}"
     ]
   }
 }
@@ -157,12 +152,6 @@ resource "digitalocean_droplet" "minitwit-swarm-worker" {
     private_key = file(var.pvt_key)
     timeout = "2m"
   }
-
-  provisioner "file" {
-    source = var.worker_token
-    destination = "/root/worker_token"
-  }
-
   provisioner "remote-exec" {
     inline = [
       # allow ports for docker swarm
@@ -175,7 +164,7 @@ resource "digitalocean_droplet" "minitwit-swarm-worker" {
       "ufw allow 8888",
 
       # join swarm cluster as workers
-      "docker swarm join --token $(cat worker_token) ${digitalocean_droplet.minitwit-swarm-leader.ipv4_address}"
+      "docker swarm join --token ${var.worker_token} ${digitalocean_droplet.minitwit-swarm-leader.ipv4_address}"
     ]
   }
 }
