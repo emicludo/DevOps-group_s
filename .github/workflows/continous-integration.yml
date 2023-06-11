@@ -15,9 +15,6 @@ on:
 # SSH_KEY
 # SSH_HOST
 
-permissions:
-  contents: write
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -25,6 +22,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Reclaim cache directory
+        run: chown -R 1001:1001 /github/home/.cache && echo "pwn dat cache"
 
       - name: Cypress testing 
         uses: cypress-io/github-action@v5
