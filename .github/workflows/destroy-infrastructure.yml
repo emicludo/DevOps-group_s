@@ -1,5 +1,5 @@
 ---
-name: Terraform build and deploy with Docker Swarm
+name: Destroy Infrastructure
 
 on:
   # allow manual triggers
