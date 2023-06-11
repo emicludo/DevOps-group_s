@@ -93,6 +93,8 @@ resource "digitalocean_droplet" "minitwit-swarm-manager" {
   # add public ssh key so we can access the machine
   ssh_keys = [digitalocean_ssh_key.minitwit.fingerprint]
 
+  manager_token = file("temp/manager_token")
+
   # specify a ssh connection
   connection {
     user = "root"
@@ -145,6 +147,9 @@ resource "digitalocean_droplet" "minitwit-swarm-worker" {
   size = "s-1vcpu-1gb"
   # add public ssh key so we can access the machine
   ssh_keys = [digitalocean_ssh_key.minitwit.fingerprint]
+
+  # Tokens
+  worker_token = file("temp/worker_token")
 
   # specify a ssh connection
   connection {
