@@ -10,9 +10,6 @@ COPY itu-minitwit-node/package*.json ./
 # Install app dependencies
 RUN npm install
 
-# Install Xvfb
-RUN npm i xvfb
-
 # Copy the current directory contents into the container at /app
 COPY itu-minitwit-node .
 

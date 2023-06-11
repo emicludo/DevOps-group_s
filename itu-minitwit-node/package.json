@@ -6,7 +6,7 @@
     "start": "node ./bin/www",
     "run-tests": "npx mocha ./tests/ --exit",
     "cy:open": "cypress open",
-    "cy:closed": "cypress run --headless --browser chrome",
+    "cy:closed": "cypress run --headless",
     "cy:test": "start-server-and-test start http://localhost:3000/api/ cy:closed"
   },
   "dependencies": {
