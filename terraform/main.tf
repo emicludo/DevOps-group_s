@@ -5,8 +5,12 @@ variable aws_secret_access_key {}
 variable aws_access_key_id {}
 variable state_file {}
 
-variable manager_token {}
-variable worker_token {}
+variable "manager_token" {
+  default = ""
+}
+variable "worker_token" {
+  default = ""
+}
 
 variable "manager_count" {
   default = 1
@@ -62,12 +66,11 @@ resource "digitalocean_droplet" "minitwit-swarm-leader" {
 
   # save the worker join token
   provisioner "local-exec" {
-    command = "ssh -o 'StrictHostKeyChecking no' root@${self.ipv4_address} -i ssh_key/terraform 'docker swarm join-token worker -q' > ../temp/worker_token"
+    command = "ssh -o 'StrictHostKeyChecking no' root@${self.ipv4_address} -i ssh_key/terraform 'docker swarm join-token worker -q' > ../temp/worker_token && echo worker_token = \"$(cat ../temp/worker_token)\" >> terraform.tfvars"
   }
 
-  # save the manager join token
   provisioner "local-exec" {
-    command = "ssh -o 'StrictHostKeyChecking no' root@${self.ipv4_address} -i ssh_key/terraform 'docker swarm join-token manager -q' > ../temp/manager_token"
+    command = "ssh -o 'StrictHostKeyChecking no' root@${self.ipv4_address} -i ssh_key/terraform 'docker swarm join-token manager -q' > ../temp/manager_token && echo manager_token = \"$(cat ../temp/manager_token)\" >> terraform.tfvars"
   }
 }
 
@@ -92,8 +95,6 @@ resource "digitalocean_droplet" "minitwit-swarm-manager" {
   size = "s-1vcpu-1gb"
   # add public ssh key so we can access the machine
   ssh_keys = [digitalocean_ssh_key.minitwit.fingerprint]
-
-  manager_token = file("temp/manager_token")
 
   # specify a ssh connection
   connection {
@@ -147,9 +148,6 @@ resource "digitalocean_droplet" "minitwit-swarm-worker" {
   size = "s-1vcpu-1gb"
   # add public ssh key so we can access the machine
   ssh_keys = [digitalocean_ssh_key.minitwit.fingerprint]
-
-  # Tokens
-  worker_token = file("temp/worker_token")
 
   # specify a ssh connection
   connection {
