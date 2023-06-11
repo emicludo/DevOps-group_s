@@ -23,16 +23,24 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Reclaim cache directory
-        run: chown -R 1001:1001 /github/home/.cache && echo "pwn dat cache"
+      # - name: Cypress testing 
+      #   uses: cypress-io/github-action@v5
+      #   with: 
+      #     working-directory: itu-minitwit-node
+      #     start: npm start
+      #     config-file: cypress.config.js
+      #     wait-on: "http://localhost:3000/api"
+      #   env:
+      #     MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+      #     MYSQL_USERNAME: ${{ secrets.MYSQL_USERNAME }}
+      #     MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
+      #     MYSQL_PORT: ${{ secrets.MYSQL_PORT }}
+      #     MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
 
-      - name: Cypress testing 
-        uses: cypress-io/github-action@v5
-        with: 
-          working-directory: itu-minitwit-node
-          start: npm start
-          config-file: cypress.config.js
-          wait-on: "http://localhost:3000/api"
+      - name: Cypress test 
+        run: |
+          docker build -t cypress-minitwit-tests -f ./itu-minitwit-node/cypress/Dockerfile
+          docker run --rm -e MYSQL_PASSWORD=$MYSQL_PASSWORD   -e MYSQL_USERNAME=$MYSQL_USERNAME   -e MYSQL_HOST=$MYSQL_HOST   -e MYSQL_PORT=$MYSQL_PORT   -e MYSQL_DATABASE=$MYSQL_DATABASE cypress-minitwit-tests
         env:
           MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
           MYSQL_USERNAME: ${{ secrets.MYSQL_USERNAME }}
