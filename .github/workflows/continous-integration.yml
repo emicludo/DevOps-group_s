@@ -21,13 +21,14 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Cypress testing 
-        uses: cypress-io/github-action@v2
+        uses: cypress-io/github-action@v5
         with: 
           working-directory: itu-minitwit-node
           start: npm start
+          config-file: cypress.config.js
         env:
           MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
           MYSQL_USERNAME: ${{ secrets.MYSQL_USERNAME }}
