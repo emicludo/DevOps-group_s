@@ -65,35 +65,26 @@ resource "digitalocean_droplet" "minitwit-swarm-leader" {
   }
 
   # save the worker join token
- provisioner "local-exec" {
-    command = "ssh -o 'StrictHostKeyChecking no' root@${self.ipv4_address} -i ssh_key/terraform 'docker swarm join-token worker -q'"
-    interpreter = ["/bin/sh", "-c"]
-    on_success = [
-      {
-        destination = "worker_token"
-        move        = true
-      }
-    ]
-    environment = {
-      WORKER_TOKEN = var.worker_token
-    }
+  provisioner "local-exec" {
+    command = "ssh -o 'StrictHostKeyChecking no' root@${self.ipv4_address} -i ssh_key/terraform 'docker swarm join-token worker -q' > ../temp/worker_token"
   }
 
+  # save the manager join token
   provisioner "local-exec" {
-    command = "ssh -o 'StrictHostKeyChecking no' root@${self.ipv4_address} -i ssh_key/terraform 'docker swarm join-token manager -q'"
-    interpreter = ["/bin/sh", "-c"]
-    on_success = [
-      {
-        destination = "manager_token"
-        move        = true
-      }
-    ]
-    environment = {
-      MANAGER_TOKEN = var.manager_token
-    }
+    command = "ssh -o 'StrictHostKeyChecking no' root@${self.ipv4_address} -i ssh_key/terraform 'docker swarm join-token manager -q' > ../temp/manager_token"
   }
+
 }
 
+# Output the worker join token
+output "worker_token" {
+  value = file("/temp/worker_token")
+}
+
+# Output the manager join token
+output "manager_token" {
+  value = file("/temp/manager_token")
+}
 
 #  _ __ ___   __ _ _ __   __ _  __ _  ___ _ __
 # | '_ ` _ \ / _` | '_ \ / _` |/ _` |/ _ \ '__|
@@ -136,10 +127,8 @@ resource "digitalocean_droplet" "minitwit-swarm-manager" {
       "ufw allow 8080",
       "ufw allow 8888",
 
-      "echo ${var.manager_token}",
-
       # join swarm cluster as managers
-      "docker swarm join --token ${var.manager_token} ${digitalocean_droplet.minitwit-swarm-leader.ipv4_address}"
+      "docker swarm join --token ${output.manager_token.value} ${digitalocean_droplet.minitwit-swarm-leader.ipv4_address}"
     ]
   }
 }
@@ -185,20 +174,10 @@ resource "digitalocean_droplet" "minitwit-swarm-worker" {
       "ufw allow 8080",
       "ufw allow 8888",
 
-      "echo ${var.worker_token}",
-
       # join swarm cluster as workers
-      "docker swarm join --token ${var.worker_token} ${digitalocean_droplet.minitwit-swarm-leader.ipv4_address}"
+      "docker swarm join --token ${output.worker_token.value} ${digitalocean_droplet.minitwit-swarm-leader.ipv4_address}"
     ]
   }
-}
-
-output "manager_token" {
-  value = var.manager_token
-}
-
-output "worker_token" {
-  value = var.worker_token
 }
 
 output "minitwit-swarm-leader-ip-address" {
