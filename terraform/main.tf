@@ -103,7 +103,7 @@ resource "digitalocean_droplet" "minitwit-swarm-manager" {
       "ufw allow 8888",
 
       # ssh into the leader with self private key and retrieve the manager token from /temp/manager_token
-       "ssh -o 'StrictHostKeyChecking no' root@${digitalocean_droplet.minitwit-swarm-leader.ipv4_address} -i ${digitalocean_ssh_key.minitwit.fingerprint} 'cat /root/temp/manager_token' > /root/manager_token",
+      "ssh -o 'StrictHostKeyChecking no' root@${digitalocean_droplet.minitwit-swarm-leader.ipv4_address} -i ${file(var.pvt_key)} 'docker swarm join-token manager -q' > /root/manager_token",
 
       # join swarm cluster as managers
       "docker swarm join --token $(cat /root/manager_token) ${digitalocean_droplet.minitwit-swarm-leader.ipv4_address}"
@@ -152,7 +152,7 @@ resource "digitalocean_droplet" "minitwit-swarm-worker" {
       "ufw allow 8888",
 
        # ssh into the leader and retrieve the worker token from /temp/worker_token
-      "ssh -o 'StrictHostKeyChecking no' root@${digitalocean_droplet.minitwit-swarm-leader.ipv4_address} -i ${digitalocean_ssh_key.minitwit.fingerprint} 'cat /root/temp/worker_token' > /root/worker_token",
+      "ssh -o 'StrictHostKeyChecking no' root@${digitalocean_droplet.minitwit-swarm-leader.ipv4_address} -i ${digitalocean_ssh_key.minitwit.fingerprint} 'docker swarm join-token manager -q' > /root/worker_token",
 
       # join swarm cluster as workers
       "docker swarm join --token $(cat /root/worker_token) ${digitalocean_droplet.minitwit-swarm-leader.ipv4_address}"
