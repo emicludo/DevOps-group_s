@@ -103,7 +103,7 @@ resource "digitalocean_droplet" "minitwit-swarm-manager" {
   }
 
   provisioner "file" {
-    source = file(var.manager_token)
+    source = var.manager_token
     destination = "/root/manager_token"
   }
 
@@ -156,7 +156,7 @@ resource "digitalocean_droplet" "minitwit-swarm-worker" {
   }
 
   provisioner "file" {
-    source = file(var.worker_token)
+    source = var.worker_token
     destination = "/root/worker_token"
   }
 
