@@ -28,4 +28,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: MSc_group_s
-          path: ./report/output/MSc_group_s.pdf
+          path: ./report/MSc_group_s.pdf
