@@ -21,4 +21,4 @@ EXPOSE 3000
 
 # Start the app
 # CMD ["npm", "start"] &
-CMD ["ELECTRON_RUN_AS_NODE=1", "npm",  "run", "cy:test"]
+CMD ["npm",  "run", "cy:test"]
