@@ -29,6 +29,7 @@ jobs:
           working-directory: itu-minitwit-node
           start: npm start
           config-file: cypress.config.js
+          wait-on: "http://localhost:3000/api"
         env:
           MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
           MYSQL_USERNAME: ${{ secrets.MYSQL_USERNAME }}
