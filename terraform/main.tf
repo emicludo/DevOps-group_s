@@ -5,11 +5,12 @@ variable aws_secret_access_key {}
 variable aws_access_key_id {}
 variable state_file {}
 
-locals {
-  manager_token = null
-  worker_token  = null
+variable "manager_token" {
+  default = ""
 }
-
+variable "worker_token" {
+  default = ""
+}
 
 variable "manager_count" {
   default = 1
@@ -65,43 +66,13 @@ resource "digitalocean_droplet" "minitwit-swarm-leader" {
 
   # save the worker join token
   provisioner "local-exec" {
-    command = "ssh -o 'StrictHostKeyChecking no' root@${self.ipv4_address} -i ssh_key/terraform 'docker swarm join-token worker -q'"
-    interpreter = ["/bin/sh", "-c"]
-    environment = {
-      WORKER_TOKEN = local.worker_token
-    }
+    command = "ssh -o 'StrictHostKeyChecking no' root@${self.ipv4_address} -i ssh_key/terraform 'docker swarm join-token worker -q' > ../temp/worker_token"
   }
 
+  # save the manager join token
   provisioner "local-exec" {
-    command = "ssh -o 'StrictHostKeyChecking no' root@${self.ipv4_address} -i ssh_key/terraform 'docker swarm join-token manager -q'"
-    interpreter = ["/bin/sh", "-c"]
-    environment = {
-      MANAGER_TOKEN = local.manager_token
-    }
+    command = "ssh -o 'StrictHostKeyChecking no' root@${self.ipv4_address} -i ssh_key/terraform 'docker swarm join-token manager -q' > ../temp/manager_token"
   }
-}
-
-resource "null_resource" "capture_tokens" {
-  triggers = {
-    worker_token = local.worker_token
-    manager_token = local.manager_token
-  }
-
-  provisioner "local-exec" {
-    command = "echo '${local.worker_token}' > worker_token"
-  }
-
-  provisioner "local-exec" {
-    command = "echo '${local.manager_token}' > manager_token"
-  }
-}
-
-output "manager_token" {
-  value = null_resource.capture_tokens.triggers.manager_token
-}
-
-output "worker_token" {
-  value = null_resource.capture_tokens.triggers.worker_token
 }
 
 #  _ __ ___   __ _ _ __   __ _  __ _  ___ _ __
@@ -146,11 +117,10 @@ resource "digitalocean_droplet" "minitwit-swarm-manager" {
       "ufw allow 8888",
 
       # join swarm cluster as managers
-      "docker swarm join --token ${output.manager_token.value} ${digitalocean_droplet.minitwit-swarm-leader.ipv4_address}"
+      "docker swarm join --token ${var.manager_token} ${digitalocean_droplet.minitwit-swarm-leader.ipv4_address}"
     ]
   }
 }
-
 
 #                     _
 # __      _____  _ __| | _____ _ __
@@ -193,7 +163,7 @@ resource "digitalocean_droplet" "minitwit-swarm-worker" {
       "ufw allow 8888",
 
       # join swarm cluster as workers
-      "docker swarm join --token ${output.worker_token.value} ${digitalocean_droplet.minitwit-swarm-leader.ipv4_address}"
+      "docker swarm join --token ${var.worker_token} ${digitalocean_droplet.minitwit-swarm-leader.ipv4_address}"
     ]
   }
 }
