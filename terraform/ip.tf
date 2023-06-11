@@ -10,11 +10,3 @@ resource "digitalocean_floating_ip_assignment" "public-ip" {
 output "public_ip" {
   value = digitalocean_floating_ip.public-ip.ip_address
 }
-
-output "manager_token" {
-  value = file("/temp/manager_token")
-}
-
-output "worker_token" {
-  value = file("/temp/worker_token")
-}

@@ -5,12 +5,11 @@ variable aws_secret_access_key {}
 variable aws_access_key_id {}
 variable state_file {}
 
-variable "manager_token" {
-  default = ""
+locals {
+  manager_token = null
+  worker_token  = null
 }
-variable "worker_token" {
-  default = ""
-}
+
 
 variable "manager_count" {
   default = 1
@@ -66,13 +65,40 @@ resource "digitalocean_droplet" "minitwit-swarm-leader" {
 
   # save the worker join token
   provisioner "local-exec" {
-    command = "ssh -o 'StrictHostKeyChecking no' root@${self.ipv4_address} -i ssh_key/terraform 'docker swarm join-token worker -q' > ../temp/worker_token"
+    command = "ssh -o 'StrictHostKeyChecking no' root@${self.ipv4_address} -i ssh_key/terraform 'docker swarm join-token worker -q'"
+    interpreter = ["/bin/sh", "-c"]
+    on_success = [
+      {
+        destination = "worker_token"
+        move        = true
+      }
+    ]
+    environment = {
+      WORKER_TOKEN = local.worker_token
+    }
   }
 
-  # save the manager join token
   provisioner "local-exec" {
-    command = "ssh -o 'StrictHostKeyChecking no' root@${self.ipv4_address} -i ssh_key/terraform 'docker swarm join-token manager -q' > ../temp/manager_token"
+    command = "ssh -o 'StrictHostKeyChecking no' root@${self.ipv4_address} -i ssh_key/terraform 'docker swarm join-token manager -q'"
+    interpreter = ["/bin/sh", "-c"]
+    on_success = [
+      {
+        destination = "manager_token"
+        move        = true
+      }
+    ]
+    environment = {
+      MANAGER_TOKEN = local.manager_token
+    }
   }
+}
+
+output "manager_token" {
+  value = local.manager_token
+}
+
+output "worker_token" {
+  value = local.worker_token
 }
 
 #  _ __ ___   __ _ _ __   __ _  __ _  ___ _ __
