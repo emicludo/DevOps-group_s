@@ -1,0 +1,40 @@
+---
+name: Terraform build and deploy with Docker Swarm
+
+on:
+  # allow manual triggers
+  workflow_dispatch:
+    manual: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y curl
+      - name: Install Terraform
+        run: |
+          curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+          sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+          sudo apt-get update && sudo apt-get install terraform
+      - name: Destroy infrastructure
+        env:
+          TF_VAR_DO_TOKEN: ${{ secrets.TF_VAR_DO_TOKEN }}
+          STATE_FILE: ${{ secrets.STATE_FILE }}
+          SPACE_NAME: ${{ secrets.SPACE_NAME }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          echo -e "\n--> APT update and jq install \n"
+          sudo apt update && sudo apt install -y jq
+
+          echo -e "\n--> Terraform Init \n"
+          terraform init -backend-config "bucket=$SPACE_NAME" -backend-config "key=$STATE_FILE" -backend-config "access_key=$AWS_ACCESS_KEY_ID" -backend-config "secret_key=$AWS_SECRET_ACCESS_KEY"
+
+          echo -e "\n--> Terraform Destroy \n"
+          terraform destroy
+
+          echo -e "\n--> Done Destroy infrastructure"
