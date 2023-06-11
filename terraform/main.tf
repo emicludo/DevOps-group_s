@@ -12,17 +12,6 @@ variable "worker_token" {
   default = ""
 }
 
-# Output the worker join token
-output "worker_token_output" {
-  value = file("/temp/worker_token")
-}
-
-# Output the manager join token
-output "manager_token_output" {
-  value = file("/temp/manager_token")
-}
-
-
 variable "manager_count" {
   default = 1
 }
@@ -76,56 +65,41 @@ resource "digitalocean_droplet" "minitwit-swarm-leader" {
   }
 
   # save the worker join token
- provisioner "local-exec" {
+  provisioner "local-exec" {
     command = "ssh -o 'StrictHostKeyChecking no' root@${self.ipv4_address} -i ssh_key/terraform 'docker swarm join-token worker -q'"
     environment = {
-      "WORKER_TOKEN" = local.worker_token
+      "WORKER_TOKEN" = var.worker_token
     }
+
+    on_failure = continue
   }
 
+  # save the manager join token
   provisioner "local-exec" {
     command = "ssh -o 'StrictHostKeyChecking no' root@${self.ipv4_address} -i ssh_key/terraform 'docker swarm join-token manager -q'"
     environment = {
-      "MANAGER_TOKEN" = local.manager_token
+      "MANAGER_TOKEN" = var.manager_token
     }
+
+    on_failure = continue
   }
 }
 
+# Update manager_token and worker_token variables with command outputs
 locals {
-  worker_token = null
-  manager_token = null
+  manager_token = digitalocean_droplet.minitwit-swarm-leader.local-exec[1].result != "" ? digitalocean_droplet.minitwit-swarm-leader.local-exec[1].result : var.manager_token
+  worker_token  = digitalocean_droplet.minitwit-swarm-leader.local-exec[0].result != "" ? digitalocean_droplet.minitwit-swarm-leader.local-exec[0].result : var.worker_token
 }
 
-# Read worker_token and manager_token from provisioners and assign them to local variables
-data "local_file" "worker_token" {
-  filename = "../temp/worker_token"
-  depends_on = [digitalocean_droplet.minitwit-swarm-leader]
-  file_permission = "0644"
-
-  content {
-    worker_token = digitalocean_droplet.minitwit-swarm-leader.local-exec[0].environment.WORKER_TOKEN
-  }
-}
-
-data "local_file" "manager_token" {
-  filename = "../temp/manager_token"
-  depends_on = [digitalocean_droplet.minitwit-swarm-leader]
-  file_permission = "0644"
-
-  content {
-    manager_token = digitalocean_droplet.minitwit-swarm-leader.local-exec[1].environment.MANAGER_TOKEN
-  }
-}
-
-# Output the worker join token
+# Output the updated worker_token and manager_token values
 output "worker_token" {
-  value = data.local_file.worker_token.content.worker_token
+  value = local.worker_token
 }
 
-# Output the manager join token
 output "manager_token" {
-  value = data.local_file.manager_token.content.manager_token
+  value = local.manager_token
 }
+
 
 #  _ __ ___   __ _ _ __   __ _  __ _  ___ _ __
 # | '_ ` _ \ / _` | '_ \ / _` |/ _` |/ _ \ '__|
