@@ -8,7 +8,7 @@
     "cy:open": "cypress open",
     "cy:closed": "cypress run --headless --browser chrome",
     "cy:test": "start-server-and-test start http://localhost:3000/api/ cy:closed",
-    "lint": "eslint ./**"
+    "lint": "npx eslint ./**"
   },
   "dependencies": {
     "@elastic/ecs-winston-format": "^1.3.1",
