@@ -23,6 +23,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Giving permissions to logger files
+        run: |
+          mkdir -p /var/log/minitwit
+          touch /var/log/minitwit/errors.log
+          touch /var/log/minitwit/combined.log
+          chmod a+rwx /var/log/minitwit/errors.log
+          chmod a+rwx /var/log/minitwit/combined.log
+
       # USING A DOCKER CONTAINER PROVIDED BY CYPRESS
       - name: Cypress testing 
         uses: cypress-io/github-action@v5
