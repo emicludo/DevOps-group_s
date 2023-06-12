@@ -14,6 +14,7 @@ module.exports = {
   overrides: [
     {
       "files": ["**/*.js"],
+      "excludedFiles": ["bin/*.js"],
     }
   ],
   parserOptions: {
