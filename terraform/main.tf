@@ -108,9 +108,6 @@ resource "digitalocean_droplet" "minitwit-swarm-manager" {
       "ufw allow 8888",
 
       "chmod 600 terraform",
-
-      # ls
-      "ls",
       # ssh into the leader with self private key and retrieve the manager token from /temp/manager_token
       "ssh -o 'StrictHostKeyChecking no' -i terraform root@${digitalocean_droplet.minitwit-swarm-leader.ipv4_address} 'docker swarm join-token manager -q' > /root/manager_token",
       # console log the manager key
