@@ -97,6 +97,7 @@ jobs:
       - name: Create Digital Ocean Cluster
         env:
           TF_VAR_DO_TOKEN: ${{ secrets.TF_VAR_DO_TOKEN }}
+          SSH_KEY: ${{ secrets.SSH_KEY }}
           SSH_USER: ${{ secrets.SSH_USER }}
           STATE_FILE: ${{ secrets.STATE_FILE }}
           SPACE_NAME: ${{ secrets.SPACE_NAME }}
