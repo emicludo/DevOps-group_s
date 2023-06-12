@@ -35,8 +35,7 @@ jobs:
 
       - name: Run ESLint
         run: 
-          cd itu-minitwit-node
-          npx eslint .
+          npx eslint ./itu-minitwit-node
           --config .eslintrc.js
           --ext .js,.jsx,.ts,.tsx
           --format @microsoft/eslint-formatter-sarif
