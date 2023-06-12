@@ -7,7 +7,8 @@
     "run-tests": "npx mocha ./tests/ --exit",
     "cy:open": "cypress open",
     "cy:closed": "cypress run --headless --browser chrome",
-    "cy:test": "start-server-and-test start http://localhost:3000/api/ cy:closed"
+    "cy:test": "start-server-and-test start http://localhost:3000/api/ cy:closed",
+    "lint": "eslint ./**"
   },
   "dependencies": {
     "@elastic/ecs-winston-format": "^1.3.1",

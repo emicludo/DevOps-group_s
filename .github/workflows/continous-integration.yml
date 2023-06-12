@@ -26,9 +26,8 @@ jobs:
       - name: ESLint
         run: |
           cd itu-minitwit-node/
-          sudo mkdir bin
           npm install
-          npx eslint ./**
+          npm run lint
 
       - name: Giving permissions to logger files
         run: |
