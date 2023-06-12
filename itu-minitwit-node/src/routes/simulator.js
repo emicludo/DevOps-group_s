@@ -22,7 +22,8 @@ const getFollowersFromUser = new GetFollowersFromUser();
 
 //Routing
 router.get('/latest', async function (req, res) {
-  res.send({ latest: latestService.getLatest() });
+  const latest = await latestService.getLatestSeq()
+  res.send({ latest });
 })
 
 router.post("/register", async function (req, res, next) {
@@ -44,7 +45,7 @@ router.post("/register", async function (req, res, next) {
     //Updates Latest
     var latest = req.query.latest;
     if (latest !== undefined && !isNaN(parseInt(latest))) {
-      await latestService.updateLatest(parseInt(latest));
+      await latestService.updateLatestSeq(parseInt(latest));
     }
 
     //Checks if username is taken

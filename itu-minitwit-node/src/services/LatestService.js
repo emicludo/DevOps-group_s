@@ -1,8 +1,18 @@
-const database = require('../db/dbService')
+const database = require('../db/dbService');
+const Latest = require('../model/Latest');
 
 module.exports = class LatestService {
     constructor() { }
+  
 
+    async getLatestSeq() {
+        const latest = await Latest.findOne();
+        return new Promise((resolve, reject) => {
+            latest ? resolve(latest.latest_id) : reject(new Error("No rows found"));
+        });
+    }
+
+    /*
     async getLatest() {
         const query = "SELECT latest_id FROM latest;";
         return new Promise((resolve, reject) => {
@@ -15,8 +25,20 @@ module.exports = class LatestService {
                 }
             });
         })
+    }*/
+
+    async updateLatestSeq(value){
+        const latest = await Latest.findOne()
+        const update = await Latest.update(
+            { latest_id: value },
+            { where: { latest_id: latest.latest_id }}
+        )
+        return new Promise((resolve, reject) => {
+            update ? resolve() : reject(update)
+        })
     }
 
+    /*
     async updateLatest(value) {
         return new Promise((resolve, reject) => {
             const query = "UPDATE latest SET latest_id = ?;";
@@ -28,6 +50,7 @@ module.exports = class LatestService {
                 }
             });
         });
-
     }
+    */
+
 }
