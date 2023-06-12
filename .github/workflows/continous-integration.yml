@@ -25,11 +25,11 @@ jobs:
 
       - name: Giving permissions to logger files
         run: |
-          mkdir -p /var/log/minitwit
-          touch /var/log/minitwit/errors.log
-          touch /var/log/minitwit/combined.log
-          chmod a+rwx /var/log/minitwit/errors.log
-          chmod a+rwx /var/log/minitwit/combined.log
+          sudo mkdir -p /var/log/minitwit
+          sudo touch /var/log/minitwit/errors.log
+          sudo touch /var/log/minitwit/combined.log
+          sudo chmod a+rwx /var/log/minitwit/errors.log
+          sudo chmod a+rwx /var/log/minitwit/combined.log
 
       # USING A DOCKER CONTAINER PROVIDED BY CYPRESS
       - name: Cypress testing 
