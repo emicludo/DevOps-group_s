@@ -155,7 +155,7 @@ resource "digitalocean_droplet" "minitwit-swarm-worker" {
       "ufw allow 8888",
 
        # ssh into the leader and retrieve the worker token from /temp/worker_token
-      "ssh -o 'StrictHostKeyChecking no' root@${digitalocean_droplet.minitwit-swarm-leader.ipv4_address} -i ${digitalocean_ssh_key.minitwit.fingerprint} 'docker swarm join-token manager -q' > /root/worker_token",
+      "ssh -o 'StrictHostKeyChecking no' root@${digitalocean_droplet.minitwit-swarm-leader.ipv4_address} -i ssh_key/terraform 'docker swarm join-token manager -q' > /root/worker_token",
 
       # join swarm cluster as workers
       "docker swarm join --token $(cat /root/worker_token) ${digitalocean_droplet.minitwit-swarm-leader.ipv4_address}"
