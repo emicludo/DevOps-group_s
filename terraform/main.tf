@@ -9,7 +9,7 @@ variable "manager_count" {
   default = 1
 }
 variable "worker_count" {
-  default = 1
+  default = 0
 }
 
 #  _                _
@@ -103,8 +103,11 @@ resource "digitalocean_droplet" "minitwit-swarm-manager" {
       "ufw allow 8888",
 
       # ssh into the leader with self private key and retrieve the manager token from /temp/manager_token
-      "ssh -o 'StrictHostKeyChecking no' root@${digitalocean_droplet.minitwit-swarm-leader.ipv4_address} -i ${file(var.pvt_key)} 'docker swarm join-token manager -q' > /root/manager_token",
+      "ssh -o 'StrictHostKeyChecking no' root@${digitalocean_droplet.minitwit-swarm-leader.ipv4_address} -i ssh_key/terraform 'docker swarm join-token manager -q' > /root/manager_token",
 
+      # console log the manager key
+      "cat /root/manager_token",
+      
       # join swarm cluster as managers
       "docker swarm join --token $(cat /root/manager_token) ${digitalocean_droplet.minitwit-swarm-leader.ipv4_address}"
     ]
