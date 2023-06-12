@@ -5,11 +5,11 @@ on:
   # Run workflow every time something is pushed to the main branch
   push:
     branches:
-      - fix-manager-and-worker-token
+      - main
   # allow manual triggers
   workflow_dispatch:
     manual: true
-
+    
 jobs:
   build:
     runs-on: ubuntu-latest
