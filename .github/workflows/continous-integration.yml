@@ -23,6 +23,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: ESLint
+        run: |
+          cd itu-minitiwt-node/
+          npm install
+          npx eslint ./**
+
       - name: Test minitwit
         run: |
           docker build -t minitwit-tests -f ./itu-minitwit-node/tests/Dockerfile .
