@@ -21,4 +21,5 @@ module.exports = {
     sourceType: "module",
   },
   rules: {},
+  ignorePatterns: ['bin/'],
 };
