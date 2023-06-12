@@ -50,14 +50,6 @@ resource "digitalocean_droplet" "minitwit-swarm-leader" {
       "docker swarm init --advertise-addr ${self.ipv4_address}"
     ]
   }
-/* 
-  provisioner "local-exec" {
-    command = "ssh -o 'StrictHostKeyChecking no' root@${self.ipv4_address} -i ssh_key/terraform 'docker swarm join-token worker -q' > ../temp/worker_token"
-  }
-
-  provisioner "local-exec" {
-    command = "ssh -o 'StrictHostKeyChecking no' root@${self.ipv4_address} -i ssh_key/terraform 'docker swarm join-token manager -q' > ../temp/manager_token"
-  } */
 }
 
 #  _ __ ___   __ _ _ __   __ _  __ _  ___ _ __
