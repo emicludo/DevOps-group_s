@@ -26,7 +26,7 @@ jobs:
       - name: ESLint
         run: |
           cd itu-minitwit-node/
-          mkdir bin
+          sudo mkdir bin
           npm install
           npx eslint ./**
 
