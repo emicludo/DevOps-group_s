@@ -23,9 +23,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      # - name: ESLint
+      #   run: |
+      #     npx eslint ./itu-minitwit-node/**
+
       - name: ESLint
-        run: |
-          npx eslint ./itu-minitwit-node/**
+        uses: stefanoeb/eslint-action@1.0.2
+        with:
+          files: ./itu-minitwit-node/**
 
       - name: Test minitwit
         run: |
