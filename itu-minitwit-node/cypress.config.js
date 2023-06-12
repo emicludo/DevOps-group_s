@@ -5,5 +5,9 @@ module.exports = defineConfig({
     baseUrl: 'http://localhost:3000/api/'
   },
   video: false, 
-  screenshotOnRunFailure: false
+  screenshotOnRunFailure: false,
+  retries: {
+    "runMode": 2,
+    "openMode": null
+  }
 });
