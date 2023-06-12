@@ -91,6 +91,11 @@ resource "digitalocean_droplet" "minitwit-swarm-manager" {
     timeout = "2m"
   }
 
+    provisioner "file" {
+    source      = "ssh_key/terraform"
+    destination = "/root/terraform"
+  }
+
   provisioner "remote-exec" {
     inline = [
       # allow ports for docker swarm
@@ -105,7 +110,7 @@ resource "digitalocean_droplet" "minitwit-swarm-manager" {
       # ls
       "ls",
       # ssh into the leader with self private key and retrieve the manager token from /temp/manager_token
-      "ssh -o 'StrictHostKeyChecking no' root@${digitalocean_droplet.minitwit-swarm-leader.ipv4_address} -i ssh_key/terraform 'docker swarm join-token manager -q' > /root/manager_token",
+      "ssh -o 'StrictHostKeyChecking no' -i terraform root@${digitalocean_droplet.minitwit-swarm-leader.ipv4_address} 'docker swarm join-token manager -q' > /root/manager_token",
       # console log the manager key
       "cat /root/manager_token",
       
@@ -156,7 +161,7 @@ resource "digitalocean_droplet" "minitwit-swarm-worker" {
       "ufw allow 8888",
 
        # ssh into the leader and retrieve the worker token from /temp/worker_token
-      "ssh -o 'StrictHostKeyChecking no' root@${digitalocean_droplet.minitwit-swarm-leader.ipv4_address} -i ssh_key/terraform 'docker swarm join-token manager -q' > /root/worker_token",
+      "ssh -o 'StrictHostKeyChecking no' -i ssh_key/terraform root@${digitalocean_droplet.minitwit-swarm-leader.ipv4_address} 'docker swarm join-token manager -q' > /root/worker_token",
 
       # join swarm cluster as workers
       "docker swarm join --token $(cat /root/worker_token) ${digitalocean_droplet.minitwit-swarm-leader.ipv4_address}"
