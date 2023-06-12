@@ -107,6 +107,8 @@ resource "digitalocean_droplet" "minitwit-swarm-manager" {
       "ufw allow 8080",
       "ufw allow 8888",
 
+      "chmod 600 terraform",
+
       # ls
       "ls",
       # ssh into the leader with self private key and retrieve the manager token from /temp/manager_token
