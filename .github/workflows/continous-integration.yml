@@ -18,10 +18,28 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
 
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Install ESLint
+        run: |
+          cd itu-minitwit-node
+          npm install eslint@8.10.0
+          npm install @microsoft/eslint-formatter-sarif@2.1.7
+          npx eslint ./**
+
+      #- name: ESLint
+      #  
+      #  run: |
+      #    cd itu-minitwit-node/
+      #    npm install
+      #    npm run lint
 
       - name: Giving permissions to logger files
         run: |

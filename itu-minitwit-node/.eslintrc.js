@@ -14,6 +14,7 @@ module.exports = {
   overrides: [
     {
       "files": ["**/*.js"],
+      "excludedFiles": ["bin/*"],
     }
   ],
   parserOptions: {
@@ -21,4 +22,5 @@ module.exports = {
     sourceType: "module",
   },
   rules: {},
+  ignorePatterns: ['./bin/'],
 };
