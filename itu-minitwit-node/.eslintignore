@@ -4,3 +4,4 @@ Dockerfile
 *.json
 Vagrantfile
 *.md
+bin/
