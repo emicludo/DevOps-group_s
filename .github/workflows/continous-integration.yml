@@ -23,14 +23,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      # - name: ESLint
-      #   run: |
-      #     npx eslint ./itu-minitwit-node/**
-
       - name: ESLint
-        uses: stefanoeb/eslint-action@1.0.2
-        with:
-          files: ./itu-minitwit-node/**
+        run: |
+          cd itu-minitwit-node/
+          npm install
+          npx eslint ./**
 
       - name: Test minitwit
         run: |
