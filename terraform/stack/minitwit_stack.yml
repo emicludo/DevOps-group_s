@@ -50,7 +50,7 @@ services:
     volumes:
       - minitwit_logs:/var/log/minitwit
     deploy:
-      mode: global
+      replicas: 2
       placement:
         constraints: [node.role == worker]
 
