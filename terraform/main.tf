@@ -9,7 +9,7 @@ variable "manager_count" {
   default = 1
 }
 variable "worker_count" {
-  default = 2
+  default = 3
 }
 
 #  _                _
