@@ -13,6 +13,10 @@ variable "region" {
   description = "DigitalOcean region"
 }
 
+# make sure to generate a pair of ssh keys
+#variable "pub_key" {}
+#variable "pvt_key" {}
+
 # setup the provider
 terraform {
         required_providers {
