@@ -9,7 +9,7 @@ on:
   # allow manual triggers
   workflow_dispatch:
     manual: true
-
+    
 jobs:
   build:
     runs-on: ubuntu-latest
