@@ -9,7 +9,7 @@ on:
   # allow manual triggers
   workflow_dispatch:
     manual: true
-    
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -36,6 +36,28 @@ jobs:
           tags: ${{ secrets.DOCKER_USERNAME }}/minitwit-tests:latest
           cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/minitwit-tests:webbuildcache
           cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/minitwit-tests:webbuildcache,mode=max
+
+      - name: Giving permissions to logger files
+        run: |
+          sudo mkdir -p /var/log/minitwit
+          sudo touch /var/log/minitwit/errors.log
+          sudo touch /var/log/minitwit/combined.log
+          sudo chmod a+rwx /var/log/minitwit/errors.log
+          sudo chmod a+rwx /var/log/minitwit/combined.log
+
+      - name: Cypress testing 
+        uses: cypress-io/github-action@v5
+        with: 
+          working-directory: itu-minitwit-node
+          start: npm start
+          config-file: cypress.config.js
+          wait-on: "http://localhost:3000/api"
+        env:
+          MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+          MYSQL_USERNAME: ${{ secrets.MYSQL_USERNAME }}
+          MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
+          MYSQL_PORT: ${{ secrets.MYSQL_PORT }}
+          MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
 
       - name: Test minitwit
         run: |

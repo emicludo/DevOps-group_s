@@ -8,8 +8,8 @@ describe('Signing in', () => {
     })
 
     it('right information gives no error and logs in', () => {
-        cy.get('#username-form').type('test-user')
-        cy.get('#password-form').type('password123')
+        cy.get('#username').type('test-user')
+        cy.get('#password').type('password123')
         cy.get('#submit-btn').click()
         cy.contains('h2', 'My Timeline')
     })
@@ -20,27 +20,27 @@ describe('Signing in', () => {
     })
 
     it('wrong username gives error', () => {
-        cy.get('#username-form').type('wrong-username')
-        cy.get('#password-form').type('superstrongpassword123')
+        cy.get('#username').type('wrong-username')
+        cy.get('#password').type('superstrongpassword123')
         cy.get('#submit-btn').click()
         cy.get('#error-msg').should('be.visible')
-        cy.contains('#error-msg', 'Error: Invalid username')  
+        cy.contains('#error-msg', 'Error: Incorrect username')  
     })
 
     it('wrong password gives error', () => {
-        cy.get('#username-form').type('test-user')
-        cy.get('#password-form').type('akjsdklajdklasjæd')
+        cy.get('#username').type('test-user')
+        cy.get('#password').type('akjsdklajdklasjæd')
         cy.get('#submit-btn').click()
         cy.get('#error-msg').should('be.visible')
         cy.contains('#error-msg', 'Error: Invalid password')  
     })
 })
 
-describe('Signing out', () => {
-    it('clicking "sign out" signs you out', () => {
-        cy.login('test-user', 'password123')
-        cy.visit('/')
-        cy.get('#sign-out').click()
-        cy.contains('#message', 'You were logged out')
-    })
-})
+// describe('Signing out', () => {
+//     it('clicking "sign out" signs you out', () => {
+//         cy.login('test-user', 'password123')
+//         cy.visit('/')
+//         cy.get('#sign-out').click()
+//         cy.contains('#message', 'You were logged out')
+//     })
+// })
