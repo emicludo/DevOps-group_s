@@ -19,7 +19,7 @@ variable "worker_count" {
 
 # create cloud vm
 resource "digitalocean_droplet" "minitwit-swarm-leader" {
-  image = "docker-18-04"
+  image = "docker-22-04"
   name = "minitwit-swarm-leader"
   region = var.region
   size = "s-1vcpu-1gb"
@@ -82,7 +82,7 @@ resource "digitalocean_droplet" "minitwit-swarm-manager" {
   # number of vms to create
   count = var.manager_count
 
-  image = "docker-18-04"
+  image = "docker-22-04"
   name = "minitwit-swarm-manager-${count.index}"
   region = var.region
   size = "s-1vcpu-1gb"
@@ -135,7 +135,7 @@ resource "digitalocean_droplet" "minitwit-swarm-worker" {
   # number of vms to create
   count = var.worker_count
 
-  image = "docker-18-04"
+  image = "docker-22-04"
   name = "minitwit-swarm-worker-${count.index}"
   region = var.region
   size = "s-1vcpu-1gb"
