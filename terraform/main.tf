@@ -152,7 +152,7 @@ resource "digitalocean_droplet" "minitwit-swarm-worker" {
   }
 
   provisioner "file" {
-    source = "temp/manager_token"
+    source = "temp/worker_token"
     destination = "/root/worker_token"
   }
 
