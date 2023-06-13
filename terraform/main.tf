@@ -4,10 +4,6 @@ variable "space_name" {}
 variable aws_secret_access_key {}
 variable aws_access_key_id {}
 variable state_file {}
-
-variable manager_token {}
-variable worker_token {}
-
 variable "manager_count" {
   default = 1
 }
@@ -103,7 +99,7 @@ resource "digitalocean_droplet" "minitwit-swarm-manager" {
   }
 
   provisioner "file" {
-    source = file(var.manager_token)
+    source = "temp/manager_token"
     destination = "/root/manager_token"
   }
 
@@ -156,7 +152,7 @@ resource "digitalocean_droplet" "minitwit-swarm-worker" {
   }
 
   provisioner "file" {
-    source = file(var.worker_token)
+    source = "temp/manager_token"
     destination = "/root/worker_token"
   }
 
